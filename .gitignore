@@ -1,0 +1,54 @@
+# Entornos
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Secretos locales
+.secrets/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+.vite/
+dist/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Editor / SO
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Media subida
+backend/media/
+!backend/media/.gitkeep
+
+# Base de datos local
+*.db
+*.sqlite*
+
+# Docker
+.docker-data/
+
+# Logs
+*.log

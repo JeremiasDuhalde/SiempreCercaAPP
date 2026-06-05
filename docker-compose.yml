@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: siemprecerca_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-siemprecerca}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-siemprecerca_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-siemprecerca}
+    volumes:
+      - siemprecerca_db_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: siemprecerca_redis
+    restart: unless-stopped
+    ports:
+      - "6382:6379"
+
+  backend:
+    build: ./backend
+    container_name: siemprecerca_backend
+    restart: unless-stopped
+    env_file: ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8300:8000"
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+      - ./backend/alembic.ini:/app/alembic.ini
+      - ./backend/media:/app/media
+    command: ["uv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  frontend:
+    build: ./frontend
+    container_name: siemprecerca_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5176:80"
+
+volumes:
+  siemprecerca_db_data:
