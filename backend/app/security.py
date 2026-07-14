@@ -1,6 +1,9 @@
+"""Autenticación: JWT + Argon2 (con fallback bcrypt para migración) + roles."""
+
 from datetime import datetime, timedelta, timezone
 from typing import Any
 
+import argon2
 import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -10,20 +13,36 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import get_db
-from app.models.admin import Admin
+from app.models.user import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
+_ph = argon2.PasswordHasher()
+
 
 def hash_password(password: str) -> str:
-    return bcrypt.hashpw(password.encode("utf-8")[:72], bcrypt.gensalt()).decode("utf-8")
+    """Hash con Argon2id."""
+    return _ph.hash(password)
 
 
 def verify_password(plain: str, hashed: str) -> bool:
+    """Verifica password. Soporta Argon2 y bcrypt (migración)."""
+    if hashed.startswith("$2b$") or hashed.startswith("$2a$"):
+        # Legacy bcrypt
+        try:
+            return bcrypt.checkpw(plain.encode("utf-8")[:72], hashed.encode("utf-8"))
+        except ValueError:
+            return False
+    # Argon2
     try:
-        return bcrypt.checkpw(plain.encode("utf-8")[:72], hashed.encode("utf-8"))
-    except ValueError:
+        return _ph.verify(hashed, plain)
+    except (argon2.exceptions.VerifyMismatchError, argon2.exceptions.VerificationError):
         return False
+
+
+def needs_rehash(hashed: str) -> bool:
+    """True si el hash es bcrypt (legacy) y debe migrarse a Argon2."""
+    return hashed.startswith("$2b$") or hashed.startswith("$2a$")
 
 
 def create_access_token(subject: str, extra: dict[str, Any] | None = None) -> str:
@@ -38,13 +57,13 @@ def create_access_token(subject: str, extra: dict[str, Any] | None = None) -> st
     return jwt.encode(payload, settings.jwt_secret, algorithm=settings.jwt_algorithm)
 
 
-async def get_current_admin(
+async def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db),
-) -> Admin:
+) -> User:
     credentials_error = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Credenciales invalidas",
+        detail="Credenciales inválidas",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
@@ -55,8 +74,22 @@ async def get_current_admin(
     except JWTError as e:
         raise credentials_error from e
 
-    result = await db.execute(select(Admin).where(Admin.email == email))
-    admin = result.scalar_one_or_none()
-    if admin is None or not admin.is_active:
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+    if user is None or not user.is_active:
         raise credentials_error
-    return admin
+    return user
+
+
+def require_role(*roles: str):
+    """Dependency factory para restringir acceso por rol."""
+
+    async def _check(user: User = Depends(get_current_user)) -> User:
+        if user.role not in roles:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Rol '{user.role}' no tiene permiso para esta acción",
+            )
+        return user
+
+    return _check

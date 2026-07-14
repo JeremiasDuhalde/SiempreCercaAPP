@@ -1,0 +1,13 @@
+.git
+.env
+*.pdf
+*.html
+!frontend/index.html
+node_modules
+frontend/node_modules
+frontend/dist
+backend/.venv
+__pycache__
+.claude
+scripts
+*.md

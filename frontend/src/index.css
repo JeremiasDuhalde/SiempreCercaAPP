@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@layer base {
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background-color: #15131c;
+    color: #f3efe9;
+  }
+}
+
+@keyframes pulseRing { 0% { transform: scale(0.8); opacity: 0.7 } 70% { transform: scale(2.4); opacity: 0 } 100% { opacity: 0 } }
+@keyframes beat { 0%, 100% { transform: scale(1) } 50% { transform: scale(1.12) } }
+@keyframes slideIn { from { opacity: 0; transform: translateY(-8px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes blink { 0%, 100% { opacity: 1 } 50% { opacity: 0.25 } }
+
+.sc-card { animation: slideIn 0.35s ease }
+.sc-scroll::-webkit-scrollbar { width: 8px }
+.sc-scroll::-webkit-scrollbar-thumb { background: #352F45; border-radius: 8px }
+.sc-btn { transition: all 0.15s ease; cursor: pointer }
+.sc-btn:hover { filter: brightness(1.12) }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important } }

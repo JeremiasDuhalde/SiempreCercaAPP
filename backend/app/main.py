@@ -12,7 +12,7 @@ from slowapi.util import get_remote_address
 
 from app.config import settings
 from app.database import dispose_engine
-from app.routers import auth, health
+from app.routers import alerts, appointments, auth, clients, health, messages, users, webhooks, wellbeing, ws
 
 logging.basicConfig(level=logging.INFO)
 
@@ -21,8 +21,8 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await dispose_engine()
     yield
+    await dispose_engine()
 
 
 app = FastAPI(
@@ -59,6 +59,14 @@ app.mount(settings.media_url_prefix, StaticFiles(directory=str(media_path)), nam
 
 app.include_router(health.router)
 app.include_router(auth.router)
+app.include_router(webhooks.router)
+app.include_router(ws.router)
+app.include_router(clients.router)
+app.include_router(alerts.router)
+app.include_router(messages.router)
+app.include_router(appointments.router)
+app.include_router(wellbeing.router)
+app.include_router(users.router)
 
 
 @app.get("/")
