@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurar FLIC — Siempre Cerca</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, system-ui, sans-serif;
+    background: #15131C;
+    color: #F3EFE9;
+    padding: 20px;
+    line-height: 1.6;
+  }
+  .container { max-width: 480px; margin: 0 auto; }
+  .logo {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .logo span {
+    display: inline-flex;
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #5AA9FF, #37C8A0);
+    align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900; color: #fff;
+  }
+  h1 {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  .sub {
+    text-align: center;
+    font-size: 13px;
+    color: #9A93AD;
+    margin-bottom: 24px;
+  }
+  .step {
+    background: #1E1B29;
+    border: 1px solid #352F45;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .step-num {
+    display: inline-flex;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #262232;
+    border: 1px solid #352F45;
+    align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    color: #6A6480;
+    margin-right: 8px;
+  }
+  .step-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .step p {
+    font-size: 13px;
+    color: #9A93AD;
+  }
+  .copy-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .copy-value {
+    flex: 1;
+    background: #262232;
+    border: 1px solid #352F45;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #5AA9FF;
+    font-family: monospace;
+    word-break: break-all;
+    user-select: all;
+  }
+  .copy-btn {
+    background: #37C8A0;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .copy-btn.copied {
+    background: #6A6480;
+  }
+  .field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6A6480;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+    margin-bottom: 4px;
+  }
+  .check {
+    background: rgba(55, 200, 160, 0.1);
+    border: 1px solid rgba(55, 200, 160, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #37C8A0;
+    margin-top: 8px;
+  }
+  .warn {
+    background: rgba(247, 162, 59, 0.1);
+    border: 1px solid rgba(247, 162, 59, 0.3);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #F7A23B;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo"><span>SC</span></div>
+  <h1>Configurar boton FLIC</h1>
+  <p class="sub">Seguí estos pasos en la app FLIC del paciente</p>
+
+  <!-- Paso 1 -->
+  <div class="step">
+    <div class="step-title"><span class="step-num">1</span> Abrir la app FLIC</div>
+    <p>Abri la app FLIC en el telefono del paciente y selecciona el boton/reloj. Anda a la accion de <strong>Doble Click</strong>.</p>
+  </div>
+
+  <!-- Paso 2 -->
+  <div class="step">
+    <div class="step-title"><span class="step-num">2</span> Agregar accion "Internet Request"</div>
+    <p>Toca <strong>"+"</strong> para agregar accion. Busca <strong>"Internet Request"</strong> (puede estar en Tools o Hub Actions).</p>
+  </div>
+
+  <!-- Paso 3 -->
+  <div class="step">
+    <div class="step-title"><span class="step-num">3</span> Configurar los campos</div>
+    <p>Copia y pega cada campo tocando el boton "Copiar":</p>
+
+    <div class="field-label">URL</div>
+    <div class="copy-box">
+      <div class="copy-value" id="val-url">http://34.95.223.140/api/webhooks/flic/alert</div>
+      <button class="copy-btn" onclick="copyField('val-url', this)">Copiar</button>
+    </div>
+
+    <div class="field-label">Metodo HTTP</div>
+    <div class="copy-box">
+      <div class="copy-value" id="val-method">POST</div>
+      <button class="copy-btn" onclick="copyField('val-method', this)">Copiar</button>
+    </div>
+
+    <div class="field-label">Content Type</div>
+    <div class="copy-box">
+      <div class="copy-value" id="val-ct">application/json</div>
+      <button class="copy-btn" onclick="copyField('val-ct', this)">Copiar</button>
+    </div>
+
+    <div class="field-label">Body</div>
+    <div class="copy-box">
+      <div class="copy-value" id="val-body">{"event": "sos"}</div>
+      <button class="copy-btn" onclick="copyField('val-body', this)">Copiar</button>
+    </div>
+  </div>
+
+  <!-- Paso 4 -->
+  <div class="step">
+    <div class="step-title"><span class="step-num">4</span> Agregar header de seguridad</div>
+    <p>En <strong>HTTP Headers</strong>, toca para agregar un header:</p>
+
+    <div class="field-label">Key</div>
+    <div class="copy-box">
+      <div class="copy-value" id="val-key">X-Webhook-Secret</div>
+      <button class="copy-btn" onclick="copyField('val-key', this)">Copiar</button>
+    </div>
+
+    <div class="field-label">Value</div>
+    <div class="copy-box">
+      <div class="copy-value" id="val-secret">4d60192711902e66a26923bfc375cb73</div>
+      <button class="copy-btn" onclick="copyField('val-secret', this)">Copiar</button>
+    </div>
+
+    <div class="warn">Despues de pegar Key y Value, toca <strong>INSERT</strong> para confirmar el header</div>
+  </div>
+
+  <!-- Paso 5 -->
+  <div class="step">
+    <div class="step-title"><span class="step-num">5</span> Activar ubicacion</div>
+    <p>Abajo de todo, activa <strong>"Include location"</strong> para que mande la ubicacion GPS.</p>
+    <div class="check">El timeout dejalo como esta (default)</div>
+  </div>
+
+  <!-- Paso 6 -->
+  <div class="step">
+    <div class="step-title"><span class="step-num">6</span> Guardar y probar</div>
+    <p>Guarda la accion y hace <strong>doble click</strong> en el boton. Si todo esta bien, en el dashboard de Siempre Cerca va a aparecer la alerta.</p>
+  </div>
+</div>
+
+<script>
+function copyField(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = "Copiado!";
+    btn.classList.add("copied");
+    setTimeout(() => {
+      btn.textContent = "Copiar";
+      btn.classList.remove("copied");
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>
