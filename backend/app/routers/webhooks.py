@@ -3,7 +3,8 @@
 import logging
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
+from fastapi.responses import PlainTextResponse
 from sqlalchemy import select
 
 from app.config import settings
@@ -183,3 +184,43 @@ async def flic_alert(
         "client": client_name,
         "message": f"Alerta {alert_type} recibida de {button_serial_number}",
     }
+
+
+# --- WhatsApp Webhooks (Meta) ---
+
+WHATSAPP_VERIFY_TOKEN = "siemprecerca-verify-2026"
+
+
+@router.get("/whatsapp")
+async def whatsapp_verify(
+    request: Request,
+):
+    """Verificacion de webhook de Meta (challenge)."""
+    mode = request.query_params.get("hub.mode")
+    token = request.query_params.get("hub.verify_token")
+    challenge = request.query_params.get("hub.challenge")
+
+    if mode == "subscribe" and token == WHATSAPP_VERIFY_TOKEN:
+        logger.info("WhatsApp webhook verificado OK")
+        return PlainTextResponse(content=challenge, status_code=200)
+
+    raise HTTPException(403, "Verificacion fallida")
+
+
+@router.post("/whatsapp")
+async def whatsapp_incoming(request: Request):
+    """Recibe mensajes entrantes y actualizaciones de estado de WhatsApp."""
+    body = await request.json()
+
+    # Guardar crudo
+    async with SessionLocal() as db:
+        raw_log = WebhookRawLog(
+            source="whatsapp",
+            payload=body,
+            processed=False,
+        )
+        db.add(raw_log)
+        await db.commit()
+
+    logger.info("WhatsApp webhook recibido: %s", body.get("entry", [{}])[0].get("changes", [{}])[0].get("field", "unknown"))
+    return {"ok": True}
