@@ -5,6 +5,7 @@ import {
   MessageCircle,
   CalendarClock,
   BarChart3,
+  Shield,
   ShieldCheck,
   Siren,
   Zap,
@@ -23,6 +24,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   MessageCircle,
   CalendarClock,
   BarChart3,
+  Shield,
 };
 
 export default function Sidebar() {

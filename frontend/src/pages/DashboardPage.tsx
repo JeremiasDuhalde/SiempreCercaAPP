@@ -7,6 +7,7 @@ import BienestarView from "@/components/bienestar/BienestarView";
 import MensajeriaView from "@/components/mensajeria/MensajeriaView";
 import AgendaView from "@/components/agenda/AgendaView";
 import ReportesView from "@/components/reportes/ReportesView";
+import UsersView from "@/components/admin/UsersView";
 
 const VIEWS: Record<string, React.FC> = {
   monitoreo: MonitoreoView,
@@ -15,6 +16,7 @@ const VIEWS: Record<string, React.FC> = {
   mensajeria: MensajeriaView,
   agenda: AgendaView,
   reportes: ReportesView,
+  admin: UsersView,
 };
 
 export default function DashboardPage() {

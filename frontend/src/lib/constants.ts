@@ -118,4 +118,5 @@ export const MODULES = [
   { key: "mensajeria", label: "Mensajería", icon: "MessageCircle" },
   { key: "agenda", label: "Agenda", icon: "CalendarClock" },
   { key: "reportes", label: "Reportes", icon: "BarChart3" },
+  { key: "admin", label: "Usuarios", icon: "Shield" },
 ] as const;
