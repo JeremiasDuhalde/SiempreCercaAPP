@@ -6,6 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
+from app.models.alert import Alert
 from app.models.client import Client
 from app.models.device import Device
 from app.models.user import User
@@ -142,10 +143,26 @@ async def assign_device(
         )
         db.add(device)
 
+    await db.flush()
+
+    # Vincular alertas huérfanas de este serial al cliente
+    orphan_alerts = await db.execute(
+        select(Alert).where(
+            Alert.client_id.is_(None),
+            Alert.raw_payload["button_serial_number"].astext == body.button_serial,
+        )
+    )
+    updated_count = 0
+    for alert in orphan_alerts.scalars().all():
+        alert.client_id = client.id
+        alert.device_id = device.id if device else None
+        updated_count += 1
+
     await db.commit()
     return {
         "ok": True,
         "client_id": client.id,
         "client_name": client.name,
         "button_serial": body.button_serial,
+        "alerts_linked": updated_count,
     }
