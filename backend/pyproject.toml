@@ -27,6 +27,7 @@ dependencies = [
     "websockets>=13.1",
     "anthropic>=0.39",
     "redis>=5.2",
+    "sentry-sdk[fastapi]>=2.0",
 ]
 
 [dependency-groups]

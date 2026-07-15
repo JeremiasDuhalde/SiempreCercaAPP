@@ -2,6 +2,7 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import sentry_sdk
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -15,6 +16,14 @@ from app.database import dispose_engine
 from app.routers import alerts, appointments, auth, clients, health, messages, users, webhooks, wellbeing, ws
 
 logging.basicConfig(level=logging.INFO)
+
+# Sentry — monitoreo de errores (solo si hay DSN configurado)
+if settings.sentry_dsn:
+    sentry_sdk.init(
+        dsn=settings.sentry_dsn,
+        traces_sample_rate=0.2,
+        environment="production" if not settings.debug else "development",
+    )
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
