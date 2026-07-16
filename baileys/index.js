@@ -11,11 +11,8 @@
  */
 
 import express from "express";
-import makeWASocket, {
-  useMultiFileAuthState,
-  DisconnectReason,
-  fetchLatestBaileysVersion,
-} from "@whiskeysockets/baileys";
+import baileys from "@whiskeysockets/baileys";
+const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } = baileys;
 import pino from "pino";
 import qrcode from "qrcode-terminal";
 
@@ -42,7 +39,7 @@ async function connectWhatsApp() {
   const { state, saveCreds } = await useMultiFileAuthState(AUTH_DIR);
   const { version } = await fetchLatestBaileysVersion();
 
-  sock = makeWASocket.default({
+  sock = makeWASocket({
     version,
     auth: state,
     logger,
