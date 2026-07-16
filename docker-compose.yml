@@ -89,6 +89,15 @@ services:
     ports:
       - "5176:80"
 
+  baileys:
+    build: ./baileys
+    container_name: siemprecerca_baileys
+    restart: unless-stopped
+    volumes:
+      - baileys_auth:/data
+    depends_on:
+      - backend
+
   nginx:
     image: nginx:alpine
     container_name: siemprecerca_nginx
@@ -106,3 +115,4 @@ services:
 
 volumes:
   siemprecerca_db_data:
+  baileys_auth:

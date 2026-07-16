@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templates WhatsApp — Siempre Cerca SRL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0e19;
+    color: #e8edf5;
+    padding: 40px 20px;
+    line-height: 1.6;
+  }
+  .container { max-width: 800px; margin: 0 auto; }
+
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  h1 span {
+    background: linear-gradient(135deg, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #8899b4;
+    margin-bottom: 32px;
+  }
+
+  .intro {
+    background: #111827;
+    border: 1px solid #2a3550;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 32px;
+    font-size: 13px;
+    color: #8899b4;
+    line-height: 1.8;
+  }
+  .intro strong { color: #e8edf5; }
+
+  .template-card {
+    background: #111827;
+    border: 1px solid #2a3550;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .template-header {
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #2a3550;
+  }
+
+  .template-badge {
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .badge-urgente { background: rgba(255,90,95,0.15); color: #ff5a5f; border: 1px solid rgba(255,90,95,0.3); }
+  .badge-diario { background: rgba(90,169,255,0.15); color: #5aa9ff; border: 1px solid rgba(90,169,255,0.3); }
+  .badge-recordatorio { background: rgba(247,162,59,0.15); color: #f7a23b; border: 1px solid rgba(247,162,59,0.3); }
+  .badge-bienvenida { background: rgba(55,200,160,0.15); color: #37c8a0; border: 1px solid rgba(55,200,160,0.3); }
+  .badge-info { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); }
+
+  .template-name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .template-body {
+    padding: 20px;
+  }
+
+  .field-group {
+    margin-bottom: 16px;
+  }
+  .field-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #5a6b87;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .field-value {
+    font-size: 13px;
+    color: #e8edf5;
+  }
+
+  .message-preview {
+    background: #1a2236;
+    border: 1px solid #2a3550;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 13px;
+    color: #e8edf5;
+    line-height: 1.7;
+    position: relative;
+  }
+  .message-preview::before {
+    content: "Vista previa del mensaje";
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #5a6b87;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .var {
+    background: rgba(90,169,255,0.15);
+    color: #5aa9ff;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .example {
+    background: #212c42;
+    border: 1px solid #334264;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #8899b4;
+  }
+  .example::before {
+    content: "Ejemplo real:";
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    color: #37c8a0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  .table-info {
+    width: 100%;
+    font-size: 12px;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  .table-info td {
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(42,53,80,0.4);
+    vertical-align: top;
+  }
+  .table-info td:first-child {
+    color: #5a6b87;
+    font-weight: 600;
+    width: 140px;
+  }
+
+  .approval {
+    text-align: center;
+    padding: 32px;
+    background: linear-gradient(135deg, rgba(55,200,160,0.06), rgba(90,169,255,0.04));
+    border: 1px solid rgba(55,200,160,0.2);
+    border-radius: 12px;
+    margin-top: 32px;
+  }
+  .approval h3 { font-size: 16px; color: #34d399; margin-bottom: 8px; }
+  .approval p { font-size: 13px; color: #8899b4; }
+
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 11px;
+    color: #5a6b87;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1><span>Templates de WhatsApp</span></h1>
+  <h1 style="font-size: 18px; color: #8899b4; font-weight: 500;">Siempre Cerca SRL</h1>
+  <p class="subtitle">Mensajes automaticos que envia el sistema — para aprobacion</p>
+
+  <div class="intro">
+    <strong>Que son los templates:</strong> Meta (WhatsApp) requiere que todos los mensajes que el sistema envia primero
+    (sin que el cliente haya escrito antes) sean templates pre-aprobados. Cada template tiene variables
+    (<span class="var">{{1}}</span>, <span class="var">{{2}}</span>, etc.) que el sistema completa automaticamente
+    con los datos del paciente, la alerta, etc.<br><br>
+    <strong>Importante:</strong> Meta revisa y aprueba cada template (suele tardar entre 1 minuto y 24 horas).
+    Los textos deben ser claros, no promocionales, y cumplir con las politicas de WhatsApp.
+  </div>
+
+  <!-- TEMPLATE 1: ALERTA SOS -->
+  <div class="template-card">
+    <div class="template-header">
+      <span class="template-badge badge-urgente">Urgente</span>
+      <span class="template-name">Alerta de emergencia</span>
+    </div>
+    <div class="template-body">
+      <table class="table-info">
+        <tr><td>Nombre tecnico</td><td><code>alerta_emergencia</code></td></tr>
+        <tr><td>Categoria</td><td>UTILITY (transaccional)</td></tr>
+        <tr><td>Idioma</td><td>Espanol (Argentina)</td></tr>
+        <tr><td>Se envia cuando</td><td>Un paciente presiona el boton SOS del reloj</td></tr>
+        <tr><td>Destinatario</td><td>Contacto de emergencia del paciente (familiar)</td></tr>
+      </table>
+
+      <div class="message-preview" style="margin-top: 16px;">
+        ALERTA DE EMERGENCIA — <span class="var">{{1}}</span><br><br>
+        Se activo una alerta de emergencia del dispositivo de <span class="var">{{1}}</span>.<br><br>
+        Ubicacion aproximada: <span class="var">{{2}}</span><br><br>
+        La central de monitoreo de Siempre Cerca ya fue notificada y esta atendiendo la situacion.<br><br>
+        Ante cualquier consulta comuniquese al <span class="var">{{3}}</span>.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+
+      <div class="example">
+        ALERTA DE EMERGENCIA — Rosa Pereyra<br><br>
+        Se activo una alerta de emergencia del dispositivo de Rosa Pereyra.<br><br>
+        Ubicacion aproximada: Santa Teresita, Av. 32 N° 1455<br><br>
+        La central de monitoreo de Siempre Cerca ya fue notificada y esta atendiendo la situacion.<br><br>
+        Ante cualquier consulta comuniquese al +54 9 2257 65-3843.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATE 2: CAIDA DETECTADA -->
+  <div class="template-card">
+    <div class="template-header">
+      <span class="template-badge badge-urgente">Urgente</span>
+      <span class="template-name">Caida detectada</span>
+    </div>
+    <div class="template-body">
+      <table class="table-info">
+        <tr><td>Nombre tecnico</td><td><code>alerta_caida</code></td></tr>
+        <tr><td>Categoria</td><td>UTILITY (transaccional)</td></tr>
+        <tr><td>Idioma</td><td>Espanol (Argentina)</td></tr>
+        <tr><td>Se envia cuando</td><td>El dispositivo detecta una caida del paciente</td></tr>
+        <tr><td>Destinatario</td><td>Contacto de emergencia del paciente</td></tr>
+      </table>
+
+      <div class="message-preview" style="margin-top: 16px;">
+        ALERTA — Posible caida detectada<br><br>
+        El dispositivo de <span class="var">{{1}}</span> detecto una posible caida.<br><br>
+        La central de Siempre Cerca esta intentando comunicarse para confirmar el estado del paciente.<br><br>
+        Le informaremos apenas tengamos novedades. Si tiene contacto directo con el paciente, por favor verifique su estado.<br><br>
+        Central: <span class="var">{{2}}</span><br><br>
+        — Equipo Siempre Cerca
+      </div>
+
+      <div class="example">
+        ALERTA — Posible caida detectada<br><br>
+        El dispositivo de Antonio Gomez detecto una posible caida.<br><br>
+        La central de Siempre Cerca esta intentando comunicarse para confirmar el estado del paciente.<br><br>
+        Le informaremos apenas tengamos novedades. Si tiene contacto directo con el paciente, por favor verifique su estado.<br><br>
+        Central: +54 9 2257 65-3843<br><br>
+        — Equipo Siempre Cerca
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATE 3: RECORDATORIO MEDICACION -->
+  <div class="template-card">
+    <div class="template-header">
+      <span class="template-badge badge-recordatorio">Recordatorio</span>
+      <span class="template-name">Recordatorio de medicacion</span>
+    </div>
+    <div class="template-body">
+      <table class="table-info">
+        <tr><td>Nombre tecnico</td><td><code>recordatorio_medicacion</code></td></tr>
+        <tr><td>Categoria</td><td>UTILITY (transaccional)</td></tr>
+        <tr><td>Idioma</td><td>Espanol (Argentina)</td></tr>
+        <tr><td>Se envia cuando</td><td>El sistema detecta que es hora de una medicacion programada</td></tr>
+        <tr><td>Destinatario</td><td>El paciente directamente (o su cuidador)</td></tr>
+      </table>
+
+      <div class="message-preview" style="margin-top: 16px;">
+        Hola <span class="var">{{1}}</span>, este es un recordatorio de Siempre Cerca.<br><br>
+        Es hora de tomar su medicacion: <span class="var">{{2}}</span>.<br><br>
+        Si necesita ayuda, presione el boton de su dispositivo o comuniquese con nosotros al <span class="var">{{3}}</span>.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+
+      <div class="example">
+        Hola Olga, este es un recordatorio de Siempre Cerca.<br><br>
+        Es hora de tomar su medicacion: Losartan 50mg.<br><br>
+        Si necesita ayuda, presione el boton de su dispositivo o comuniquese con nosotros al +54 9 2257 65-3843.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATE 4: PARTE FAMILIAR DIARIO -->
+  <div class="template-card">
+    <div class="template-header">
+      <span class="template-badge badge-diario">Diario</span>
+      <span class="template-name">Parte diario para la familia</span>
+    </div>
+    <div class="template-body">
+      <table class="table-info">
+        <tr><td>Nombre tecnico</td><td><code>parte_familiar_diario</code></td></tr>
+        <tr><td>Categoria</td><td>UTILITY (transaccional)</td></tr>
+        <tr><td>Idioma</td><td>Espanol (Argentina)</td></tr>
+        <tr><td>Se envia cuando</td><td>Todos los dias a las 20:00 hs automaticamente</td></tr>
+        <tr><td>Destinatario</td><td>Familiar principal del paciente</td></tr>
+      </table>
+
+      <div class="message-preview" style="margin-top: 16px;">
+        Buen dia <span class="var">{{1}}</span>, le compartimos el parte diario de <span class="var">{{2}}</span>.<br><br>
+        <span class="var">{{3}}</span><br><br>
+        Calificacion general del dia: <span class="var">{{4}}</span>/100.<br><br>
+        Cualquier consulta estamos a disposicion en el <span class="var">{{5}}</span>.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+
+      <div class="example">
+        Buen dia Ana, le compartimos el parte diario de Rosa Pereyra.<br><br>
+        Sin novedades. Actividad normal, medicacion tomada en horario. Descanso adecuado.<br><br>
+        Calificacion general del dia: 85/100.<br><br>
+        Cualquier consulta estamos a disposicion en el +54 9 2257 65-3843.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATE 5: BIENVENIDA NUEVO PACIENTE -->
+  <div class="template-card">
+    <div class="template-header">
+      <span class="template-badge badge-bienvenida">Bienvenida</span>
+      <span class="template-name">Bienvenida al servicio</span>
+    </div>
+    <div class="template-body">
+      <table class="table-info">
+        <tr><td>Nombre tecnico</td><td><code>bienvenida_servicio</code></td></tr>
+        <tr><td>Categoria</td><td>UTILITY (transaccional)</td></tr>
+        <tr><td>Idioma</td><td>Espanol (Argentina)</td></tr>
+        <tr><td>Se envia cuando</td><td>Se da de alta un nuevo paciente en el sistema</td></tr>
+        <tr><td>Destinatario</td><td>Familiar principal del nuevo paciente</td></tr>
+      </table>
+
+      <div class="message-preview" style="margin-top: 16px;">
+        Hola <span class="var">{{1}}</span>, bienvenido/a al servicio de Siempre Cerca.<br><br>
+        Le confirmamos que <span class="var">{{2}}</span> ya se encuentra dado/a de alta en nuestro sistema de monitoreo.<br><br>
+        A partir de ahora recibira notificaciones por este medio en caso de cualquier novedad. Tambien le enviaremos un parte diario con el estado general del paciente.<br><br>
+        Ante cualquier consulta puede escribirnos a este numero o llamarnos al <span class="var">{{3}}</span>.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+
+      <div class="example">
+        Hola Mariela, bienvenido/a al servicio de Siempre Cerca.<br><br>
+        Le confirmamos que Olga Fernandez ya se encuentra dado/a de alta en nuestro sistema de monitoreo.<br><br>
+        A partir de ahora recibira notificaciones por este medio en caso de cualquier novedad. Tambien le enviaremos un parte diario con el estado general del paciente.<br><br>
+        Ante cualquier consulta puede escribirnos a este numero o llamarnos al +54 9 2257 65-3843.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+    </div>
+  </div>
+
+  <!-- TEMPLATE 6: ALERTA RESUELTA -->
+  <div class="template-card">
+    <div class="template-header">
+      <span class="template-badge badge-info">Informativo</span>
+      <span class="template-name">Alerta resuelta</span>
+    </div>
+    <div class="template-body">
+      <table class="table-info">
+        <tr><td>Nombre tecnico</td><td><code>alerta_resuelta</code></td></tr>
+        <tr><td>Categoria</td><td>UTILITY (transaccional)</td></tr>
+        <tr><td>Idioma</td><td>Espanol (Argentina)</td></tr>
+        <tr><td>Se envia cuando</td><td>La operadora resuelve una alerta que genero notificacion previa</td></tr>
+        <tr><td>Destinatario</td><td>Familiar que recibio la alerta original</td></tr>
+      </table>
+
+      <div class="message-preview" style="margin-top: 16px;">
+        Hola <span class="var">{{1}}</span>, le informamos que la alerta de <span class="var">{{2}}</span> fue atendida y resuelta.<br><br>
+        <span class="var">{{3}}</span><br><br>
+        El paciente se encuentra bien. Cualquier consulta estamos a disposicion.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+
+      <div class="example">
+        Hola Ana, le informamos que la alerta de Rosa Pereyra fue atendida y resuelta.<br><br>
+        La paciente presiono el boton por error. Se verifico por llamada que se encuentra bien.<br><br>
+        El paciente se encuentra bien. Cualquier consulta estamos a disposicion.<br><br>
+        — Equipo Siempre Cerca
+      </div>
+    </div>
+  </div>
+
+  <div class="approval">
+    <h3>Para aprobar</h3>
+    <p>
+      Revisa los textos y confirmanos si estan bien o si queres cambiar algo.
+      Una vez aprobados, los cargamos en Meta y en 24 hs estan activos.
+    </p>
+  </div>
+
+  <div class="footer">
+    Preparado por Jeremias Duhalde · jeremias.duhalde@infocontrol.io
+  </div>
+
+</div>
+</body>
+</html>

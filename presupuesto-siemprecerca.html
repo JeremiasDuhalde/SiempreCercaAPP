@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presupuesto — Siempre Cerca SRL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  :root {
+    --bg: #0a0e19;
+    --surface: #111827;
+    --surface-2: #1a2236;
+    --surface-3: #212c42;
+    --border: #2a3550;
+    --border-light: #334264;
+    --text: #e8edf5;
+    --text-muted: #8899b4;
+    --text-dim: #5a6b87;
+    --primary: #3b82f6;
+    --primary-glow: #60a5fa;
+    --accent: #10b981;
+    --accent-glow: #34d399;
+    --warn: #f59e0b;
+    --purple: #a78bfa;
+    --cyan: #22d3ee;
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary), var(--accent), var(--cyan));
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    padding: 40px 48px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .header-left h1 {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    margin-bottom: 2px;
+  }
+
+  .header-left h1 .gr {
+    background: linear-gradient(135deg, var(--primary-glow), var(--accent-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-left .doc-type {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--primary-glow);
+    margin-bottom: 12px;
+  }
+
+  .header-right {
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .header-right strong { color: var(--text); }
+
+  .header-right .presup-num {
+    display: inline-block;
+    background: rgba(59,130,246,0.1);
+    border: 1px solid rgba(59,130,246,0.25);
+    padding: 4px 14px;
+    border-radius: 50px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: var(--primary-glow);
+    margin-bottom: 8px;
+  }
+
+  /* ===== DIVIDER ===== */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 48px;
+  }
+
+  /* ===== CLIENT / PROVIDER ===== */
+  .parties {
+    display: flex;
+    gap: 24px;
+    padding: 24px 48px;
+  }
+
+  .party {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+  }
+
+  .party-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .party-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .party-detail {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ===== SCOPE ===== */
+  .scope {
+    padding: 24px 48px 16px;
+  }
+
+  .scope h2 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--primary-glow);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ===== LINE ITEMS TABLE ===== */
+  .items-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 12px;
+  }
+
+  .items-table thead th {
+    background: var(--surface-2);
+    color: var(--text-dim);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .items-table thead th:first-child { border-radius: var(--radius) 0 0 0; }
+  .items-table thead th:last-child { border-radius: 0 var(--radius) 0 0; text-align: right; }
+  .items-table thead th:nth-child(3) { text-align: center; }
+
+  .items-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid rgba(42,53,80,0.5);
+    vertical-align: top;
+  }
+
+  .items-table tbody tr:hover td { background: rgba(26,34,54,0.5); }
+
+  .item-num {
+    font-weight: 700;
+    color: var(--text-dim);
+    font-variant-numeric: tabular-nums;
+    font-size: 11px;
+  }
+
+  .item-name {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12px;
+  }
+
+  .item-desc {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+
+  .item-days {
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .item-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+
+  .item-tag.tech { background: rgba(59,130,246,0.1); color: var(--primary-glow); border: 1px solid rgba(59,130,246,0.2); }
+  .item-tag.custom { background: rgba(245,158,11,0.08); color: var(--warn); border: 1px solid rgba(245,158,11,0.18); }
+  .item-tag.qa { background: rgba(167,139,250,0.08); color: var(--purple); border: 1px solid rgba(167,139,250,0.18); }
+
+  /* Total row */
+  .total-row td {
+    background: var(--surface-2) !important;
+    border-bottom: none;
+    font-weight: 700;
+  }
+
+  .total-row td:first-child { border-radius: 0 0 0 var(--radius); }
+  .total-row td:last-child { border-radius: 0 0 var(--radius) 0; }
+
+  /* ===== PRICING SECTION ===== */
+  .pricing {
+    padding: 24px 48px 16px;
+  }
+
+  .pricing h2 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-glow);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .price-card {
+    background: linear-gradient(135deg, rgba(59,130,246,0.06), rgba(16,185,129,0.04));
+    border: 1px solid rgba(59,130,246,0.2);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .price-left h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .price-amount {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--primary-glow), var(--accent-glow));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .price-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .price-right {
+    text-align: right;
+  }
+
+  .price-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .price-detail strong { color: var(--text); }
+
+  /* Payment options */
+  .pay-options {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .pay-option {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .pay-option:hover { border-color: var(--border-light); }
+
+  .pay-option.recommended {
+    border-color: rgba(16,185,129,0.35);
+    background: rgba(16,185,129,0.03);
+  }
+
+  .pay-option.recommended::after {
+    content: 'RECOMENDADO';
+    position: absolute;
+    top: -8px;
+    right: 16px;
+    background: var(--accent);
+    color: white;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 50px;
+  }
+
+  .pay-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+
+  .pay-title {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+
+  .pay-option.recommended .pay-title { color: var(--accent-glow); }
+
+  .pay-steps {
+    list-style: none;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .pay-steps li {
+    padding: 3px 0;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed rgba(42,53,80,0.5);
+  }
+
+  .pay-steps li:last-child { border-bottom: none; }
+
+  .pay-steps .amount {
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== INCLUDES ===== */
+  .includes {
+    padding: 16px 48px 16px;
+  }
+
+  .includes h2 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .inc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 24px;
+    margin-bottom: 16px;
+  }
+
+  .inc-item {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 5px 0 5px 18px;
+    position: relative;
+    line-height: 1.4;
+  }
+
+  .inc-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 4px rgba(16,185,129,0.4);
+  }
+
+  .exc-item::before {
+    background: var(--text-dim) !important;
+    box-shadow: none !important;
+  }
+
+  /* ===== CONDITIONS ===== */
+  .conditions {
+    padding: 8px 48px 20px;
+  }
+
+  .conditions h2 {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cond-list {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.7;
+    columns: 2;
+    gap: 24px;
+  }
+
+  .cond-list li {
+    padding: 3px 0;
+    break-inside: avoid;
+    list-style: none;
+    padding-left: 14px;
+    position: relative;
+  }
+
+  .cond-list li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+    font-family: monospace;
+    font-weight: 700;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    padding: 16px 48px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-top: 1px solid var(--border);
+    margin: 0 48px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .footer-left {
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .footer-right {
+    text-align: right;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .footer-right .validity {
+    display: inline-block;
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.18);
+    color: var(--warn);
+    padding: 4px 12px;
+    border-radius: 50px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* Print */
+  @media print {
+    body { background: #0a0e19; }
+    .page { margin: 0; box-shadow: none; }
+  }
+
+  @media (max-width: 800px) {
+    .page { width: 100%; min-height: auto; }
+    .header, .parties, .scope, .pricing, .includes, .conditions { padding-left: 24px; padding-right: 24px; }
+    .divider { margin: 0 24px; }
+    .footer { margin: 0 24px; }
+    .parties { flex-direction: column; }
+    .pay-options { flex-direction: column; }
+    .inc-grid { grid-template-columns: 1fr; }
+    .cond-list { columns: 1; }
+    .price-card { flex-direction: column; gap: 16px; text-align: center; }
+    .price-right { text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Top gradient bar -->
+  <div class="topbar"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="doc-type">Presupuesto</div>
+      <h1>Implementacion <span class="gr">Odoo 19</span></h1>
+    </div>
+    <div class="header-right">
+      <div class="presup-num">PRES-2026-0601</div><br>
+      <strong>Fecha:</strong> 6 de junio de 2026<br>
+      <strong>Entrega:</strong> 1 de julio de 2026<br>
+      <strong>Vigencia:</strong> 30 dias
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Parties -->
+  <div class="parties">
+    <div class="party">
+      <div class="party-label">Prestador</div>
+      <div class="party-name">Jeremias Duhalde</div>
+      <div class="party-detail">
+        Implementacion y consultoria Odoo<br>
+        jeremias.duhalde@infocontrol.io
+      </div>
+    </div>
+    <div class="party">
+      <div class="party-label">Cliente</div>
+      <div class="party-name">Siempre Cerca SRL</div>
+      <div class="party-detail">
+        Servicio de enfermeria y asistencia domiciliaria<br>
+        administracion@siemprecercasrl.com
+      </div>
+    </div>
+  </div>
+
+  <!-- Scope / Line items -->
+  <div class="scope">
+    <h2>Detalle del trabajo</h2>
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th style="width:28px">#</th>
+          <th>Descripcion</th>
+          <th style="width:55px">Tipo</th>
+          <th style="width:45px; text-align:right">Dias</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="item-num">01</td>
+          <td><span class="item-name">Relevamiento y diagnostico de instancia</span><div class="item-desc">Auditoria via API, version, edicion, capacidades, informe de estado</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">0.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">02</td>
+          <td><span class="item-name">Activacion y configuracion de 23+ modulos</span><div class="item-desc">Instalacion ordenada, dependencias, configuracion base</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">0.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">03</td>
+          <td><span class="item-name">Roles, permisos y grupos de seguridad</span><div class="item-desc">Grupos custom, record rules, visibilidad por perfil, 2FA</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">1.0</td>
+        </tr>
+        <tr>
+          <td class="item-num">04</td>
+          <td><span class="item-name">Secuencia automatica de asociados</span><div class="item-desc">Numeracion al alta via ir.sequence + Studio</div></td>
+          <td><span class="item-tag custom">Custom</span></td>
+          <td class="item-days">0.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">05</td>
+          <td><span class="item-name">Campos computados en contactos</span><div class="item-desc">Morosidad, deuda acumulada, estado — calculados desde facturas</div></td>
+          <td><span class="item-tag custom">Custom</span></td>
+          <td class="item-days">1.0</td>
+        </tr>
+        <tr>
+          <td class="item-num">06</td>
+          <td><span class="item-name">Vistas personalizadas de asociados</span><div class="item-desc">Kanban y lista con campos custom via Studio</div></td>
+          <td><span class="item-tag custom">Custom</span></td>
+          <td class="item-days">0.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">07</td>
+          <td><span class="item-name">Compras con niveles de aprobacion</span><div class="item-desc">Reglas por monto y jerarquia</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">0.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">08</td>
+          <td><span class="item-name">Alquiler de equipos medicos</span><div class="item-desc">Productos, disponibilidad, tarifas, flujo operativo</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">0.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">09</td>
+          <td><span class="item-name">Suscripciones y facturacion recurrente</span><div class="item-desc">Planes, recurrencia, metodos de pago, vinculacion a productos</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">1.0</td>
+        </tr>
+        <tr>
+          <td class="item-num">10</td>
+          <td><span class="item-name">Dashboards y KPIs de rendimiento</span><div class="item-desc">Paneles individuales y generales con metricas clave</div></td>
+          <td><span class="item-tag custom">Custom</span></td>
+          <td class="item-days">1.0</td>
+        </tr>
+        <tr>
+          <td class="item-num">11</td>
+          <td><span class="item-name">Automatizacion de comisiones</span><div class="item-desc">Calculo automatico por empleado segun asociados activos</div></td>
+          <td><span class="item-tag custom">Custom</span></td>
+          <td class="item-days">1.0</td>
+        </tr>
+        <tr>
+          <td class="item-num">12</td>
+          <td><span class="item-name">Tracking, auditoria y trazabilidad</span><div class="item-desc">Tracking fields en modelos clave, historial de cambios</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">0.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">13</td>
+          <td><span class="item-name">Integracion WhatsApp Business</span><div class="item-desc">Vinculacion de cuenta, templates Meta, triggers automaticos</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">1.0</td>
+        </tr>
+        <tr>
+          <td class="item-num">14</td>
+          <td><span class="item-name">Portal de autoservicio</span><div class="item-desc">Acceso portal asociados/enfermeros, permisos, documentos</div></td>
+          <td><span class="item-tag tech">Config</span></td>
+          <td class="item-days">0.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">15</td>
+          <td><span class="item-name">Reportes custom</span><div class="item-desc">Morosidad, rendimiento, inventario — PDF/Excel via Studio</div></td>
+          <td><span class="item-tag custom">Custom</span></td>
+          <td class="item-days">1.5</td>
+        </tr>
+        <tr>
+          <td class="item-num">16</td>
+          <td><span class="item-name">QA, capacitacion y go-live</span><div class="item-desc">Pruebas integrales, capacitacion del equipo, documentacion</div></td>
+          <td><span class="item-tag qa">QA</span></td>
+          <td class="item-days">1.5</td>
+        </tr>
+        <tr class="total-row">
+          <td></td>
+          <td style="font-size:13px; color:var(--text);">Total dias de trabajo tecnico</td>
+          <td></td>
+          <td class="item-days" style="font-size:14px; color:var(--primary-glow);">12.0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pricing -->
+  <div class="pricing">
+    <h2>Inversion</h2>
+
+    <div class="price-card">
+      <div class="price-left">
+        <h3>Implementacion completa — 16 tareas / 12 dias</h3>
+        <div class="price-amount">USD 1.500</div>
+        <div class="price-sub">Equivalente estimado: ARS ~$2.150.000 (TC ref. junio 2026)</div>
+      </div>
+      <div class="price-right">
+        <div class="price-detail">
+          <strong>Incluye:</strong> configuracion, personalizacion,<br>
+          integraciones, reportes, capacitacion,<br>
+          7 dias de soporte post go-live<br><br>
+          <strong>Entrega:</strong> 1 de julio de 2026
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment options -->
+    <div class="pay-options">
+      <div class="pay-option">
+        <div class="pay-label">Opcion A</div>
+        <div class="pay-title">Pago unico</div>
+        <ul class="pay-steps">
+          <li><span>Al aprobar la propuesta</span><span class="amount">USD 1.500</span></li>
+          <li><span>&nbsp;</span><span class="amount" style="color:var(--text-dim);">&nbsp;</span></li>
+          <li><span><strong>Total</strong></span><span class="amount">USD 1.500</span></li>
+        </ul>
+      </div>
+      <div class="pay-option recommended">
+        <div class="pay-label">Opcion B</div>
+        <div class="pay-title">50/50</div>
+        <ul class="pay-steps">
+          <li><span>Al aprobar la propuesta</span><span class="amount">USD 750</span></li>
+          <li><span>Al go-live (1 de julio)</span><span class="amount">USD 750</span></li>
+          <li><span><strong>Total</strong></span><span class="amount">USD 1.500</span></li>
+        </ul>
+      </div>
+      <div class="pay-option">
+        <div class="pay-label">Opcion C</div>
+        <div class="pay-title">3 pagos</div>
+        <ul class="pay-steps">
+          <li><span>Al aprobar (inicio)</span><span class="amount">USD 500</span></li>
+          <li><span>A mitad de proyecto</span><span class="amount">USD 500</span></li>
+          <li><span>Al go-live (1 de julio)</span><span class="amount">USD 500</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ADD-ON: REDISEÑO WEB ===== -->
+  <div style="padding: 0 48px 24px;">
+    <div style="background: linear-gradient(135deg, rgba(167,139,250,0.06), rgba(34,211,238,0.04)); border: 1px solid rgba(167,139,250,0.2); border-radius: var(--radius); padding: 28px 32px; position: relative; overflow: hidden;">
+
+      <div style="position: absolute; top: -1px; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--purple), var(--cyan)); border-radius: var(--radius) var(--radius) 0 0;"></div>
+
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+        <div>
+          <div style="display: inline-block; background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.25); padding: 3px 12px; border-radius: 50px; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--purple); margin-bottom: 10px;">Servicio adicional opcional</div>
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 4px;">Rediseno completo del sitio web</h3>
+          <p style="font-size: 12px; color: var(--text-muted);">Modernizacion integral de <strong style="color:var(--text);">siemprecercasrl.net</strong></p>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 28px; font-weight: 900; background: linear-gradient(135deg, var(--purple), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">USD 500</div>
+          <div style="font-size: 10px; color: var(--text-dim);">adicionales al presupuesto base</div>
+        </div>
+      </div>
+
+      <!-- Diagnostico actual -->
+      <div style="background: rgba(251,113,133,0.06); border: 1px solid rgba(251,113,133,0.15); border-radius: 8px; padding: 14px 18px; margin-bottom: 16px;">
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #fb7185; margin-bottom: 6px;">Estado actual del sitio</div>
+        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">
+          Construido en <strong style="color:var(--text);">Squarespace</strong> con plantilla basica. Diseño visualmente anticuado, paleta sin contraste, sin jerarquia visual clara, sin testimonios ni precios visibles. Contenido minimo. No transmite la profesionalidad y escala del servicio que ofrecen.
+        </div>
+      </div>
+
+      <!-- Que incluye el rediseño -->
+      <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--purple); margin-bottom: 10px;">Que incluye el rediseno</div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; margin-bottom: 16px;">
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          Diseno moderno con Odoo Website Builder
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          Paleta de colores profesional y coherente
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          Paginas: Inicio, Servicios, Nosotros, Contacto
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          100% responsive (celular, tablet, desktop)
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          Seccion de servicios con iconografia y detalle
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          Formulario de contacto / solicitud de cotizacion
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          Seccion de testimonios / confianza
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          SEO basico (meta tags, estructura, velocidad)
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          Integracion con WhatsApp (boton flotante)
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); padding: 4px 0 4px 16px; position: relative;">
+          <span style="position:absolute; left:0; top:8px; width:6px; height:6px; border-radius:50%; background:var(--purple); box-shadow:0 0 4px rgba(167,139,250,0.4);"></span>
+          Chat en vivo integrado con Odoo Helpdesk
+        </div>
+      </div>
+
+      <!-- Ventaja -->
+      <div style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); border-radius: 8px; padding: 14px 18px;">
+        <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-glow); margin-bottom: 4px;">Ventaja clave</div>
+        <div style="font-size: 11px; color: var(--text-muted); line-height: 1.6;">
+          Al construir el sitio dentro de <strong style="color:var(--text);">Odoo Website</strong>, el formulario de contacto alimenta automaticamente el CRM, el chat en vivo se gestiona desde Helpdesk, y los asociados acceden al portal desde el mismo dominio. <strong style="color:var(--text);">Todo integrado, sin herramientas externas.</strong> Se elimina la dependencia de Squarespace y su costo mensual.
+        </div>
+      </div>
+
+      <!-- Total con add-on -->
+      <div style="margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 12px; color: var(--text-muted);">
+          <strong style="color:var(--text);">Total con rediseno web:</strong> Implementacion Odoo + Sitio web
+        </div>
+        <div style="font-size: 20px; font-weight: 900; background: linear-gradient(135deg, var(--primary-glow), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+          USD 2.000
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Includes / Excludes -->
+  <div class="includes">
+    <h2>Que incluye / Que no incluye</h2>
+    <div class="inc-grid">
+      <div class="inc-item">Configuracion de 23+ modulos Odoo Enterprise</div>
+      <div class="inc-item">Personalizaciones con Odoo Studio</div>
+      <div class="inc-item">Automatizaciones (comisiones, alertas, secuencias)</div>
+      <div class="inc-item">Reportes custom PDF/Excel</div>
+      <div class="inc-item">Integracion WhatsApp Business</div>
+      <div class="inc-item">Roles, permisos y auditoria</div>
+      <div class="inc-item">Portal de autoservicio</div>
+      <div class="inc-item">Capacitacion basica al equipo</div>
+      <div class="inc-item">7 dias de soporte post go-live</div>
+      <div class="inc-item">Documentacion de lo configurado</div>
+      <div class="inc-item exc-item">Localizacion contable AFIP/ARCA</div>
+      <div class="inc-item exc-item">Licencia Odoo Enterprise (se paga directo a Odoo)</div>
+      <div class="inc-item exc-item">Carga masiva de datos historicos</div>
+      <div class="inc-item exc-item">Desarrollo de modulos Python custom</div>
+    </div>
+  </div>
+
+  <!-- Conditions -->
+  <div class="conditions">
+    <h2>Condiciones</h2>
+    <ul class="cond-list">
+      <li>Los pagos pueden realizarse en dolares (transferencia/crypto) o su equivalente en pesos al TC del dia.</li>
+      <li>El cronograma asume disponibilidad del cliente para responder el cuestionario de relevamiento en los primeros 3 dias.</li>
+      <li>Soporte post go-live cubre ajustes menores de configuracion; cambios de alcance se cotizan por separado.</li>
+      <li>La licencia de Odoo Enterprise la contrata y paga el cliente directamente a Odoo S.A.</li>
+      <li>Presupuesto valido por 30 dias corridos desde la fecha de emision.</li>
+      <li>El alcance detallado esta sujeto al relevamiento inicial; si surgen necesidades adicionales se informara antes de ejecutar.</li>
+    </ul>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">
+      Jeremias Duhalde<br>
+      jeremias.duhalde@infocontrol.io<br>
+      Implementacion Odoo 19 Enterprise
+    </div>
+    <div class="footer-right">
+      <div class="validity">Valido hasta 6 de julio de 2026</div><br><br>
+      PRES-2026-0601 &mdash; Pagina 1 de 2
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== PAGE 2: ANEXO TECNICO ==================== -->
+<div class="page" style="padding-top: 0;">
+
+  <div class="topbar"></div>
+
+  <div class="header" style="padding-bottom: 20px;">
+    <div class="header-left">
+      <div class="doc-type">Anexo tecnico</div>
+      <h1 style="font-size: 22px;">Justificacion <span class="gr">por tarea</span></h1>
+    </div>
+    <div class="header-right">
+      <div class="presup-num">PRES-2026-0601</div><br>
+      <span style="font-size:11px; color:var(--text-dim);">Detalle de lo que se ejecuta en cada item del presupuesto</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div style="padding: 24px 48px 0;">
+
+    <!-- Item 01 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">01</span>
+          <span style="font-size:13px; font-weight:700;">Relevamiento y diagnostico de instancia</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">0.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Conexion a la instancia Odoo via XML-RPC. Deteccion automatizada de version (saas~19.3+e), edicion (Enterprise), tipo de hosting (Online/SaaS), modulos activos, usuarios existentes, datos cargados y limitaciones de la plataforma. Se genera un informe escrito con el estado actual y las restricciones tecnicas (ej: no se puede subir codigo Python en Odoo Online). Este diagnostico define como se ejecutan las demas tareas.
+      </div>
+    </div>
+
+    <!-- Item 02 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">02</span>
+          <span style="font-size:13px; font-weight:700;">Activacion y configuracion de 23+ modulos</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">0.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Instalacion en orden correcto de: CRM, Ventas, Suscripciones, Contactos, Facturacion, Inventario, Alquiler, Compras, Empleados, Ausencias, Reclutamiento, Evaluaciones, Timesheets, Sign, WhatsApp, Email Marketing, Chat en vivo, Discuss, Sitio Web, Portal, Documentos, Encuestas, Calendario, Helpdesk y Studio. Cada modulo requiere resolver dependencias y configurar los valores iniciales (moneda ARS, pais Argentina, zona horaria, idioma).
+      </div>
+    </div>
+
+    <!-- Item 03 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">03</span>
+          <span style="font-size:13px; font-weight:700;">Roles, permisos y grupos de seguridad</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">1.0 dia</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Creacion de grupos de seguridad custom: Administrador, Gerencia, Ventas, RRHH, Enfermeria, Portal Asociado. Para cada grupo se definen record rules (que registros puede ver, editar o eliminar), permisos por modulo (ej: Ventas puede ver asociados pero no modificar configuracion contable) y acceso al portal. Incluye activar autenticacion de dos factores (2FA) para usuarios administrativos.
+      </div>
+    </div>
+
+    <!-- Item 04 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--warn); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">04</span>
+          <span style="font-size:13px; font-weight:700;">Secuencia automatica de asociados</span>
+        </div>
+        <span style="font-size:11px; color:var(--warn); font-weight:600;">0.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Creacion de una secuencia (ir.sequence) con el formato definido por el cliente (ej: SC-00001). Se vincula al modelo de contactos (res.partner) mediante una accion automatizada que asigna el numero al momento del alta. Esto no existe en Odoo por defecto: los contactos no tienen numeracion secuencial. Requiere Studio para agregar el campo y la automatizacion para llenarlo.
+      </div>
+    </div>
+
+    <!-- Item 05 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--warn); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">05</span>
+          <span style="font-size:13px; font-weight:700;">Campos computados en contactos</span>
+        </div>
+        <span style="font-size:11px; color:var(--warn); font-weight:600;">1.0 dia</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Creacion de campos calculados en la ficha del asociado que no existen nativamente: <strong style="color:var(--text);">deuda acumulada</strong> (suma de facturas vencidas impagas), <strong style="color:var(--text);">indicador de morosidad</strong> (dias de atraso del pago mas antiguo), <strong style="color:var(--text);">estado del asociado</strong> (activo/moroso/suspendido/baja, calculado segun reglas de negocio). Estos campos se construyen con Studio + acciones automatizadas que recalculan periodicamente.
+      </div>
+    </div>
+
+    <!-- Item 06 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--warn); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">06</span>
+          <span style="font-size:13px; font-weight:700;">Vistas personalizadas de asociados</span>
+        </div>
+        <span style="font-size:11px; color:var(--warn); font-weight:600;">0.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Modificacion de las vistas de contactos con Studio para mostrar los asociados como tarjetas Kanban agrupadas por estado (activo, moroso, suspendido, baja) y como lista con columnas de numero de asociado, deuda, morosidad y fecha de alta. Odoo muestra contactos en una vista generica; esta tarea la transforma en un panel de gestion de asociados util para el equipo.
+      </div>
+    </div>
+
+    <!-- Item 07 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">07</span>
+          <span style="font-size:13px; font-weight:700;">Compras con niveles de aprobacion</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">0.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Configuracion del flujo de aprobacion de ordenes de compra: definir montos umbral (ej: >$50.000 requiere aprobacion de gerencia), asignar aprobadores por nivel, configurar notificaciones automaticas al aprobador y restriccion de confirmacion sin aprobacion. Tambien incluye habilitar la comparacion de presupuestos de proveedores si el cliente lo requiere.
+      </div>
+    </div>
+
+    <!-- Item 08 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">08</span>
+          <span style="font-size:13px; font-weight:700;">Alquiler de equipos medicos</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">0.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Configuracion del modulo Alquiler para equipamiento medico: dar de alta los tipos de equipo (sillas de ruedas, camas ortopedicas, nebulizadores, etc.) como productos alquilables, definir tarifas (diaria/semanal/mensual), configurar el flujo de entrega-devolucion con registro de estado del equipo, y habilitar la gestion de disponibilidad para saber que equipos estan libres en cada momento.
+      </div>
+    </div>
+
+    <!-- Item 09 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">09</span>
+          <span style="font-size:13px; font-weight:700;">Suscripciones y facturacion recurrente</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">1.0 dia</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Creacion de los planes de suscripcion (segun lo que defina el cliente: basico, intermedio, premium, etc.), vinculacion a productos de servicio con precio y periodicidad (mensual/trimestral), configuracion de la generacion automatica de facturas recurrentes, configuracion de metodos de pago aceptados y reglas de renovacion/cancelacion. Incluye pruebas del ciclo completo: alta de suscripcion, generacion de factura, registro de pago.
+      </div>
+    </div>
+
+    <!-- Item 10 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--warn); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">10</span>
+          <span style="font-size:13px; font-weight:700;">Dashboards y KPIs de rendimiento</span>
+        </div>
+        <span style="font-size:11px; color:var(--warn); font-weight:600;">1.0 dia</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Construccion de paneles de control con Studio: <strong style="color:var(--text);">panel general</strong> (total asociados activos, porcentaje de mora, recaudacion del mes, deuda acumulada global, distribucion por metodo de pago) y <strong style="color:var(--text);">panel individual por empleado</strong> (asociados a su cargo, cuantos estan al dia, cuantos en mora, comisiones acumuladas). Se usan vistas pivot, graficos de barra y KPIs numericos disponibles en Odoo Enterprise.
+      </div>
+    </div>
+
+    <!-- Item 11 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--warn); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">11</span>
+          <span style="font-size:13px; font-weight:700;">Automatizacion de comisiones</span>
+        </div>
+        <span style="font-size:11px; color:var(--warn); font-weight:600;">1.0 dia</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Desarrollo de la logica de comisiones con acciones automatizadas: asignar a cada asociado un empleado responsable (campo relacional), calcular periodicamente cuantos asociados activos y al dia tiene cada empleado, aplicar la formula de comision definida por el cliente (porcentaje fijo, escala progresiva, etc.) y registrar el resultado en un campo del empleado. Odoo no tiene sistema de comisiones nativo para este modelo de negocio; se construye desde cero con automatizaciones.
+      </div>
+    </div>
+
+    <!-- Item 12 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">12</span>
+          <span style="font-size:13px; font-weight:700;">Tracking, auditoria y trazabilidad</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">0.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Activacion de tracking fields en los modelos criticos (contactos, facturas, suscripciones, ordenes de compra, empleados) para que cada cambio quede registrado en el chatter con fecha, hora, usuario y valor anterior/nuevo. Se configuran notificaciones automaticas para cambios sensibles (ej: modificacion de monto de factura, cambio de estado de asociado, anulacion de pago). Esto genera un log de auditoria completo sin modulos adicionales.
+      </div>
+    </div>
+
+    <!-- Item 13 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">13</span>
+          <span style="font-size:13px; font-weight:700;">Integracion WhatsApp Business</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">1.0 dia</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Vinculacion de la cuenta WhatsApp Business del cliente con el modulo nativo de Odoo 19. Creacion de plantillas de mensajes que deben ser aprobadas por Meta (proceso que puede tomar 24-48h): bienvenida al nuevo asociado, recordatorio de pago proximo, aviso de factura vencida, confirmacion de visita. Configuracion de triggers automaticos desde Odoo (ej: al vencer una factura, enviar WA automatico). Requiere que el cliente tenga cuenta WA Business API activa.
+      </div>
+    </div>
+
+    <!-- Item 14 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--primary-glow); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">14</span>
+          <span style="font-size:13px; font-weight:700;">Portal de autoservicio</span>
+        </div>
+        <span style="font-size:11px; color:var(--primary-glow); font-weight:600;">0.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Configuracion del portal web para que los asociados y/o enfermeros puedan acceder con usuario y contrasena a ver: sus facturas y estado de cuenta, documentos firmados, historial de interacciones, y levantar tickets de soporte. Se definen los permisos de portal (que modulos y que datos ve cada tipo de usuario externo) y se personaliza la apariencia basica del portal con el branding del cliente.
+      </div>
+    </div>
+
+    <!-- Item 15 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--warn); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">15</span>
+          <span style="font-size:13px; font-weight:700;">Reportes custom</span>
+        </div>
+        <span style="font-size:11px; color:var(--warn); font-weight:600;">1.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Creacion de reportes que no existen nativamente en Odoo: <strong style="color:var(--text);">reporte de morosidad</strong> (listado de asociados con deuda, dias de atraso, monto adeudado, empleado responsable), <strong style="color:var(--text);">reporte de rendimiento por empleado</strong> (asociados activos, mora, recaudacion, comisiones del periodo), <strong style="color:var(--text);">reporte de inventario/equipos</strong> (stock actual, equipos alquilados, proximos vencimientos). Exportables a PDF y Excel. Se construyen con las herramientas de reporting de Studio/Odoo Enterprise y se asignan permisos de acceso por rol.
+      </div>
+    </div>
+
+    <!-- Item 16 -->
+    <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--surface-3); border:1px solid var(--border); color:var(--purple); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">16</span>
+          <span style="font-size:13px; font-weight:700;">QA, capacitacion y go-live</span>
+        </div>
+        <span style="font-size:11px; color:var(--purple); font-weight:600;">1.5 dias</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Pruebas integrales de todos los flujos configurados: alta de asociado completa (desde prospecto CRM hasta suscripcion activa con factura), ciclo de compra con aprobacion, alquiler de equipo, generacion de reportes, envio de WhatsApp, acceso al portal. Correccion de errores encontrados. Sesion de capacitacion al equipo usuario (1-2 horas) cubriendo los flujos principales. Entrega de documentacion escrita de lo configurado y como re-ejecutar procesos clave.
+      </div>
+    </div>
+
+    <!-- Item ADD-ON: Rediseño web -->
+    <div style="background: linear-gradient(135deg, rgba(167,139,250,0.04), rgba(34,211,238,0.03)); border: 1px solid rgba(167,139,250,0.25); border-radius:var(--radius); padding:18px 22px; margin-bottom:12px; position:relative;">
+      <div style="position:absolute; top:10px; right:16px;">
+        <span style="background:rgba(167,139,250,0.12); border:1px solid rgba(167,139,250,0.25); color:var(--purple); font-size:8px; font-weight:700; letter-spacing:1px; padding:3px 10px; border-radius:50px; text-transform:uppercase;">Opcional</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:rgba(167,139,250,0.12); border:1px solid rgba(167,139,250,0.25); color:var(--purple); font-size:10px; font-weight:800; width:24px; height:24px; display:flex; align-items:center; justify-content:center; border-radius:50%;">+</span>
+          <span style="font-size:13px; font-weight:700;">Rediseno completo del sitio web</span>
+        </div>
+        <span style="font-size:11px; color:var(--purple); font-weight:600;">USD 500 adicionales</span>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); line-height:1.65; padding-left:34px;">
+        Reemplazo del sitio actual en Squarespace (siemprecercasrl.net) por un sitio moderno construido con <strong style="color:var(--text);">Odoo Website Builder</strong>, integrado nativamente con el CRM, Helpdesk y portal de asociados. Incluye: diseno de paginas Inicio, Servicios (internacion domiciliaria, enfermeria, kinesiologia, rehabilitacion, cuidados paliativos, equipamiento medico, traslados), Nosotros y Contacto. Paleta de colores profesional, tipografia moderna, seccion de testimonios, formulario de cotizacion conectado al CRM, boton flotante de WhatsApp, chat en vivo integrado con Helpdesk, SEO basico (meta tags, estructura semantica, velocidad). 100% responsive. Al estar dentro de Odoo se elimina el costo mensual de Squarespace y se unifica todo en una sola plataforma.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer page 2 -->
+  <div style="padding: 16px 48px 24px; display:flex; justify-content:space-between; align-items:flex-end; border-top:1px solid var(--border); margin:12px 48px 0;">
+    <div style="font-size:10px; color:var(--text-dim); line-height:1.6;">
+      Jeremias Duhalde<br>
+      jeremias.duhalde@infocontrol.io
+    </div>
+    <div style="text-align:right; font-size:10px; color:var(--text-dim);">
+      PRES-2026-0601 &mdash; Pagina 2 de 2
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

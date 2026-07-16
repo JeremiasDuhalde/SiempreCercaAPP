@@ -11,6 +11,7 @@ import {
   Zap,
   Trash2,
   LogOut,
+  DollarSign,
 } from "lucide-react";
 import { COLORS, MODULES } from "@/lib/constants";
 import { useAppStore } from "@/stores/useAppStore";
@@ -25,6 +26,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   CalendarClock,
   BarChart3,
   Shield,
+  DollarSign,
 };
 
 export default function Sidebar() {

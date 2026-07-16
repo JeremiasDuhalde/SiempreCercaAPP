@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta — Siempre Cerca SRL — Odoo 19</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2c6faa;
+    --accent: #0f7b5f;
+    --accent-light: #14a37f;
+    --warn: #b45309;
+    --purple: #6d28d9;
+    --text: #1a1a2e;
+    --text-mid: #3d4663;
+    --text-light: #6b7a99;
+    --gray-50: #f7f8fa;
+    --gray-100: #eef0f4;
+    --gray-200: #dde1e8;
+    --gray-300: #c5cad6;
+    --radius: 10px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',-apple-system,sans-serif; background:#fff; color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased; }
+
+  .wrap { max-width:960px; margin:0 auto; padding:0 24px; }
+
+  /* ===== COVER ===== */
+  .cover {
+    min-height:100vh; display:flex; flex-direction:column; justify-content:center;
+    padding:60px 0; position:relative;
+    border-top:5px solid; border-image:linear-gradient(90deg, var(--primary), var(--primary-light), var(--accent)) 1;
+  }
+  .cover-badge { display:inline-block; background:var(--gray-50); border:1.5px solid var(--gray-200); padding:6px 18px; border-radius:50px; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--primary-light); margin-bottom:28px; }
+  .cover h1 { font-size:clamp(32px,5vw,48px); font-weight:900; line-height:1.1; letter-spacing:-1px; color:var(--primary); margin-bottom:16px; }
+  .cover h1 span { color:var(--accent); }
+  .cover .sub { font-size:clamp(14px,2vw,17px); color:var(--text-light); max-width:560px; margin-bottom:48px; line-height:1.7; }
+  .cover-stats { display:flex; gap:40px; flex-wrap:wrap; }
+  .cover-stat .n { font-size:36px; font-weight:900; color:var(--primary); }
+  .cover-stat .l { font-size:10px; font-weight:600; color:var(--text-light); text-transform:uppercase; letter-spacing:1.5px; margin-top:2px; }
+  .cover-foot { margin-top:80px; display:flex; justify-content:space-between; font-size:11px; color:var(--text-light); border-top:1px solid var(--gray-200); padding-top:16px; flex-wrap:wrap; gap:8px; }
+  .cover-foot a { color:var(--primary-light); text-decoration:none; }
+
+  /* ===== SECTIONS ===== */
+  .sec { padding:60px 0; border-top:1px solid var(--gray-200); }
+  .pill { display:inline-block; background:var(--primary); color:white; padding:4px 14px; border-radius:50px; font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:12px; }
+  .pill.green { background:var(--accent); }
+  .pill.purple { background:var(--purple); }
+  .s-title { font-size:clamp(20px,3vw,26px); font-weight:800; color:var(--primary); letter-spacing:-0.3px; margin-bottom:4px; }
+  .s-sub { font-size:14px; color:var(--text-light); margin-bottom:36px; }
+
+  /* ===== GRID ===== */
+  .grid-3 { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:16px; }
+  .fc { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:24px; }
+  .fc h3 { font-size:14px; font-weight:700; color:var(--primary); margin-bottom:6px; }
+  .fc p { font-size:12px; color:var(--text-light); line-height:1.55; }
+  .fc-icon { font-size:22px; margin-bottom:10px; display:block; }
+
+  /* ===== PROPOSAL HEADER ===== */
+  .prop-h { padding:40px 0 24px; display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid var(--primary); flex-wrap:wrap; gap:16px; }
+  .prop-h h2 { font-size:24px; font-weight:800; color:var(--primary); }
+  .prop-h .sub2 { font-size:13px; color:var(--text-light); margin-top:2px; }
+  .meta { text-align:right; font-size:12px; color:var(--text-light); line-height:1.8; }
+  .meta strong { color:var(--text); }
+
+  /* ===== RELEVAMIENTO ===== */
+  .relev { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:24px; margin:28px 0; }
+  .relev h3 { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--accent); margin-bottom:14px; }
+  .relev-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:12px; }
+  .relev-item { background:white; border:1px solid var(--gray-200); border-radius:8px; padding:12px 16px; }
+  .relev-item .rl { font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--text-light); font-weight:600; margin-bottom:2px; }
+  .relev-item .rv { font-size:14px; font-weight:700; color:var(--text); }
+  .relev-item .rv.green { color:var(--accent); }
+  .relev-item .rv.orange { color:var(--warn); }
+
+  /* ===== INTRO BOX ===== */
+  .intro-box { background:var(--gray-50); border-left:3px solid var(--primary); border-radius:var(--radius); padding:20px 24px; margin-bottom:28px; font-size:13px; color:var(--text-mid); line-height:1.7; }
+  .intro-box strong { color:var(--text); }
+
+  /* ===== SPLIT ===== */
+  .split { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; }
+  .split-box { border-radius:var(--radius); padding:24px; border:1.5px solid; }
+  .split-box.ours { border-color:var(--primary-light); background:rgba(44,111,170,0.03); }
+  .split-box.theirs { border-color:var(--accent-light); background:rgba(20,163,127,0.03); }
+  .split-box .big { font-size:30px; font-weight:900; margin-bottom:2px; }
+  .split-box.ours .big { color:var(--primary); }
+  .split-box.theirs .big { color:var(--accent); }
+  .split-box h3 { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .split-box.ours h3 { color:var(--primary); }
+  .split-box.theirs h3 { color:var(--accent); }
+  .split-box p { font-size:12px; color:var(--text-light); line-height:1.5; }
+
+  /* ===== TABLE ===== */
+  .ptable { width:100%; border-collapse:collapse; font-size:13px; margin-bottom:32px; }
+  .ptable thead th { background:var(--primary); color:white; padding:12px 16px; text-align:left; font-weight:600; font-size:10px; text-transform:uppercase; letter-spacing:1px; }
+  .ptable thead th:last-child { text-align:right; }
+  .ptable td { padding:12px 16px; border-bottom:1px solid var(--gray-100); vertical-align:top; }
+  .ptable tbody tr:hover td { background:var(--gray-50); }
+  .pnum { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:50%; font-size:10px; font-weight:800; background:var(--gray-100); color:var(--primary); }
+  .pname { font-weight:600; color:var(--text); display:block; font-size:13px; margin-bottom:1px; }
+  .pdetail { font-size:11px; color:var(--text-light); }
+  .tag { display:inline-block; padding:3px 10px; border-radius:50px; font-size:9px; font-weight:700; }
+  .tag-tech { background:#e8f0fe; color:var(--primary-light); }
+  .tag-custom { background:#fef3e2; color:var(--warn); }
+  .tag-qa { background:#ede9fe; color:var(--purple); }
+  .days-cell { text-align:right; font-weight:700; color:var(--primary); font-variant-numeric:tabular-nums; }
+  .total-row td { background:var(--gray-50); font-weight:700; }
+
+  /* ===== CLIENT GRID ===== */
+  .client-sec { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:28px; margin-bottom:32px; }
+  .client-sec h3 { font-size:16px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .client-sec h3 span { color:var(--accent); font-weight:400; }
+  .client-sec .cs-sub { font-size:12px; color:var(--text-light); margin-bottom:16px; }
+  .client-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:8px; }
+  .ci { background:white; border:1px solid var(--gray-200); border-radius:8px; padding:10px 14px; font-size:11px; color:var(--text-mid); display:flex; align-items:center; gap:8px; }
+  .ci-dot { width:6px; height:6px; background:var(--accent); border-radius:50%; flex-shrink:0; }
+
+  /* ===== NOTES ===== */
+  .notes { background:#fefce8; border:1px solid #fde68a; border-radius:var(--radius); padding:20px 24px; margin-bottom:32px; }
+  .notes h4 { font-size:11px; font-weight:700; color:#92400e; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+  .notes ul { list-style:disc; padding-left:18px; font-size:12px; color:#78350f; line-height:1.7; }
+  .notes ul strong { color:#451a03; }
+
+  /* ===== CTA ===== */
+  .cta { background:var(--gray-50); border:1.5px solid var(--gray-200); border-radius:var(--radius); padding:32px; text-align:center; }
+  .cta h3 { font-size:20px; font-weight:800; color:var(--primary); margin-bottom:8px; }
+  .cta p { font-size:13px; color:var(--text-light); margin-bottom:16px; max-width:500px; margin-left:auto; margin-right:auto; }
+  .cta-links { display:flex; justify-content:center; gap:28px; font-size:13px; color:var(--text-light); flex-wrap:wrap; }
+  .cta-links strong { color:var(--primary); }
+  .cta-links a { color:var(--primary-light); text-decoration:none; }
+
+  /* ===== DETAIL CARDS ===== */
+  .dcard { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:20px 24px; margin-bottom:14px; }
+  .dcard.custom { border-left:3px solid var(--warn); }
+  .dcard.qa-card { border-left:3px solid var(--purple); }
+  .dcard-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:8px; }
+  .dcard-head h3 { font-size:14px; font-weight:700; color:var(--text); }
+  .dcard-days { font-size:12px; font-weight:600; color:var(--primary); }
+  .dcard-days.custom-d { color:var(--warn); }
+  .dcard-days.qa-d { color:var(--purple); }
+  .dcard p { font-size:12px; color:var(--text-light); line-height:1.65; }
+
+  /* ===== TECH ===== */
+  .tech-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:24px; }
+  .tb { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:22px; }
+  .tb h4 { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--primary); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--gray-200); }
+  .tb ul { list-style:none; font-size:12px; }
+  .tb ul li { padding:4px 0; color:var(--text-mid); padding-left:14px; position:relative; }
+  .tb ul li::before { content:'>'; position:absolute; left:0; color:var(--primary-light); font-weight:700; font-family:monospace; }
+
+  .mods-box { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:22px; margin-bottom:24px; }
+  .mods-box h4 { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--primary); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--gray-200); }
+  .mods { display:flex; flex-wrap:wrap; gap:8px; }
+  .mod { background:white; border:1px solid var(--gray-200); border-radius:6px; padding:5px 12px; font-size:11px; font-weight:500; color:var(--text-mid); }
+  .mod.core { border-color:var(--primary-light); color:var(--primary); }
+  .mod.hr { border-color:#7c3aed; color:#6d28d9; }
+  .mod.comm { border-color:var(--accent); color:var(--accent); }
+
+  /* Diagram */
+  .diagram { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:var(--radius); padding:32px; text-align:center; margin-bottom:24px; }
+  .diagram h4 { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--primary); margin-bottom:24px; padding-bottom:8px; border-bottom:1px solid var(--gray-200); text-align:left; }
+  .d-node { display:inline-block; padding:10px 28px; border-radius:50px; font-size:12px; font-weight:700; }
+  .d-node.main { background:var(--primary); color:white; }
+  .d-node.platform { background:white; border:2px solid var(--primary-light); color:var(--primary); font-size:14px; }
+  .d-line { width:2px; height:16px; background:var(--gray-300); margin:0 auto; }
+  .d-label { font-size:9px; color:var(--text-light); font-weight:600; letter-spacing:1px; margin:4px 0; text-transform:uppercase; }
+  .d-row { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0; }
+  .d-chip { background:white; border:1px solid var(--gray-200); border-radius:8px; padding:8px 16px; font-size:11px; font-weight:600; color:var(--text-mid); }
+  .d-area { background:white; border:1px solid var(--gray-200); border-radius:8px; padding:12px 18px; text-align:center; flex:1; min-width:140px; }
+  .d-area strong { font-size:11px; color:var(--primary); display:block; margin-bottom:2px; }
+  .d-area span { font-size:9px; color:var(--text-light); }
+  .d-base { display:inline-block; background:var(--gray-100); border:1px solid var(--gray-200); border-radius:8px; padding:6px 18px; font-size:10px; color:var(--text-light); font-weight:600; }
+
+  .foot { font-size:11px; color:var(--text-light); text-align:center; margin-top:20px; padding-top:16px; border-top:1px solid var(--gray-200); }
+  .foot a { color:var(--primary-light); text-decoration:none; }
+
+  @media (max-width:680px) {
+    .cover { padding:40px 0; }
+    .cover h1 { font-size:28px; }
+    .cover-stats { gap:24px; }
+    .split { grid-template-columns:1fr; }
+    .relev-grid { grid-template-columns:1fr 1fr; }
+    .client-grid { grid-template-columns:1fr; }
+    .cta-links { flex-direction:column; gap:8px; }
+    .prop-h { flex-direction:column; }
+    .meta { text-align:left; }
+    .ptable { font-size:11px; }
+    .ptable td, .ptable th { padding:8px 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ======================== COVER ======================== -->
+  <section class="cover">
+    <div class="cover-badge">Propuesta de implementacion</div>
+    <h1>Digitalice toda su operacion <span>en un solo lugar</span></h1>
+    <p class="sub">Implementacion integral de Odoo 19 Enterprise para Siempre Cerca SRL. Gestion de asociados, empleados, facturacion recurrente, inventario y comunicacion unificada.</p>
+    <div class="cover-stats">
+      <div class="cover-stat"><div class="n">12</div><div class="l">Dias de trabajo</div></div>
+      <div class="cover-stat"><div class="n">16</div><div class="l">Tareas tecnicas</div></div>
+      <div class="cover-stat"><div class="n">23+</div><div class="l">Modulos</div></div>
+    </div>
+    <div class="cover-foot">
+      <span>Preparado para Siempre Cerca SRL</span>
+      <span>Jeremias Duhalde &mdash; <a href="https://linkedin.com/in/jerem%C3%ADas-duhalde-1b4929219">LinkedIn</a> &mdash; Junio 2026</span>
+    </div>
+  </section>
+
+  <!-- ======================== QUE INCLUYE ======================== -->
+  <section class="sec">
+    <span class="pill">Alcance</span>
+    <h2 class="s-title">Todo lo que su empresa necesita, integrado</h2>
+    <p class="s-sub">Cada modulo se configura segun los procesos reales de Siempre Cerca, no con valores por defecto.</p>
+    <div class="grid-3">
+      <div class="fc"><span class="fc-icon">&#9881;</span><h3>Gestion de Asociados</h3><p>Numeracion automatica, ficha completa, estados de cuenta, morosidad y trazabilidad de cada interaccion.</p></div>
+      <div class="fc"><span class="fc-icon">&#9733;</span><h3>Facturacion Recurrente</h3><p>Suscripciones con cobro automatico, control de deuda acumulada y multiples metodos de pago.</p></div>
+      <div class="fc"><span class="fc-icon">&#9670;</span><h3>Paneles y KPIs</h3><p>Dashboards por empleado, asociados activos vs morosos, recaudacion y comisiones automaticas.</p></div>
+      <div class="fc"><span class="fc-icon">&#9673;</span><h3>Recursos Humanos</h3><p>Legajos, ausencias, reclutamiento, evaluaciones y partes de horas vinculados a asociados.</p></div>
+      <div class="fc"><span class="fc-icon">&#9634;</span><h3>Inventario y Alquiler</h3><p>Insumos medicos y equipos alquilados, ordenes de compra con niveles de aprobacion.</p></div>
+      <div class="fc"><span class="fc-icon">&#9993;</span><h3>Comunicacion</h3><p>WhatsApp Business, email marketing, chat en vivo, portal de autoservicio y firma electronica.</p></div>
+      <div class="fc"><span class="fc-icon">&#9776;</span><h3>Reportes</h3><p>Morosidad, rendimiento y stock exportables a PDF/Excel con permisos por rol.</p></div>
+      <div class="fc"><span class="fc-icon">&#9775;</span><h3>Portal y Sitio Web</h3><p>Autoservicio para asociados y enfermeros: facturas, documentos y soporte online.</p></div>
+      <div class="fc"><span class="fc-icon">&#9951;</span><h3>Seguridad y Auditoria</h3><p>Roles granulares, historial de cambios y trazabilidad completa de todas las acciones.</p></div>
+    </div>
+  </section>
+
+  <!-- ======================== PROPUESTA ======================== -->
+  <section class="sec" style="padding-bottom:0;">
+    <div class="prop-h">
+      <div><h2>Propuesta Tecnica</h2><p class="sub2">Odoo 19 Enterprise &mdash; Siempre Cerca SRL</p></div>
+      <div class="meta"><strong>Fecha:</strong> Junio 2026<br><strong>Vigencia:</strong> 30 dias<br><strong>Entrega:</strong> A coordinar</div>
+    </div>
+
+    <div class="relev">
+      <h3>Diagnostico de la instancia actual</h3>
+      <div class="relev-grid">
+        <div class="relev-item"><div class="rl">Version</div><div class="rv">Odoo 19.3</div></div>
+        <div class="relev-item"><div class="rl">Edicion</div><div class="rv green">Enterprise</div></div>
+        <div class="relev-item"><div class="rl">Hosting</div><div class="rv orange">Odoo Online (SaaS)</div></div>
+        <div class="relev-item"><div class="rl">Contactos</div><div class="rv">5</div></div>
+        <div class="relev-item"><div class="rl">Productos</div><div class="rv">16</div></div>
+        <div class="relev-item"><div class="rl">Codigo custom</div><div class="rv orange">No (solo Studio)</div></div>
+      </div>
+    </div>
+
+    <div class="intro-box">
+      <strong>Sobre esta propuesta:</strong> Al ser Odoo Online (SaaS), toda personalizacion se realiza con <strong>Odoo Studio y automatizaciones nativas</strong>, sin codigo. Esto garantiza compatibilidad con futuras actualizaciones. La instancia esta practicamente virgen: configuramos desde cero sin riesgo.
+    </div>
+
+    <div class="split">
+      <div class="split-box ours"><div class="big">12 dias</div><h3>Trabajo tecnico especializado</h3><p>Configuraciones avanzadas, personalizaciones, automatizaciones, integraciones, reportes, permisos y puesta en produccion.</p></div>
+      <div class="split-box theirs"><div class="big">Autoservicio</div><h3>Gestion del cliente en Odoo</h3><p>Carga de datos operativos y uso diario de modulos. Se realiza desde la interfaz visual sin asistencia tecnica. No se cotiza.</p></div>
+    </div>
+
+    <h3 style="font-size:16px; font-weight:700; color:var(--primary); margin-bottom:4px;">Detalle del trabajo tecnico</h3>
+    <p style="font-size:12px; color:var(--text-light); margin-bottom:16px;">Solo tareas que requieren intervencion especializada.</p>
+    <table class="ptable">
+      <thead><tr><th style="width:36px">#</th><th>Tarea</th><th style="width:80px">Tipo</th><th style="width:50px; text-align:right">Dias</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pnum">1</span></td><td><span class="pname">Relevamiento y diagnostico</span><span class="pdetail">Auditoria de la instancia, informe de estado</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">0.5</td></tr>
+        <tr><td><span class="pnum">2</span></td><td><span class="pname">Activacion de 23+ modulos</span><span class="pdetail">Instalacion, dependencias, configuracion base</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">0.5</td></tr>
+        <tr><td><span class="pnum">3</span></td><td><span class="pname">Roles, permisos y seguridad</span><span class="pdetail">Grupos custom, record rules, 2FA</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">1.0</td></tr>
+        <tr><td><span class="pnum">4</span></td><td><span class="pname">Secuencia de asociados</span><span class="pdetail">Numeracion automatica al alta</span></td><td><span class="tag tag-custom">Custom</span></td><td class="days-cell">0.5</td></tr>
+        <tr><td><span class="pnum">5</span></td><td><span class="pname">Campos computados en contactos</span><span class="pdetail">Morosidad, deuda, estado del asociado</span></td><td><span class="tag tag-custom">Custom</span></td><td class="days-cell">1.0</td></tr>
+        <tr><td><span class="pnum">6</span></td><td><span class="pname">Vistas de asociados</span><span class="pdetail">Kanban y lista con campos custom</span></td><td><span class="tag tag-custom">Custom</span></td><td class="days-cell">0.5</td></tr>
+        <tr><td><span class="pnum">7</span></td><td><span class="pname">Compras con aprobaciones</span><span class="pdetail">Reglas por monto y jerarquia</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">0.5</td></tr>
+        <tr><td><span class="pnum">8</span></td><td><span class="pname">Alquiler de equipos medicos</span><span class="pdetail">Productos, tarifas, disponibilidad</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">0.5</td></tr>
+        <tr><td><span class="pnum">9</span></td><td><span class="pname">Suscripciones y facturacion</span><span class="pdetail">Planes, recurrencia, metodos de pago</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">1.0</td></tr>
+        <tr><td><span class="pnum">10</span></td><td><span class="pname">Dashboards y KPIs</span><span class="pdetail">Paneles de rendimiento y metricas</span></td><td><span class="tag tag-custom">Custom</span></td><td class="days-cell">1.0</td></tr>
+        <tr><td><span class="pnum">11</span></td><td><span class="pname">Comisiones automaticas</span><span class="pdetail">Calculo por empleado segun asociados</span></td><td><span class="tag tag-custom">Custom</span></td><td class="days-cell">1.0</td></tr>
+        <tr><td><span class="pnum">12</span></td><td><span class="pname">Tracking y auditoria</span><span class="pdetail">Historial de cambios, trazabilidad</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">0.5</td></tr>
+        <tr><td><span class="pnum">13</span></td><td><span class="pname">WhatsApp Business</span><span class="pdetail">Cuenta, templates Meta, triggers</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">1.0</td></tr>
+        <tr><td><span class="pnum">14</span></td><td><span class="pname">Portal de autoservicio</span><span class="pdetail">Acceso asociados, permisos, docs</span></td><td><span class="tag tag-tech">Config</span></td><td class="days-cell">0.5</td></tr>
+        <tr><td><span class="pnum">15</span></td><td><span class="pname">Reportes custom</span><span class="pdetail">Morosidad, rendimiento, inventario</span></td><td><span class="tag tag-custom">Custom</span></td><td class="days-cell">1.5</td></tr>
+        <tr><td><span class="pnum" style="background:#dcfce7; color:var(--accent);">&#10003;</span></td><td><span class="pname">QA, capacitacion y go-live</span><span class="pdetail">Pruebas, capacitacion, documentacion</span></td><td><span class="tag tag-qa">QA</span></td><td class="days-cell">1.5</td></tr>
+        <tr class="total-row"><td></td><td><strong>Total dias de trabajo tecnico</strong></td><td></td><td class="days-cell" style="font-size:15px;">12.0</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ======================== CLIENTE + NOTAS + CTA ======================== -->
+  <section class="sec">
+    <div class="client-sec">
+      <h3>Gestion del cliente <span>&mdash; sin costo adicional</span></h3>
+      <p class="cs-sub">Tareas que se realizan desde la interfaz visual de Odoo. Se incluye capacitacion para que las manejen de forma autonoma.</p>
+      <div class="client-grid">
+        <div class="ci"><span class="ci-dot"></span>Cargar datos de empresa</div>
+        <div class="ci"><span class="ci-dot"></span>Crear usuarios</div>
+        <div class="ci"><span class="ci-dot"></span>Cargar asociados</div>
+        <div class="ci"><span class="ci-dot"></span>Crear productos</div>
+        <div class="ci"><span class="ci-dot"></span>Configurar CRM</div>
+        <div class="ci"><span class="ci-dot"></span>Cargar stock</div>
+        <div class="ci"><span class="ci-dot"></span>Ordenes de compra</div>
+        <div class="ci"><span class="ci-dot"></span>Legajos empleados</div>
+        <div class="ci"><span class="ci-dot"></span>Ausencias</div>
+        <div class="ci"><span class="ci-dot"></span>Reclutamiento</div>
+        <div class="ci"><span class="ci-dot"></span>Evaluaciones</div>
+        <div class="ci"><span class="ci-dot"></span>Timesheets</div>
+        <div class="ci"><span class="ci-dot"></span>Email marketing</div>
+        <div class="ci"><span class="ci-dot"></span>Encuestas</div>
+        <div class="ci"><span class="ci-dot"></span>Calendario</div>
+        <div class="ci"><span class="ci-dot"></span>Chat interno</div>
+        <div class="ci"><span class="ci-dot"></span>Documentos</div>
+        <div class="ci"><span class="ci-dot"></span>Responder chats</div>
+        <div class="ci"><span class="ci-dot"></span>Tickets soporte</div>
+        <div class="ci"><span class="ci-dot"></span>Firma (Sign)</div>
+        <div class="ci"><span class="ci-dot"></span>Facturas manuales</div>
+        <div class="ci"><span class="ci-dot"></span>Ordenes alquiler</div>
+        <div class="ci"><span class="ci-dot"></span>Editar sitio web</div>
+        <div class="ci"><span class="ci-dot"></span>Registrar pagos</div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <h4>Consideraciones</h4>
+      <ul>
+        <li>Al ser <strong>Odoo Online SaaS</strong>, las personalizaciones se realizan con Studio y automatizaciones nativas.</li>
+        <li>Los tiempos asumen <strong>disponibilidad del cliente</strong> para responder el cuestionario de relevamiento.</li>
+        <li>Se incluye <strong>capacitacion basica</strong> y <strong>7 dias de soporte post go-live</strong>.</li>
+      </ul>
+    </div>
+
+    <!-- Servicio adicional: Rediseño web -->
+    <div style="background:white; border:2px solid var(--purple); border-radius:var(--radius); padding:28px; margin-bottom:32px; position:relative;">
+      <div style="position:absolute; top:-10px; left:20px; background:var(--purple); color:white; font-size:9px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:4px 14px; border-radius:50px;">Servicio adicional opcional</div>
+
+      <h3 style="font-size:18px; font-weight:800; color:var(--primary); margin-top:8px; margin-bottom:4px;">Rediseno completo del sitio web</h3>
+      <p style="font-size:13px; color:var(--text-light); margin-bottom:20px;">Modernizacion integral de <strong style="color:var(--text);">siemprecercasrl.net</strong> &mdash; reemplazo de Squarespace por Odoo Website</p>
+
+      <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:8px; padding:14px 18px; margin-bottom:16px;">
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#dc2626; margin-bottom:4px;">Estado actual del sitio</div>
+        <p style="font-size:12px; color:#7f1d1d; line-height:1.6; margin:0;">Construido en Squarespace con plantilla basica. Diseno visualmente anticuado, sin jerarquia visual, sin testimonios ni precios. No transmite la profesionalidad del servicio que ofrecen.</p>
+      </div>
+
+      <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--primary); margin-bottom:12px;">Que incluye el rediseno</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px 20px; margin-bottom:20px;">
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>Diseno moderno con Odoo Website Builder</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>Paleta de colores profesional</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>Paginas: Inicio, Servicios, Nosotros, Contacto</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>100% responsive (celular, tablet, desktop)</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>Seccion de servicios con detalle</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>Formulario de contacto conectado al CRM</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>Seccion de testimonios</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>SEO basico (meta tags, estructura, velocidad)</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>Boton flotante de WhatsApp</div>
+        <div style="font-size:12px; color:var(--text-mid); padding:4px 0 4px 16px; position:relative;"><span style="position:absolute; left:0; top:9px; width:6px; height:6px; border-radius:50%; background:var(--purple);"></span>Chat en vivo integrado con Helpdesk</div>
+      </div>
+
+      <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px; padding:14px 18px;">
+        <div style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:4px;">Ventaja clave</div>
+        <p style="font-size:12px; color:#14532d; line-height:1.6; margin:0;">Al construir el sitio dentro de <strong>Odoo Website</strong>, el formulario de contacto alimenta automaticamente el CRM, el chat en vivo se gestiona desde Helpdesk, y los asociados acceden al portal desde el mismo dominio. <strong>Todo integrado, sin herramientas externas.</strong> Se elimina la dependencia de Squarespace y su costo mensual.</p>
+      </div>
+    </div>
+
+    <div class="cta">
+      <h3>Siguiente paso</h3>
+      <p>Para avanzar, necesitamos que completen el cuestionario de relevamiento adjunto. Con esas respuestas arrancamos inmediatamente.</p>
+      <div class="cta-links">
+        <span><strong>Email:</strong> jeremias.duhalde@infocontrol.io</span>
+        <span><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/jerem%C3%ADas-duhalde-1b4929219">jeremias-duhalde</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== DETALLE POR TAREA ======================== -->
+  <section class="sec">
+    <span class="pill">Detalle por tarea</span>
+    <h2 class="s-title">Que hacemos concretamente en cada fase</h2>
+    <p class="s-sub">Descripcion en lenguaje claro de lo que se ejecuta en cada linea del plan.</p>
+
+    <div class="dcard"><div class="dcard-head"><h3>01 &mdash; Relevamiento y diagnostico</h3><span class="dcard-days">0.5 dias</span></div><p>Nos conectamos a su instancia de Odoo y analizamos version, modulos activos, datos cargados y limitaciones. Generamos un informe escrito con el estado actual. Ya lo hicimos: su instancia es Odoo 19.3 Enterprise Online, practicamente vacia.</p></div>
+
+    <div class="dcard"><div class="dcard-head"><h3>02 &mdash; Activacion de modulos</h3><span class="dcard-days">0.5 dias</span></div><p>Instalamos los 23+ modulos en orden correcto (CRM, Ventas, Suscripciones, Facturacion, Inventario, Alquiler, Compras, RRHH, WhatsApp, Helpdesk, etc.). Cada uno se configura con valores base de Argentina: moneda ARS, zona horaria, idioma.</p></div>
+
+    <div class="dcard"><div class="dcard-head"><h3>03 &mdash; Roles, permisos y seguridad</h3><span class="dcard-days">1.0 dia</span></div><p>Creamos perfiles diferenciados (Administrador, Gerencia, Ventas, RRHH, Enfermeria, Portal) para que cada persona vea solo lo que le corresponde. Activamos doble factor de autenticacion para administradores.</p></div>
+
+    <div class="dcard custom"><div class="dcard-head"><h3>04 &mdash; Numeracion automatica de asociados</h3><span class="dcard-days custom-d">0.5 dias &mdash; Custom</span></div><p>Odoo no trae numeracion para contactos. Creamos un sistema que asigna automaticamente un numero unico (ej: SC-00001) a cada asociado al momento del alta.</p></div>
+
+    <div class="dcard custom"><div class="dcard-head"><h3>05 &mdash; Morosidad, deuda y estado</h3><span class="dcard-days custom-d">1.0 dia &mdash; Custom</span></div><p>Agregamos campos inteligentes a la ficha del asociado que se calculan solos: cuanto debe, dias de atraso y en que estado esta (activo, moroso, suspendido, baja). No existe por defecto en Odoo.</p></div>
+
+    <div class="dcard custom"><div class="dcard-head"><h3>06 &mdash; Panel visual de asociados</h3><span class="dcard-days custom-d">0.5 dias &mdash; Custom</span></div><p>Transformamos la vista generica de contactos en tarjetas agrupadas por estado y una lista con numero, deuda, morosidad y responsable. El equipo ve de un vistazo la situacion completa.</p></div>
+
+    <div class="dcard"><div class="dcard-head"><h3>07 &mdash; Compras con aprobaciones</h3><span class="dcard-days">0.5 dias</span></div><p>Configuramos que las ordenes por encima de cierto monto requieran aprobacion de un superior. Notificaciones automaticas al aprobador.</p></div>
+
+    <div class="dcard"><div class="dcard-head"><h3>08 &mdash; Alquiler de equipos medicos</h3><span class="dcard-days">0.5 dias</span></div><p>Cargamos los equipos (sillas de ruedas, camas, nebulizadores, etc.) con tarifas y configuramos el flujo: reserva, entrega, devolucion. El sistema muestra disponibilidad en tiempo real.</p></div>
+
+    <div class="dcard"><div class="dcard-head"><h3>09 &mdash; Suscripciones y facturacion</h3><span class="dcard-days">1.0 dia</span></div><p>Creamos los planes de membresia, configuramos facturacion automatica mensual y metodos de pago. Probamos el ciclo completo: alta, factura y pago.</p></div>
+
+    <div class="dcard custom"><div class="dcard-head"><h3>10 &mdash; Dashboards y KPIs</h3><span class="dcard-days custom-d">1.0 dia &mdash; Custom</span></div><p>Construimos paneles visuales: uno general (asociados activos, mora, recaudacion, deuda global) y uno por empleado (sus asociados, al dia, morosos, comisiones). Gerencia ve el negocio en tiempo real.</p></div>
+
+    <div class="dcard custom"><div class="dcard-head"><h3>11 &mdash; Comisiones automaticas</h3><span class="dcard-days custom-d">1.0 dia &mdash; Custom</span></div><p>Cada asociado queda vinculado a su empleado responsable. El sistema calcula comisiones automaticamente segun la formula que definan. Odoo no tiene esta funcionalidad; la construimos a medida.</p></div>
+
+    <div class="dcard"><div class="dcard-head"><h3>12 &mdash; Auditoria y trazabilidad</h3><span class="dcard-days">0.5 dias</span></div><p>Activamos registro de cambios en todos los registros importantes: cada modificacion queda guardada con fecha, hora, quien la hizo y que cambio.</p></div>
+
+    <div class="dcard"><div class="dcard-head"><h3>13 &mdash; WhatsApp Business</h3><span class="dcard-days">1.0 dia</span></div><p>Conectamos su WhatsApp Business con Odoo para mensajes automaticos: bienvenida, recordatorio de pago, aviso de factura vencida, confirmacion de visita. Todo desde Odoo.</p></div>
+
+    <div class="dcard"><div class="dcard-head"><h3>14 &mdash; Portal de autoservicio</h3><span class="dcard-days">0.5 dias</span></div><p>Habilitamos acceso web para que asociados y enfermeros vean facturas, documentos firmados y levanten tickets de soporte. Reduce llamadas y da autonomia.</p></div>
+
+    <div class="dcard custom"><div class="dcard-head"><h3>15 &mdash; Reportes a medida</h3><span class="dcard-days custom-d">1.5 dias &mdash; Custom</span></div><p>Tres reportes que no vienen en Odoo: morosidad (quien debe, cuanto, hace cuanto), rendimiento por empleado (asociados, cobros, comisiones) e inventario/equipos. Exportables a PDF y Excel.</p></div>
+
+    <div class="dcard qa-card"><div class="dcard-head"><h3>16 &mdash; Pruebas, capacitacion y lanzamiento</h3><span class="dcard-days qa-d">1.5 dias</span></div><p>Probamos todos los flujos de punta a punta. Corregimos lo que haga falta. Sesion de capacitacion con su equipo (1-2 horas) y entregamos documentacion escrita.</p></div>
+  </section>
+
+  <!-- ======================== ANEXO TECNICO ======================== -->
+  <section class="sec">
+    <span class="pill">Anexo tecnico</span>
+    <h2 class="s-title">Arquitectura e implementacion</h2>
+    <p class="s-sub">Resumen tecnico de la plataforma, integraciones y personalizaciones.</p>
+
+    <div class="tech-grid">
+      <div class="tb"><h4>Plataforma</h4><ul><li>Odoo 19.3 Enterprise &mdash; Online (SaaS)</li><li>PostgreSQL gestionado por Odoo S.A.</li><li>Cloud Odoo (backups diarios)</li><li>SSL/TLS &mdash; SLA 99.9%</li><li>Personalizacion via Odoo Studio</li></ul></div>
+      <div class="tb"><h4>Integracion</h4><ul><li>XML-RPC / JSON-RPC para config</li><li>Python 3.12 (scripts idempotentes)</li><li>WhatsApp Business API (nativo)</li><li>Email: SMTP integrado</li><li>Exportacion: Excel y PDF</li></ul></div>
+      <div class="tb"><h4>Personalizacion</h4><ul><li>Studio: campos, vistas, reportes</li><li>Server actions: comisiones</li><li>Campos computados: morosidad</li><li>Secuencias: numeracion</li><li>Automatizaciones: triggers</li></ul></div>
+      <div class="tb"><h4>Seguridad</h4><ul><li>Grupos: Admin, Gerencia, Ventas, HR, Portal</li><li>Record rules por rol</li><li>Tracking fields en chatter</li><li>2FA para administradores</li><li>Permisos granulares</li></ul></div>
+    </div>
+
+    <div class="mods-box">
+      <h4>Modulos a activar (23+)</h4>
+      <div class="mods">
+        <span class="mod core">CRM</span><span class="mod core">Ventas</span><span class="mod core">Suscripciones</span><span class="mod core">Contactos</span><span class="mod core">Facturacion</span><span class="mod core">Inventario</span><span class="mod core">Alquiler</span><span class="mod core">Compras</span>
+        <span class="mod hr">Empleados</span><span class="mod hr">Ausencias</span><span class="mod hr">Reclutamiento</span><span class="mod hr">Evaluaciones</span><span class="mod hr">Timesheets</span>
+        <span class="mod comm">Sign</span><span class="mod comm">WhatsApp</span><span class="mod comm">Email Marketing</span><span class="mod comm">Chat en vivo</span><span class="mod comm">Discuss</span>
+        <span class="mod">Sitio Web</span><span class="mod">Portal</span><span class="mod">Documentos</span><span class="mod">Encuestas</span><span class="mod">Calendario</span><span class="mod">Helpdesk</span><span class="mod">Studio</span>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <h4>Como funciona todo junto</h4>
+      <div class="d-node main">Equipo Siempre Cerca + Asociados</div>
+      <div class="d-line"></div>
+      <div class="d-label">Conexion segura (HTTPS)</div>
+      <div class="d-line"></div>
+      <div class="d-node platform">Odoo 19 Enterprise &mdash; Plataforma central</div>
+      <div class="d-line"></div>
+      <div class="d-row">
+        <div class="d-chip">Sitio Web</div>
+        <div class="d-chip">WhatsApp</div>
+        <div class="d-chip">Email</div>
+        <div class="d-chip">Firma Digital</div>
+        <div class="d-chip">Portal</div>
+      </div>
+      <div class="d-line"></div>
+      <div class="d-row">
+        <div class="d-area"><strong>Comercial</strong><span>CRM + Ventas + Suscripciones</span></div>
+        <div class="d-area"><strong>Operaciones</strong><span>Inventario + Compras + Alquiler</span></div>
+        <div class="d-area"><strong>Personas</strong><span>RRHH + Ausencias + Evaluaciones</span></div>
+        <div class="d-area"><strong>Finanzas</strong><span>Facturacion + Reportes + Cobros</span></div>
+      </div>
+      <div class="d-line"></div>
+      <div class="d-row">
+        <div class="d-base">Base de datos segura</div>
+        <div class="d-base">Backups diarios</div>
+        <div class="d-base">99.9% disponibilidad</div>
+      </div>
+    </div>
+
+    <p class="foot">Documento confidencial &mdash; Jeremias Duhalde &mdash; <a href="https://linkedin.com/in/jerem%C3%ADas-duhalde-1b4929219">LinkedIn</a> &mdash; jeremias.duhalde@infocontrol.io &mdash; Junio 2026</p>
+  </section>
+
+</div>
+
+</body>
+</html>

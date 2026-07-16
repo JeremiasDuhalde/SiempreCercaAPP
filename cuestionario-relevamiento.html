@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuestionario de Relevamiento — Siempre Cerca SRL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+  :root {
+    --primary:#1a3a5c; --primary-light:#2c6faa; --accent:#0f7b5f;
+    --warn:#b45309; --purple:#6d28d9; --text:#1a1a2e; --text-mid:#3d4663;
+    --text-light:#6b7a99; --gray-50:#f7f8fa; --gray-100:#eef0f4;
+    --gray-200:#dde1e8; --radius:10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Inter',-apple-system,sans-serif;background:#fff;color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:800px;margin:0 auto;padding:0 20px;}
+
+  /* Header */
+  .header{text-align:center;padding:48px 0 36px;border-bottom:3px solid var(--primary);}
+  .badge{display:inline-block;background:var(--primary);color:white;padding:4px 14px;border-radius:50px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+  .header h1{font-size:clamp(22px,4vw,30px);font-weight:900;color:var(--primary);letter-spacing:-0.5px;margin-bottom:4px;}
+  .header h1 span{color:var(--accent);}
+  .header .sub{font-size:13px;color:var(--text-light);}
+
+  /* Intro */
+  .intro{background:var(--gray-50);border-left:3px solid var(--primary);border-radius:var(--radius);padding:18px 22px;margin:28px 0;font-size:12px;color:var(--text-mid);line-height:1.7;}
+  .intro strong{color:var(--text);}
+
+  /* Stats */
+  .stats{display:flex;gap:16px;margin-bottom:36px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:120px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px;text-align:center;}
+  .stat .n{font-size:24px;font-weight:900;color:var(--primary);}
+  .stat .l{font-size:9px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+
+  /* Session header */
+  .session{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:2px;padding:10px 16px;border-radius:8px;margin:40px 0 20px;}
+  .session.s1{background:#eff6ff;color:var(--primary-light);border:1px solid #bfdbfe;}
+  .session.s2{background:#ecfdf5;color:var(--accent);border:1px solid #a7f3d0;}
+  .session.s3{background:#f5f3ff;color:var(--purple);border:1px solid #c4b5fd;}
+
+  /* Module */
+  .module{margin-bottom:32px;}
+  .mod-head{display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:2px solid var(--gray-200);margin-bottom:14px;}
+  .mod-num{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;font-size:12px;font-weight:800;flex-shrink:0;color:white;}
+  .mod-num.blue{background:var(--primary-light);}
+  .mod-num.green{background:var(--accent);}
+  .mod-num.orange{background:var(--warn);}
+  .mod-num.purple{background:var(--purple);}
+  .mod-num.rose{background:#e11d48;}
+  .mod-num.cyan{background:#0891b2;}
+  .mod-title{font-size:16px;font-weight:700;color:var(--text);}
+  .mod-ctx{font-size:11px;color:var(--text-light);margin-left:auto;font-style:italic;}
+
+  /* Question */
+  .q{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
+  .q-top{display:flex;align-items:flex-start;gap:12px;padding:14px 18px;}
+  .q-num{font-size:11px;font-weight:700;color:var(--text-light);min-width:28px;padding-top:2px;}
+  .q-text{font-size:13px;color:var(--text);line-height:1.5;flex:1;}
+
+  /* Priority badges */
+  .pr{display:inline-block;padding:2px 8px;border-radius:50px;font-size:8px;font-weight:700;letter-spacing:.3px;margin-left:6px;vertical-align:middle;}
+  .pr.crit{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
+  .pr.imp{background:#fefce8;color:#a16207;border:1px solid #fde68a;}
+  .pr.opt{background:#eff6ff;color:var(--primary-light);border:1px solid #bfdbfe;}
+
+  /* Answer textarea */
+  .q-answer{border-top:1px dashed var(--gray-200);padding:12px 18px 14px;}
+  .q-answer label{display:block;font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-light);margin-bottom:6px;}
+  .q-answer textarea{width:100%;min-height:48px;border:1px solid var(--gray-200);border-radius:8px;padding:10px 14px;font-family:inherit;font-size:13px;color:var(--text);background:white;resize:vertical;line-height:1.5;transition:border-color .2s;}
+  .q-answer textarea:focus{outline:none;border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(44,111,170,0.1);}
+  .q-answer textarea::placeholder{color:var(--text-light);font-style:italic;}
+
+  /* Save bar */
+  .save-bar{position:sticky;bottom:0;background:white;border-top:2px solid var(--primary);padding:16px 0;margin-top:40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;z-index:100;}
+  .save-bar .info{font-size:12px;color:var(--text-light);}
+  .save-bar .info strong{color:var(--text);}
+  .save-btn{background:var(--primary);color:white;border:none;padding:14px 32px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .2s;}
+  .save-btn:hover{background:var(--primary-light);}
+  .save-btn:active{transform:scale(0.98);}
+
+  /* Progress */
+  .progress-bar{height:4px;background:var(--gray-200);border-radius:2px;margin-bottom:4px;}
+  .progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s;width:0%;}
+
+  /* Footer */
+  .foot{text-align:center;padding:20px 0;font-size:11px;color:var(--text-light);border-top:1px solid var(--gray-200);margin-top:20px;}
+
+  /* Toast */
+  .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--accent);color:white;padding:12px 24px;border-radius:50px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,0.15);opacity:0;transition:opacity .3s;pointer-events:none;z-index:200;}
+  .toast.show{opacity:1;}
+
+  @media(max-width:600px){
+    .mod-ctx{display:none;}
+    .stats{gap:8px;}
+    .stat{min-width:80px;padding:12px 8px;}
+    .save-bar{flex-direction:column;text-align:center;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="header">
+    <div class="badge">Cuestionario de relevamiento</div>
+    <h1>Implementacion <span>Odoo 19</span></h1>
+    <p class="sub">Siempre Cerca SRL &mdash; Junio 2026</p>
+  </div>
+
+  <div class="intro">
+    <strong>Instrucciones:</strong> Complete cada pregunta con la mayor cantidad de detalle posible.
+    Las respuestas nos permiten configurar Odoo correctamente desde el inicio.
+    Las preguntas marcadas como <span class="pr crit">Critico</span> son bloqueantes para arrancar.
+    <strong>No necesitan respuestas tecnicas</strong> &mdash; simplemente describan como funciona hoy o como les gustaria que funcione.<br><br>
+    Al terminar, presione <strong>"Guardar respuestas"</strong> y se descargara un archivo con todas las respuestas para enviar por email a <strong>eunijereduhalde@gmail.com</strong>.
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n">17</div><div class="l">Modulos</div></div>
+    <div class="stat"><div class="n" id="totalQ">0</div><div class="l">Preguntas</div></div>
+    <div class="stat"><div class="n" id="answeredQ">0</div><div class="l">Respondidas</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">Sesiones sugeridas</div></div>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+  <!-- ============ SESION 1 ============ -->
+  <div class="session s1">Sesion 1 &mdash; Nucleo de negocio</div>
+
+  <div class="module" data-module="CRM">
+    <div class="mod-head"><span class="mod-num blue">01</span><span class="mod-title">CRM (Gestion comercial)</span><span class="mod-ctx">Captacion de asociados</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">1.1</span><span class="q-text">Como llegan los prospectos hoy? (web, telefono, derivaciones medicas, obras sociales, referidos) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">1.2</span><span class="q-text">Quienes son los "clientes" del CRM: el asociado, su familiar responsable, o ambos?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">1.3</span><span class="q-text">Cuantas etapas tiene el proceso de venta/captacion actualmente? Cuales son? <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">1.4</span><span class="q-text">Hay multiples equipos de ventas o vendedores asignados por zona geografica?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">1.5</span><span class="q-text">Se requieren tareas automaticas al pasar de etapa? (ej: llamada de seguimiento, visita) <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">1.6</span><span class="q-text">El CRM debe integrarse con el proceso de alta de asociado o son procesos independientes?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Suscripciones">
+    <div class="mod-head"><span class="mod-num green">02</span><span class="mod-title">Suscripciones y Ventas</span><span class="mod-ctx">Cobros recurrentes</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">2.1</span><span class="q-text">Cuantos planes de membresia existen? (ej: basico, intermedio, premium) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">2.2</span><span class="q-text">La periodicidad de cobro es mensual, trimestral, anual? Hay opciones mixtas? <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">2.3</span><span class="q-text">El precio varia segun edad del asociado, localidad o condicion de salud?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">2.4</span><span class="q-text">Como se manejan los aumentos de precio: automaticos o con aprobacion? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">2.5</span><span class="q-text">Existen cargos adicionales por servicios extra? Se facturan en la misma factura o separado?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">2.6</span><span class="q-text">Como se gestiona la baja de un asociado: se factura el mes completo o se prorratea?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">2.7</span><span class="q-text">Hay descuentos por grupo familiar o por pago anual anticipado?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Contactos">
+    <div class="mod-head"><span class="mod-num cyan">03</span><span class="mod-title">Contactos y Asociados</span><span class="mod-ctx">Numeracion y ficha</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">3.1</span><span class="q-text">Cual es el formato actual del numero de asociado? (ej: SC-00001) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">3.2</span><span class="q-text">Un asociado puede tener multiples beneficiarios o dependientes bajo su numero?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">3.4</span><span class="q-text">Que datos son obligatorios al dar de alta un asociado? (DNI, CUIL, obra social, etc.) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">3.5</span><span class="q-text">Que estados puede tener un asociado? (activo, suspendido, baja temporal, baja definitiva, moroso) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">3.6</span><span class="q-text">Los proveedores (enfermeros, medicos, clinicas) se gestionan en el mismo sistema o separados?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">3.7</span><span class="q-text">Hay datos de salud o ficha medica que deba vincularse al asociado? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Facturacion">
+    <div class="mod-head"><span class="mod-num orange">04</span><span class="mod-title">Facturacion y Cobros</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">4.1</span><span class="q-text">Cual es el metodo de cobro principal? (debito automatico, transferencia, efectivo, tarjeta) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">4.2</span><span class="q-text">Se maneja caja chica o cobranza en campo (enfermeros que cobran)?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">4.3</span><span class="q-text">Hay recargos por mora? De cuanto? A partir de cuantos dias de atraso? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">4.4</span><span class="q-text">Se emiten notas de credito por cancelaciones? Con que frecuencia?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <!-- ============ SESION 2 ============ -->
+  <div class="session s2">Sesion 2 &mdash; Operaciones</div>
+
+  <div class="module" data-module="Inventario">
+    <div class="mod-head"><span class="mod-num green">05</span><span class="mod-title">Inventario</span><span class="mod-ctx">Insumos medicos</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">5.1</span><span class="q-text">Que productos fisicos maneja la empresa? (medicamentos, insumos, material descartable, equipos) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">5.2</span><span class="q-text">Hay un deposito central y depositos secundarios o botiquines por zona?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">5.3</span><span class="q-text">Se requiere trazabilidad por lote o numero de serie? (vencimientos) <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">5.4</span><span class="q-text">Los insumos que se entregan a asociados se consumen del stock o se prestan?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Alquiler">
+    <div class="mod-head"><span class="mod-num purple">06</span><span class="mod-title">Alquiler de Equipos</span><span class="mod-ctx">Equipamiento medico</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">6.1</span><span class="q-text">Que equipos se alquilan o prestan? (sillas de ruedas, camas, nebulizadores, andadores) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">6.2</span><span class="q-text">El alquiler tiene costo adicional o esta incluido en el plan?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">6.3</span><span class="q-text">Como se registra la entrega y devolucion? Hay firma del receptor? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">6.4</span><span class="q-text">Se cobra deposito por el equipo? Como se gestiona la devolucion?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Compras">
+    <div class="mod-head"><span class="mod-num orange">07</span><span class="mod-title">Compras</span><span class="mod-ctx">Aprobaciones</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">7.1</span><span class="q-text">Quien puede generar ordenes de compra? Solo administracion o tambien supervisores?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">7.2</span><span class="q-text">A partir de que monto se requiere aprobacion? Hay niveles? <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">7.3</span><span class="q-text">Como se recepciona la mercaderia: en deposito central o en campo?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="RRHH">
+    <div class="mod-head"><span class="mod-num rose">08</span><span class="mod-title">Recursos Humanos</span><span class="mod-ctx">Empleados, ausencias, evaluaciones</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">8.1</span><span class="q-text">Cuantos empleados hay en total? Cuantos en campo vs administracion? <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">8.2</span><span class="q-text">Como se organiza la estructura: departamentos, sucursales, supervisores por zona?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">8.3</span><span class="q-text">Los enfermeros trabajan con horarios fijos o por guardia/turno variable? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">8.4</span><span class="q-text">Que tipos de ausencias existen? Quien las aprueba?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">8.5</span><span class="q-text">Se necesitan timesheets vinculados a pacientes/asociados para medir horas de atencion? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Comisiones">
+    <div class="mod-head"><span class="mod-num orange">09</span><span class="mod-title">Comisiones de Empleados</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">9.1</span><span class="q-text">Que formula se aplica para comisiones? Sobre asociados activos, nuevas altas, cobrados? <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">9.2</span><span class="q-text">Todos los empleados cobran comision o solo vendedores/captadores?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">9.3</span><span class="q-text">La comision se liquida mensual, quincenal, o en cada cobro?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">9.4</span><span class="q-text">Se descuenta comision si el asociado entra en mora? Despues de cuantos dias?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <!-- ============ SESION 3 ============ -->
+  <div class="session s3">Sesion 3 &mdash; Comunicacion y canales</div>
+
+  <div class="module" data-module="Sign">
+    <div class="mod-head"><span class="mod-num blue">10</span><span class="mod-title">Firma Electronica (Sign)</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">10.1</span><span class="q-text">Que documentos requieren firma del asociado? (contrato, consentimiento, autorizacion de debito) <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">10.2</span><span class="q-text">Se necesita firma digital con validez legal o alcanza firma electronica simple?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="WhatsApp">
+    <div class="mod-head"><span class="mod-num green">11</span><span class="mod-title">WhatsApp Business</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">11.1</span><span class="q-text">Ya tienen cuenta de WhatsApp Business API activa? Con que proveedor? <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">11.2</span><span class="q-text">Para que usos quieren WhatsApp: recordatorio de cuotas, avisos de visita, atencion?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">11.3</span><span class="q-text">Los mensajes los envia el sistema automaticamente o un operador humano?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">11.4</span><span class="q-text">Se necesita que el asociado pueda responder y que llegue a un agente en Odoo? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">11.5</span><span class="q-text">Cuantos numeros de WhatsApp Business tienen o necesitan?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Email Marketing">
+    <div class="mod-head"><span class="mod-num orange">12</span><span class="mod-title">Email Marketing</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">12.1</span><span class="q-text">Que comunicaciones envian masivamente hoy? (newsletter, avisos, campanas)</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">12.2</span><span class="q-text">Se necesitan flujos automatizados? (bienvenida al nuevo asociado, recordatorio antes del vencimiento) <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Chat y Helpdesk">
+    <div class="mod-head"><span class="mod-num cyan">13</span><span class="mod-title">Chat en Vivo y Helpdesk</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">13.1</span><span class="q-text">En que horario estara operado el chat? Fuera de horario: chatbot o mensaje de ausencia?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">13.2</span><span class="q-text">Que tipos de tickets de soporte se esperan? <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">13.4</span><span class="q-text">Las emergencias medicas pasan por Helpdesk o canal separado?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">13.5</span><span class="q-text">Hay SLA definidos? (ej: urgencias en 2h, administrativas en 48h) <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">13.6</span><span class="q-text">Los tickets los cargan asociados (portal/email/WA) o solo el equipo interno?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Website y Portal">
+    <div class="mod-head"><span class="mod-num purple">14</span><span class="mod-title">Sitio Web y Portal</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">14.1</span><span class="q-text">Se construira el sitio publico en Odoo o solo el portal privado? <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">14.2</span><span class="q-text">Que informacion vera el asociado en su portal? (facturas, contratos, historial)</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">14.3</span><span class="q-text">El asociado podra hacer pagos online desde el portal? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">14.4</span><span class="q-text">Se necesita formulario de alta web que alimente el CRM?</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Docs, Encuestas, Calendario">
+    <div class="mod-head"><span class="mod-num rose">15</span><span class="mod-title">Documentos, Encuestas y Calendario</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">15.1</span><span class="q-text">Que documentos gestionan centralizadamente? (contratos, estudios, polizas, DNIs)</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">15.2</span><span class="q-text">Que eventos se gestionan en el calendario? (visitas domiciliarias, guardias, reuniones)</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">15.3</span><span class="q-text">Como se asignan las visitas a domicilio: un coordinador las asigna o los enfermeros eligen? <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <div class="module" data-module="Datos Generales">
+    <div class="mod-head"><span class="mod-num blue">16</span><span class="mod-title">Datos Generales de la Empresa</span></div>
+    <div class="q"><div class="q-top"><span class="q-num">16.1</span><span class="q-text">Razon social completa y CUIT <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">16.2</span><span class="q-text">Direccion fiscal y sucursales (si las hay)</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">16.3</span><span class="q-text">Telefono, email de contacto y sitio web actual</span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">16.5</span><span class="q-text">Quienes seran los usuarios del sistema? Nombres, emails y rol de cada uno <span class="pr crit">Critico</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+    <div class="q"><div class="q-top"><span class="q-num">16.6</span><span class="q-text">Hay datos existentes que migrar a Odoo? (Excel de asociados, listado de equipos) <span class="pr imp">Importante</span></span></div><div class="q-answer"><label>Respuesta</label><textarea placeholder="Escriba su respuesta aqui..."></textarea></div></div>
+  </div>
+
+  <!-- Save bar -->
+  <div class="save-bar">
+    <div class="info"><strong id="answeredQ2">0</strong> de <strong id="totalQ2">0</strong> preguntas respondidas</div>
+    <button class="save-btn" onclick="saveResponses()">Guardar respuestas y descargar</button>
+  </div>
+
+  <div class="foot">
+    Cuestionario preparado por Jeremias Duhalde &mdash; <a href="https://linkedin.com/in/jerem%C3%ADas-duhalde-1b4929219">LinkedIn</a> &mdash; eunijereduhalde@gmail.com &mdash; Junio 2026
+  </div>
+
+</div>
+
+<div class="toast" id="toast">Archivo descargado. Enviar a eunijereduhalde@gmail.com</div>
+
+<script>
+const textareas = document.querySelectorAll('textarea');
+const totalEl = document.getElementById('totalQ');
+const totalEl2 = document.getElementById('totalQ2');
+const answeredEl = document.getElementById('answeredQ');
+const answeredEl2 = document.getElementById('answeredQ2');
+const progressEl = document.getElementById('progressFill');
+
+totalEl.textContent = textareas.length;
+totalEl2.textContent = textareas.length;
+
+function updateProgress() {
+  let answered = 0;
+  textareas.forEach(t => { if (t.value.trim()) answered++; });
+  answeredEl.textContent = answered;
+  answeredEl2.textContent = answered;
+  progressEl.style.width = Math.round((answered / textareas.length) * 100) + '%';
+}
+
+textareas.forEach(t => t.addEventListener('input', updateProgress));
+
+function saveResponses() {
+  const now = new Date();
+  const date = now.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit', year:'numeric' });
+  const time = now.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' });
+
+  let answered = 0;
+  let total = textareas.length;
+  const modules = document.querySelectorAll('.module');
+  let html = '';
+
+  modules.forEach(mod => {
+    const title = mod.querySelector('.mod-title').textContent;
+    const qs = mod.querySelectorAll('.q');
+    let modHtml = '';
+    let modHasAnswers = false;
+
+    qs.forEach(q => {
+      const num = q.querySelector('.q-num').textContent;
+      const text = q.querySelector('.q-text').textContent.replace(/Critico|Importante|Opcional/g, '').trim();
+      const ta = q.querySelector('textarea');
+      const val = ta.value.trim();
+      if (val) { answered++; modHasAnswers = true; }
+
+      modHtml += '<div style="margin-bottom:14px;padding:14px 18px;background:' + (val ? '#f0fdf4' : '#fefce8') + ';border:1px solid ' + (val ? '#bbf7d0' : '#fde68a') + ';border-radius:8px;">';
+      modHtml += '<div style="font-size:12px;font-weight:600;color:#1a1a2e;margin-bottom:6px;">' + num + ' ' + text + '</div>';
+      modHtml += '<div style="font-size:13px;color:' + (val ? '#14532d' : '#92400e') + ';line-height:1.6;white-space:pre-wrap;">' + (val || '(Sin respuesta)') + '</div>';
+      modHtml += '</div>';
+    });
+
+    html += '<div style="margin-bottom:32px;">';
+    html += '<h2 style="font-size:16px;font-weight:700;color:#1a3a5c;border-bottom:2px solid #dde1e8;padding-bottom:8px;margin-bottom:14px;">' + title + '</h2>';
+    html += modHtml;
+    html += '</div>';
+  });
+
+  const fullHtml = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">'
+    + '<title>Respuestas Cuestionario - Siempre Cerca SRL</title>'
+    + '<style>@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap");'
+    + 'body{font-family:"Inter",-apple-system,sans-serif;max-width:800px;margin:0 auto;padding:40px 24px;background:#fff;color:#1a1a2e;}'
+    + '</style></head><body>'
+    + '<div style="text-align:center;padding:32px 0 24px;border-bottom:3px solid #1a3a5c;margin-bottom:32px;">'
+    + '<div style="display:inline-block;background:#1a3a5c;color:white;padding:4px 14px;border-radius:50px;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;">Respuestas del relevamiento</div>'
+    + '<h1 style="font-size:26px;font-weight:900;color:#1a3a5c;margin-bottom:4px;">Siempre Cerca SRL</h1>'
+    + '<p style="font-size:13px;color:#6b7a99;">Completado el ' + date + ' a las ' + time + ' &mdash; ' + answered + ' de ' + total + ' preguntas respondidas</p>'
+    + '</div>'
+    + '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px;margin-bottom:32px;font-size:12px;color:#1e40af;text-align:center;">'
+    + 'Por favor envie este archivo a <strong>eunijereduhalde@gmail.com</strong>'
+    + '</div>'
+    + html
+    + '<div style="text-align:center;padding:20px 0;border-top:1px solid #dde1e8;margin-top:32px;font-size:11px;color:#6b7a99;">'
+    + 'Cuestionario de Jeremias Duhalde &mdash; Implementacion Odoo 19 &mdash; Junio 2026</div>'
+    + '</body></html>';
+
+  const blob = new Blob([fullHtml], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'respuestas_cuestionario_siemprecerca.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 5000);
+}
+</script>
+
+</body>
+</html>

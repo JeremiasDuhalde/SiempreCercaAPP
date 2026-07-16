@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guia WhatsApp Business — Siempre Cerca SRL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #0a0e19;
+    --surface: #111827;
+    --surface-2: #1a2236;
+    --border: #2a3550;
+    --text: #e8edf5;
+    --text-muted: #8899b4;
+    --text-dim: #5a6b87;
+    --primary: #3b82f6;
+    --primary-glow: #60a5fa;
+    --accent: #10b981;
+    --accent-glow: #34d399;
+    --warn: #f59e0b;
+    --coral: #ff5a5f;
+    --purple: #a78bfa;
+    --cyan: #22d3ee;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 40px 20px;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header .badge {
+    display: inline-block;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.25);
+    padding: 4px 16px;
+    border-radius: 50px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent-glow);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+
+  .header h1 span {
+    background: linear-gradient(135deg, var(--accent-glow), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  /* Intro */
+  .intro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 32px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .intro strong { color: var(--text); }
+
+  /* Fase */
+  .fase {
+    margin-bottom: 32px;
+  }
+
+  .fase-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .fase-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .fase-title {
+    flex: 1;
+  }
+
+  .fase-title h2 {
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .fase-title .time {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .fase-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-left: 58px;
+  }
+
+  /* Steps */
+  .steps {
+    list-style: none;
+    counter-reset: step;
+  }
+
+  .steps li {
+    counter-increment: step;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(42,53,80,0.4);
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .steps li:last-child { border-bottom: none; }
+
+  .steps li::before {
+    content: counter(step);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .steps li strong { color: var(--accent-glow); }
+  .steps li em { color: var(--warn); font-style: normal; font-weight: 600; }
+
+  /* Callout */
+  .callout {
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  .callout.info {
+    background: rgba(59,130,246,0.08);
+    border: 1px solid rgba(59,130,246,0.2);
+    color: var(--primary-glow);
+  }
+
+  .callout.warn {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.2);
+    color: var(--warn);
+  }
+
+  .callout.success {
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.2);
+    color: var(--accent-glow);
+  }
+
+  .callout.danger {
+    background: rgba(255,90,95,0.08);
+    border: 1px solid rgba(255,90,95,0.2);
+    color: var(--coral);
+  }
+
+  .callout strong { color: inherit; }
+
+  /* Screenshot placeholder */
+  .screenshot {
+    background: var(--surface-2);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin: 12px 0;
+  }
+
+  /* Profile fields */
+  .profile-fields {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+  }
+
+  .field-label {
+    width: 120px;
+    font-weight: 600;
+    color: var(--text-dim);
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .field-value {
+    flex: 1;
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 40px 0;
+  }
+
+  /* After all */
+  .after {
+    text-align: center;
+    padding: 32px;
+    background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(34,211,238,0.04));
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: var(--radius);
+  }
+
+  .after h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-glow);
+    margin-bottom: 8px;
+  }
+
+  .after p {
+    font-size: 13px;
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .fase-body { margin-left: 0; margin-top: 12px; }
+    .fase-header { flex-wrap: wrap; }
+    .field-row { flex-direction: column; gap: 4px; }
+    .field-label { text-align: left; width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="badge">Guia de configuracion</div>
+    <h1><span>WhatsApp Business</span></h1>
+    <h1 style="font-size: 20px; color: var(--text-muted); font-weight: 500;">Siempre Cerca SRL</h1>
+    <p style="margin-top: 12px;">Pasos para dejar funcionando el WhatsApp del sistema de monitoreo</p>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro">
+    <strong>Que vamos a hacer:</strong> configurar el numero de la eSIM como WhatsApp oficial de Siempre Cerca.
+    Una vez hecho, el sistema va a poder mandar mensajes automaticos (alertas a familiares, recordatorios) y
+    la operadora va a poder chatear manualmente desde WhatsApp Web en la PC.<br><br>
+    <strong>Tiempo total estimado:</strong> 30-40 minutos.<br>
+    <strong>Lo que necesitas:</strong> el telefono con la eSIM, una cuenta de Facebook y una PC.
+  </div>
+
+  <!-- FASE 1 -->
+  <div class="fase">
+    <div class="fase-header">
+      <div class="fase-num" style="background: rgba(16,185,129,0.15); color: var(--accent-glow);">1</div>
+      <div class="fase-title">
+        <h2>Activar la eSIM en el telefono</h2>
+        <span class="time">5 minutos</span>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ol class="steps">
+        <li>En el iPhone, anda a <strong>Ajustes</strong> (el icono del engranaje)</li>
+        <li>Toca <strong>Datos moviles</strong> (o "Celular")</li>
+        <li>Toca <strong>Agregar eSIM</strong> o "Agregar plan celular"</li>
+        <li>Cuando pida, <strong>escaneá el codigo QR</strong> de la eSIM que te dieron</li>
+        <li>Espera unos segundos a que se active. Vas a ver que aparece una segunda linea con señal</li>
+        <li>Hacé una llamada de prueba desde esa linea para confirmar que funciona</li>
+        <li><em>Anota el numero de telefono de la eSIM y pasámelo</em></li>
+      </ol>
+      <div class="callout info">
+        <strong>Nota:</strong> si la eSIM ya esta activada, saltá este paso y pasame el numero directamente.
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="fase">
+    <div class="fase-header">
+      <div class="fase-num" style="background: rgba(59,130,246,0.15); color: var(--primary-glow);">2</div>
+      <div class="fase-title">
+        <h2>Instalar WhatsApp Business</h2>
+        <span class="time">5 minutos</span>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ol class="steps">
+        <li>En el iPhone, abri la <strong>App Store</strong></li>
+        <li>Busca <strong>"WhatsApp Business"</strong> — es la app con icono <em>azul</em> (NO la verde que es la comun)</li>
+        <li>Descargala e instalala</li>
+        <li>Abri la app y acepta los terminos</li>
+        <li>Cuando pida numero de telefono, pone <strong>el numero de la eSIM</strong> (con codigo de pais +54)</li>
+        <li>Te va a llegar un <strong>SMS con un codigo de 6 digitos</strong> a ese numero — ingresalo en la app</li>
+        <li>Ahora te pide configurar el <strong>perfil del negocio</strong>. Completa con estos datos:</li>
+      </ol>
+
+      <div class="profile-fields">
+        <div class="field-row">
+          <span class="field-label">Nombre</span>
+          <span class="field-value">Siempre Cerca SRL</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Categoria</span>
+          <span class="field-value">Salud → Servicios medicos</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Descripcion</span>
+          <span class="field-value">Servicio de teleasistencia y monitoreo remoto para adultos mayores</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Direccion</span>
+          <span class="field-value">(la direccion de Siempre Cerca)</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Horario</span>
+          <span class="field-value">24 horas / 7 dias</span>
+        </div>
+        <div class="field-row">
+          <span class="field-label">Foto de perfil</span>
+          <span class="field-value">El logo de Siempre Cerca</span>
+        </div>
+      </div>
+
+      <div class="callout success">
+        <strong>Listo!</strong> Ya tenes WhatsApp Business funcionando. Podes chatear manualmente desde el telefono.
+        En el siguiente paso lo conectamos a la PC.
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="fase">
+    <div class="fase-header">
+      <div class="fase-num" style="background: rgba(167,139,250,0.15); color: var(--purple);">3</div>
+      <div class="fase-title">
+        <h2>Conectar WhatsApp Web en la PC</h2>
+        <span class="time">2 minutos</span>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ol class="steps">
+        <li>En la PC de la operadora, abri el navegador (Chrome, Edge, etc.)</li>
+        <li>Anda a <strong>web.whatsapp.com</strong></li>
+        <li>Te va a mostrar un <strong>codigo QR</strong> en la pantalla</li>
+        <li>En el telefono, abri <strong>WhatsApp Business</strong> (la azul)</li>
+        <li>Toca los <strong>3 puntos</strong> (arriba a la derecha) → <strong>Dispositivos vinculados</strong></li>
+        <li>Toca <strong>"Vincular un dispositivo"</strong></li>
+        <li><strong>Escaneá el QR</strong> de la PC con el telefono</li>
+        <li>Espera unos segundos — vas a ver todos los chats en la PC</li>
+      </ol>
+
+      <div class="callout success">
+        <strong>Ahora la operadora puede ver y responder mensajes desde la PC.</strong>
+        No hace falta tener el telefono al lado todo el tiempo — WhatsApp Web funciona independiente
+        mientras el telefono tenga internet.
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 4 -->
+  <div class="fase">
+    <div class="fase-header">
+      <div class="fase-num" style="background: rgba(245,158,11,0.15); color: var(--warn);">4</div>
+      <div class="fase-title">
+        <h2>Crear la cuenta de Meta Business</h2>
+        <span class="time">15 minutos</span>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ol class="steps">
+        <li>Abri en la PC: <strong>business.facebook.com</strong></li>
+        <li>Inicia sesion con una <strong>cuenta de Facebook</strong> — puede ser la tuya personal o una de la empresa. Si no tenes, crea una</li>
+        <li>Hace clic en <strong>"Crear cuenta"</strong> (o "Crear portafolio de negocio")</li>
+        <li>Completa los datos:
+          <div class="profile-fields" style="margin-top: 8px;">
+            <div class="field-row">
+              <span class="field-label">Nombre</span>
+              <span class="field-value">Siempre Cerca SRL</span>
+            </div>
+            <div class="field-row">
+              <span class="field-label">Tu nombre</span>
+              <span class="field-value">(tu nombre real)</span>
+            </div>
+            <div class="field-row">
+              <span class="field-label">Email</span>
+              <span class="field-value">(el email oficial de la empresa)</span>
+            </div>
+          </div>
+        </li>
+        <li>Meta va a pedir <strong>verificar el negocio</strong>. Te da dos opciones:
+          <br>→ <strong>Por email:</strong> te mandan un codigo al email del dominio de la empresa
+          <br>→ <strong>Por documentacion:</strong> subis una foto del CUIT, constancia de inscripcion, o factura de servicios a nombre de Siempre Cerca SRL
+        </li>
+        <li>Subi lo que te pida y <strong>espera la aprobacion</strong> (puede ser instantanea o tardar 1-2 dias)</li>
+      </ol>
+
+      <div class="callout warn">
+        <strong>Importante:</strong> una vez creada la cuenta, necesito que me agregues como administrador
+        para que yo pueda hacer la parte tecnica. Pedime mi email o Facebook y te digo como agregarme.
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 5 -->
+  <div class="fase">
+    <div class="fase-header">
+      <div class="fase-num" style="background: rgba(255,90,95,0.15); color: var(--coral);">5</div>
+      <div class="fase-title">
+        <h2>Pasarme el codigo de verificacion</h2>
+        <span class="time">1 minuto (cuando yo te avise)</span>
+      </div>
+    </div>
+    <div class="fase-body">
+      <ol class="steps">
+        <li>En algun momento te voy a avisar que necesito <strong>verificar el numero</strong> en la plataforma de Meta</li>
+        <li>Te va a llegar un <strong>SMS o llamada con un codigo de 6 digitos</strong> al telefono de la eSIM</li>
+        <li><em>Pasame ese codigo lo antes posible</em> (tiene un tiempo de expiracion corto)</li>
+        <li>Yo lo ingreso desde mi lado y listo — el numero queda registrado</li>
+      </ol>
+
+      <div class="callout danger">
+        <strong>No te asustes:</strong> puede que WhatsApp Business (la app azul) se desconecte temporalmente del numero.
+        Es normal — despues de completar la configuracion lo reconectamos y queda todo andando junto.
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- After -->
+  <div class="after">
+    <h3>Eso es todo de tu parte</h3>
+    <p>
+      Con estos 5 pasos me das todo lo que necesito para conectar WhatsApp al sistema.
+      Yo me encargo de toda la parte tecnica: crear la app, configurar la API,
+      conectar los mensajes automaticos y dejarlo funcionando.
+    </p>
+    <p style="margin-top: 16px; font-size: 12px; color: var(--text-dim);">
+      Despues de esto, cuando un paciente presione el boton de emergencia,
+      el familiar va a recibir un WhatsApp automatico con la alerta y la ubicacion.
+      Y la operadora va a poder chatear desde WhatsApp Web en su PC.
+    </p>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align: center; margin-top: 32px; font-size: 11px; color: var(--text-dim);">
+    Guia preparada por Jeremias Duhalde · jeremias.duhalde@infocontrol.io
+  </div>
+
+</div>
+
+</body>
+</html>

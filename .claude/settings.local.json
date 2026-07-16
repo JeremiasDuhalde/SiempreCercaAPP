@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(winget install *)",
+      "Read(//c/Users/Jeremias/.ssh/**)",
+      "Bash(ssh-keygen *)",
+      "Bash(ssh *)"
+    ]
+  }
+}
