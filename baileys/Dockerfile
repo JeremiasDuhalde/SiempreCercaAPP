@@ -1,7 +1,7 @@
 FROM node:20-alpine
 
 # Dependencias nativas que Baileys puede necesitar (buffers, crypto)
-RUN apk add --no-cache python3 make g++
+RUN apk add --no-cache python3 make g++ git
 
 WORKDIR /app
 
