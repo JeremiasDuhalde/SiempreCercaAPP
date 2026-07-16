@@ -11,8 +11,8 @@
  */
 
 import express from "express";
-import baileys from "@whiskeysockets/baileys";
-const { default: makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } = baileys;
+const baileys = await import("@whiskeysockets/baileys");
+const { makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } = baileys;
 import pino from "pino";
 import qrcode from "qrcode-terminal";
 
