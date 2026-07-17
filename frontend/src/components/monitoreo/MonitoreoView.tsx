@@ -829,8 +829,27 @@ function ClientFicha() {
         <InlineAvatar client={client} size={52} />
         <div>
           <div style={{ fontSize: 15, fontWeight: 700, color: COLORS.ink }}>{client.name}</div>
-          <div style={{ fontSize: 12, color: COLORS.sub }}>{client.age} años · {client.barrio}</div>
+          <div style={{ fontSize: 12, color: COLORS.sub }}>{client.age > 0 ? `${client.age} años · ` : ""}{client.barrio}</div>
           <div style={{ fontSize: 11, color: COLORS.faint }}>{client.dir} {client.entre}</div>
+          {alert.latitude && alert.longitude && parseFloat(alert.latitude) !== 0 && (
+            <a
+              href={`https://www.google.com/maps?q=${alert.latitude},${alert.longitude}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                fontSize: 11,
+                fontWeight: 600,
+                color: COLORS.blue,
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                marginTop: 4,
+              }}
+            >
+              📍 Ver en Google Maps
+            </a>
+          )}
         </div>
       </div>
 
