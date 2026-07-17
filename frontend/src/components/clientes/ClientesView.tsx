@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { COLORS } from "@/lib/constants";
-import { CLIENTS } from "@/lib/mockData";
 import { initials } from "@/lib/utils";
 import { useAppStore } from "@/stores/useAppStore";
 import { useClients } from "@/hooks/useClients";
@@ -21,34 +20,34 @@ import type { Client } from "@/lib/types";
 
 /* ── API → Client adapter ───────────────────────────────────── */
 
-// The API returns full field names; mock uses short names.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function adaptApiClient(raw: any): Client {
+  const dev = raw.device || {};
   return {
     id: String(raw.id),
-    name: raw.full_name ?? raw.name ?? "Sin nombre",
+    name: raw.name ?? "Sin nombre",
     age: raw.age ?? 0,
-    barrio: raw.neighborhood ?? raw.barrio ?? "",
-    dir: raw.address ?? raw.dir ?? "",
-    entre: raw.address_ref ?? raw.entre ?? "",
-    gx: raw.geo_x ?? raw.gx ?? 0.5,
-    gy: raw.geo_y ?? raw.gy ?? 0.5,
+    barrio: raw.barrio ?? "",
+    dir: raw.address ?? "",
+    entre: raw.address_entre ?? "",
+    gx: 0.5,
+    gy: 0.5,
     color: raw.color ?? COLORS.aqua,
-    device: raw.device_model ?? raw.device ?? "Dispositivo",
-    bat: raw.battery_pct ?? raw.bat ?? 0,
-    sig: raw.signal_bars ?? raw.sig ?? 0,
-    cond: raw.conditions ?? raw.cond ?? [],
-    meds: raw.medications ?? raw.meds ?? [],
+    device: dev.model ?? "Sin dispositivo",
+    bat: dev.battery_pct ?? 0,
+    sig: dev.signal_strength ?? 0,
+    cond: raw.conditions ?? [],
+    meds: raw.medications ? Object.entries(raw.medications).map(([k, v]) => `${k}: ${v}`) : [],
     contacts: (raw.contacts ?? []).map((ct: any) => ({
-      ord: ct.ord ?? ct.order ?? 1,
-      n: ct.n ?? ct.name ?? "",
-      rel: ct.rel ?? ct.relationship ?? "",
-      p: ct.p ?? ct.phone ?? "",
-      acceso: ct.acceso ?? ct.has_key ?? false,
+      ord: ct.order ?? 1,
+      n: ct.name ?? "",
+      rel: ct.relationship_label ?? "",
+      p: ct.phone ?? "",
+      acceso: ct.has_key ?? false,
     })),
-    hr: raw.hr,
-    spo2: raw.spo2,
-    geofence: raw.geofence_active ?? raw.geofence,
+    hr: undefined,
+    spo2: undefined,
+    geofence: raw.geofence ? raw.geofence.is_active : false,
   };
 }
 
@@ -295,11 +294,10 @@ function ClientDetail({ client, onBack }: { client: Client; onBack?: () => void 
 export default function ClientesView() {
   const isMobile = useAppStore((s) => s.isMobile);
 
-  // API data with mock fallback
-  const { data: clientsData } = useClients();
+  const { data: clientsData, isLoading } = useClients();
   const clients: Client[] = clientsData?.items
     ? clientsData.items.map(adaptApiClient)
-    : CLIENTS;
+    : [];
 
   const [selectedId, setSelectedId] = useState<string | null>(clients[0]?.id ?? null);
   const [showDetail, setShowDetail] = useState(false);
@@ -334,14 +332,25 @@ export default function ClientesView() {
           </p>
         </div>
         <div className="flex-1 px-2 pb-4 space-y-1">
-          {clients.map((cl) => (
-            <ClientCard
-              key={cl.id}
-              client={cl}
-              selected={selectedId === cl.id}
-              onClick={() => handleSelect(cl.id)}
-            />
-          ))}
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8" style={{ color: COLORS.sub }}>
+              <span className="text-sm">Cargando...</span>
+            </div>
+          ) : clients.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-8 gap-2" style={{ color: COLORS.sub }}>
+              <span className="text-sm font-medium">Sin clientes cargados</span>
+              <span className="text-xs" style={{ color: COLORS.faint }}>Los clientes se agregan desde el sistema</span>
+            </div>
+          ) : (
+            clients.map((cl) => (
+              <ClientCard
+                key={cl.id}
+                client={cl}
+                selected={selectedId === cl.id}
+                onClick={() => handleSelect(cl.id)}
+              />
+            ))
+          )}
         </div>
       </div>
 

@@ -19,6 +19,7 @@ interface AppState {
   setAlertStatus: (id: string, status: AlertStatus) => void;
   pushAlert: (type?: AlertType, clientId?: string) => void;
   pushRealAlert: (alert: Alert) => void;
+  removeAlert: (id: string) => void;
   clearAlerts: () => void;
   _nextAlertId: number;
 
@@ -69,6 +70,11 @@ export const useAppStore = create<AppState>((set, get) => ({
       selectedAlertId: alert.id,
     });
   },
+  removeAlert: (id) =>
+    set((s) => {
+      const alerts = s.alerts.filter((a) => a.id !== id);
+      return { alerts, selectedAlertId: s.selectedAlertId === id ? null : s.selectedAlertId };
+    }),
   clearAlerts: () => set({ alerts: [], selectedAlertId: null }),
   _nextAlertId: 100,
 

@@ -329,6 +329,32 @@ function AlertCard({
           </span>
         </div>
       </div>
+
+      {/* Botón borrar */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          useAppStore.getState().removeAlert(alert.id);
+        }}
+        style={{
+          flexShrink: 0,
+          width: 24,
+          height: 24,
+          borderRadius: 6,
+          border: "none",
+          background: "transparent",
+          color: COLORS.faint,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 16,
+          lineHeight: 1,
+        }}
+        title="Descartar alerta"
+      >
+        ×
+      </button>
     </button>
   );
 }
