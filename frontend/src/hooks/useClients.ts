@@ -11,7 +11,7 @@ export function useClients(filters?: ClientFilters) {
   return useQuery({
     queryKey: ["clients", filters],
     queryFn: () =>
-      api.get("/api/clients", { params: { per_page: 100, ...filters } }).then((r) => r.data),
+      api.get("/api/clients/", { params: { per_page: 100, ...filters } }).then((r) => r.data),
   });
 }
 

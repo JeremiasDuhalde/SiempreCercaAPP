@@ -15,7 +15,7 @@ export function useAlerts(filters?: AlertFilters) {
   return useQuery({
     queryKey: ["alerts", filters],
     queryFn: () =>
-      api.get("/api/alerts", { params: { per_page: 50, ...filters } }).then((r) => r.data),
+      api.get("/api/alerts/", { params: { per_page: 50, ...filters } }).then((r) => r.data),
   });
 }
 
