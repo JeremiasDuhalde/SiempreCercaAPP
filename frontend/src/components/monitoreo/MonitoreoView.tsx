@@ -370,28 +370,36 @@ function AlertQueue() {
   const pushRealAlert = useAppStore((s) => s.pushRealAlert);
   const setAlertStatus = useAppStore((s) => s.setAlertStatus);
 
-  // Load active alerts from API on mount and merge into the store
-  const { data: apiAlertsData } = useAlerts({ status: "nueva" });
+  // Load active alerts from API on mount (nueva + atendiendo)
+  const { data: apiNuevas } = useAlerts({ status: "nueva" });
+  const { data: apiAtendiendo } = useAlerts({ status: "atendiendo" });
   useEffect(() => {
-    if (!apiAlertsData?.items) return;
+    const allItems = [
+      ...(apiNuevas?.items ?? []),
+      ...(apiAtendiendo?.items ?? []),
+    ];
+    if (allItems.length === 0) return;
     const storeIds = new Set(alerts.map((a) => a.id));
-    for (const raw of apiAlertsData.items) {
+    for (const raw of allItems) {
       const id = String(raw.id);
       if (storeIds.has(id)) continue;
-      const type = (raw.alert_type ?? raw.type ?? "compania") as AlertType;
+      const type = (raw.type ?? "compania") as AlertType;
+      const payload = raw.raw_payload || {};
       pushRealAlert({
         id,
-        clientId: String(raw.client_id ?? raw.clientId ?? ""),
+        clientId: raw.client_id ? String(raw.client_id) : "unknown",
         type: ALERT_TYPES[type] ? type : "compania",
         ts: raw.created_at ? new Date(raw.created_at).getTime() : Date.now(),
         status: (raw.status ?? "nueva") as Alert["status"],
-        clientName: raw.client_name ?? raw.clientName,
-        latitude: raw.latitude ? String(raw.latitude) : undefined,
-        longitude: raw.longitude ? String(raw.longitude) : undefined,
+        clientName: raw.client_name ?? payload.button_serial_number,
+        latitude: payload.latitude ? String(payload.latitude) : undefined,
+        longitude: payload.longitude ? String(payload.longitude) : undefined,
+        buttonSerial: payload.button_serial_number,
+        source: "api",
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiAlertsData]);
+  }, [apiNuevas, apiAtendiendo]);
 
   void setAlertStatus; // referenced in ClientFicha via the store
 
