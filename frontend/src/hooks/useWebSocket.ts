@@ -21,9 +21,9 @@ export function useWebSocket() {
       // En dev con Vite: va directo al backend en 8300
       const proto = window.location.protocol === "https:" ? "wss:" : "ws:";
       const host = window.location.hostname;
-      const port = import.meta.env.DEV ? "8300" : "80";
+      const port = import.meta.env.DEV ? "8300" : window.location.port || (proto === "wss:" ? "443" : "80");
       const token = localStorage.getItem("sc_token") || "";
-      const url = `${proto}//${host}:${port}/ws?token=${token}`;
+      const url = `${proto}//${host}${port === "443" || port === "80" ? "" : `:${port}`}/ws?token=${token}`;
 
       const ws = new WebSocket(url);
       wsRef.current = ws;
