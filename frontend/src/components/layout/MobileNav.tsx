@@ -7,6 +7,7 @@ import {
   BarChart3,
   Shield,
   DollarSign,
+  MessageSquareText,
 } from "lucide-react";
 import { COLORS, MODULES } from "@/lib/constants";
 import { useAppStore } from "@/stores/useAppStore";
@@ -21,6 +22,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   BarChart3,
   Shield,
   DollarSign,
+  MessageSquareText,
 };
 
 export default function MobileNav() {

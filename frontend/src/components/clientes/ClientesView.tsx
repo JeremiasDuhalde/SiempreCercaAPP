@@ -225,8 +225,132 @@ function serializeNotes(text: string, notif: NotifPrefs): string {
 }
 
 /* ─────────────────────────────────────────────────────────────
+   Template preview texts
+───────────────────────────────────────────────────────────── */
+
+const TEMPLATE_PREVIEWS: Record<keyof NotifPrefs, (name: string) => string> = {
+  alerta_emergencia: (name) =>
+    `ALERTA DE EMERGENCIA\n\nEl dispositivo de ${name} ha activado una alerta de emergencia.\n\nUbicacion aproximada: [link GPS]\n\nEstamos controlando la emergencia. Le informaremos apenas tengamos novedades.\n\nCentral: +54 9 2257 65-3843`,
+  alerta_caida: (name) =>
+    `ALERTA — Posible caida detectada\n\nEl dispositivo de ${name} detecto una posible caida.\n\nEstamos comunicandonos con el paciente para confirmar su estado.`,
+  recordatorio_med: (name) =>
+    `Hola ${name}, le recordamos que es hora de tomar su medicacion: [medicamento].\n\nSi necesita ayuda, presione el boton 2 veces.`,
+  recordatorio_turno: (name) =>
+    `Hola ${name}, le recordamos que hoy tiene turno con [especialista].`,
+  recordatorio_enfermera: (name) =>
+    `Hola ${name}, le recordamos que hoy lo/la visitara [enfermera/o].`,
+  recordatorio_monitoreo: (name) =>
+    `Hola ${name}, le recordamos que estamos monitoreandolo las 24 horas.`,
+  parte_diario: (name) =>
+    `Buen dia [familiar], le compartimos el parte diario de ${name}.\n\n[estado del dia]\n\nCalificacion: [score]/100.`,
+  bienvenida: (name) =>
+    `Bienvenido/a al servicio de Siempre Cerca.\n\nAgradecemos nos haya elegido para cuidar a ${name} las 24 horas.`,
+};
+
+/* ── Tooltip component ──────────────────────────────────────── */
+
+function NotifTooltip({ text }: { text: string }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        bottom: "calc(100% + 8px)",
+        left: 0,
+        zIndex: 100,
+        minWidth: 260,
+        maxWidth: 320,
+        background: "#1a1a2e",
+        color: "#e2e8f0",
+        borderRadius: 10,
+        padding: "10px 12px",
+        fontSize: 11,
+        lineHeight: 1.6,
+        whiteSpace: "pre-wrap",
+        fontFamily: "monospace",
+        boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        pointerEvents: "none",
+      }}
+    >
+      {text}
+      {/* Arrow */}
+      <div
+        style={{
+          position: "absolute",
+          top: "100%",
+          left: 16,
+          width: 0,
+          height: 0,
+          borderLeft: "6px solid transparent",
+          borderRight: "6px solid transparent",
+          borderTop: "6px solid #1a1a2e",
+        }}
+      />
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────
    Sub-components
 ───────────────────────────────────────────────────────────── */
+
+function NotifToggleRow({
+  label,
+  active,
+  previewText,
+  onToggle,
+}: {
+  label: string;
+  active: boolean;
+  previewText: string;
+  onToggle: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <label className="flex items-center gap-3 cursor-pointer" style={{ position: "relative" }}>
+      <div
+        onClick={onToggle}
+        className="w-9 h-5 rounded-full relative transition-colors cursor-pointer shrink-0"
+        style={{ background: active ? COLORS.aqua : alpha30(COLORS.sub) }}
+      >
+        <div
+          className="absolute top-0.5 w-4 h-4 rounded-full transition-transform"
+          style={{ background: "#fff", left: active ? "calc(100% - 18px)" : "2px" }}
+        />
+      </div>
+      <span
+        className="text-xs flex-1"
+        style={{ color: COLORS.ink }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        {label}
+        <span
+          style={{
+            display: "inline-block",
+            marginLeft: 5,
+            width: 13,
+            height: 13,
+            borderRadius: "50%",
+            background: COLORS.panel2,
+            border: `1px solid ${COLORS.line}`,
+            color: COLORS.faint,
+            fontSize: 9,
+            fontWeight: 700,
+            textAlign: "center",
+            lineHeight: "13px",
+            verticalAlign: "middle",
+            cursor: "help",
+          }}
+        >
+          ?
+        </span>
+      </span>
+      {hovered && <NotifTooltip text={previewText} />}
+    </label>
+  );
+}
 
 function Avatar({ name, color, size = 44 }: { name: string; color: string; size?: number }) {
   return (
@@ -752,33 +876,18 @@ function ClientForm({ initial, onSaved, onCancel, isMobile }: ClientFormProps) {
           <p className="text-xs font-bold tracking-wider mb-2" style={{ color: COLORS.sub }}>
             PREFERENCIAS DE NOTIFICACIÓN
           </p>
-          {(Object.keys(NOTIF_LABELS) as (keyof NotifPrefs)[]).map((key) => (
-            <label
-              key={key}
-              className="flex items-center gap-3 cursor-pointer"
-            >
-              <div
-                onClick={() => toggleNotif(key)}
-                className="w-9 h-5 rounded-full relative transition-colors cursor-pointer shrink-0"
-                style={{
-                  background: notifPrefs[key]
-                    ? COLORS.aqua
-                    : alpha30(COLORS.sub),
-                }}
-              >
-                <div
-                  className="absolute top-0.5 w-4 h-4 rounded-full transition-transform"
-                  style={{
-                    background: "#fff",
-                    left: notifPrefs[key] ? "calc(100% - 18px)" : "2px",
-                  }}
-                />
-              </div>
-              <span className="text-xs" style={{ color: COLORS.ink }}>
-                {NOTIF_LABELS[key]}
-              </span>
-            </label>
-          ))}
+          {(Object.keys(NOTIF_LABELS) as (keyof NotifPrefs)[]).map((key) => {
+            const previewText = TEMPLATE_PREVIEWS[key](name || "el paciente");
+            return (
+              <NotifToggleRow
+                key={key}
+                label={NOTIF_LABELS[key]}
+                active={notifPrefs[key]}
+                previewText={previewText}
+                onToggle={() => toggleNotif(key)}
+              />
+            );
+          })}
         </div>
 
         {/* Notas */}

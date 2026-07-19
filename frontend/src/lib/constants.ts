@@ -175,4 +175,5 @@ export const MODULES = [
   { key: "reportes", label: "Reportes", icon: "BarChart3" },
   { key: "admin", label: "Usuarios", icon: "Shield" },
   { key: "costos", label: "Costos", icon: "DollarSign" },
+  { key: "templates", label: "Templates", icon: "MessageSquareText" },
 ] as const;

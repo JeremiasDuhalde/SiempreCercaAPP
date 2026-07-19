@@ -12,6 +12,7 @@ import {
   Trash2,
   LogOut,
   DollarSign,
+  MessageSquareText,
   Sun,
   Moon,
 } from "lucide-react";
@@ -30,6 +31,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   BarChart3,
   Shield,
   DollarSign,
+  MessageSquareText,
 };
 
 export default function Sidebar() {
