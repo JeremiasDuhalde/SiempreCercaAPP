@@ -4,6 +4,7 @@ import {
   HeartPulse,
   MessageCircle,
   CalendarClock,
+  ClipboardCheck,
   BarChart3,
   Shield,
   ShieldCheck,
@@ -13,6 +14,7 @@ import {
   LogOut,
   DollarSign,
   MessageSquareText,
+  Settings,
   Sun,
   Moon,
 } from "lucide-react";
@@ -28,10 +30,12 @@ const ICON_MAP: Record<string, LucideIcon> = {
   HeartPulse,
   MessageCircle,
   CalendarClock,
+  ClipboardCheck,
   BarChart3,
   Shield,
   DollarSign,
   MessageSquareText,
+  Settings,
 };
 
 export default function Sidebar() {
@@ -60,7 +64,7 @@ export default function Sidebar() {
     >
       {/* Nav items */}
       <nav className="sc-scroll" style={{ flex: 1, overflowY: "auto", padding: "12px 8px" }}>
-        {MODULES.map((mod) => {
+        {MODULES.filter((mod) => mod.key !== "config" || user?.role === "admin").map((mod) => {
           const Icon = ICON_MAP[mod.icon];
           const active = activeModule === mod.key;
           return (

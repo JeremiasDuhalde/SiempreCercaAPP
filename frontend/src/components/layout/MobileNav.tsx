@@ -4,13 +4,16 @@ import {
   HeartPulse,
   MessageCircle,
   CalendarClock,
+  ClipboardCheck,
   BarChart3,
   Shield,
   DollarSign,
   MessageSquareText,
+  Settings,
 } from "lucide-react";
 import { COLORS, MODULES } from "@/lib/constants";
 import { useAppStore } from "@/stores/useAppStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import type { LucideIcon } from "lucide-react";
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -19,16 +22,19 @@ const ICON_MAP: Record<string, LucideIcon> = {
   HeartPulse,
   MessageCircle,
   CalendarClock,
+  ClipboardCheck,
   BarChart3,
   Shield,
   DollarSign,
   MessageSquareText,
+  Settings,
 };
 
 export default function MobileNav() {
   const activeModule = useAppStore((s) => s.activeModule);
   const setActiveModule = useAppStore((s) => s.setActiveModule);
   const alerts = useAppStore((s) => s.alerts);
+  const user = useAuthStore((s) => s.user);
 
   const activeAlerts = alerts.filter((a) => a.status !== "resuelta").length;
 
@@ -45,7 +51,7 @@ export default function MobileNav() {
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >
-      {MODULES.map((mod) => {
+      {MODULES.filter((mod) => mod.key !== "config" || user?.role === "admin").map((mod) => {
         const Icon = ICON_MAP[mod.icon];
         const active = activeModule === mod.key;
         return (

@@ -172,8 +172,10 @@ export const MODULES = [
   { key: "bienestar", label: "Bienestar", icon: "HeartPulse" },
   { key: "mensajeria", label: "Mensajería", icon: "MessageCircle" },
   { key: "agenda", label: "Agenda", icon: "CalendarClock" },
+  { key: "tareas", label: "Tareas", icon: "ClipboardCheck" },
   { key: "reportes", label: "Reportes", icon: "BarChart3" },
   { key: "admin", label: "Usuarios", icon: "Shield" },
   { key: "costos", label: "Costos", icon: "DollarSign" },
   { key: "templates", label: "Templates", icon: "MessageSquareText" },
+  { key: "config", label: "Configuración", icon: "Settings" },
 ] as const;

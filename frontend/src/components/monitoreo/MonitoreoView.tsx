@@ -30,6 +30,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { COLORS, ALERT_TYPES, ALERT_STATUSES, CRITICAL_CONDITIONS, colorTint } from "@/lib/constants";
+import { api } from "@/lib/api";
 import type { AlertType } from "@/lib/constants";
 import type { Alert, Client } from "@/lib/types";
 import { CLIENTS } from "@/lib/mockData";
@@ -809,7 +810,25 @@ function ClientFicha() {
       label: "Despachar móvil",
       icon: Truck,
       color: COLORS.amber,
-      action: () => addLog(`Móvil despachado a ${client.dir}`),
+      action: async () => {
+        try {
+          await api.post("/api/dispatch/emp", {
+            client_id: parseInt(client.id) || null,
+            client_name: client.name,
+            client_age: client.age,
+            client_phone: client.contacts[0]?.p || "",
+            family_phone: client.contacts[0]?.p || "",
+            location:
+              alert.latitude && alert.longitude
+                ? `https://www.google.com/maps?q=${alert.latitude},${alert.longitude}`
+                : client.dir,
+            alert_type: meta.label,
+          });
+          addLog(`Despacho EMP enviado — WhatsApp a emergencias + llamada automática`);
+        } catch (err) {
+          addLog(`Error al despachar EMP: ${err}`);
+        }
+      },
     },
     {
       label: "Marcar resuelta",

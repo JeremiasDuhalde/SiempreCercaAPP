@@ -6,10 +6,12 @@ import ClientesView from "@/components/clientes/ClientesView";
 import BienestarView from "@/components/bienestar/BienestarView";
 import MensajeriaView from "@/components/mensajeria/MensajeriaView";
 import AgendaView from "@/components/agenda/AgendaView";
+import TasksView from "@/components/tasks/TasksView";
 import ReportesView from "@/components/reportes/ReportesView";
 import UsersView from "@/components/admin/UsersView";
 import CostsView from "@/components/admin/CostsView";
 import TemplatesView from "@/components/admin/TemplatesView";
+import ConfigView from "@/components/admin/ConfigView";
 
 const VIEWS: Record<string, React.FC> = {
   monitoreo: MonitoreoView,
@@ -17,10 +19,12 @@ const VIEWS: Record<string, React.FC> = {
   bienestar: BienestarView,
   mensajeria: MensajeriaView,
   agenda: AgendaView,
+  tareas: TasksView,
   reportes: ReportesView,
   admin: UsersView,
   costos: CostsView,
   templates: TemplatesView,
+  config: ConfigView,
 };
 
 export default function DashboardPage() {
