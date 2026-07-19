@@ -764,9 +764,42 @@ function ClientFicha() {
   const addLog = useAppStore((s) => s.addLog);
   const log = useAppStore((s) => s.log);
   const updateAlertStatus = useUpdateAlertStatus();
+  const [apiClient, setApiClient] = useState<Client | null>(null);
 
   const alert = alerts.find((a) => a.id === selectedAlertId);
-  const client = alert ? clientById(alert.clientId, alert) : undefined;
+
+  // Fetch real client data from API if we have a numeric client_id
+  useEffect(() => {
+    if (!alert) { setApiClient(null); return; }
+    const numId = parseInt(alert.clientId, 10);
+    if (isNaN(numId) || alert.clientId === "unknown") { setApiClient(null); return; }
+    import("@/lib/api").then(({ api }) => {
+      api.get(`/api/clients/${numId}`).then((res) => {
+        const raw = res.data;
+        const dev = raw.device || {};
+        setApiClient({
+          id: String(raw.id),
+          name: raw.name || "Sin nombre",
+          age: raw.age || 0,
+          barrio: raw.barrio || "",
+          dir: raw.address || "",
+          entre: raw.address_entre || "",
+          gx: 0.5, gy: 0.5,
+          color: raw.color || "#FF5A5F",
+          device: dev.model || "FLIC",
+          bat: dev.battery_pct || 0,
+          sig: dev.signal_strength || 0,
+          cond: raw.conditions || [],
+          meds: raw.medications ? Object.entries(raw.medications).map(([k, v]) => `${k}: ${v}`) : [],
+          contacts: (raw.contacts || []).map((ct: any) => ({
+            ord: ct.order || 1, n: ct.name || "", rel: ct.relationship_label || "", p: ct.phone || "", acceso: ct.has_key || false,
+          })),
+        });
+      }).catch(() => setApiClient(null));
+    });
+  }, [alert?.clientId, alert?.id]);
+
+  const client = apiClient || (alert ? clientById(alert.clientId, alert) : undefined);
 
   if (!alert || !client) {
     return (
