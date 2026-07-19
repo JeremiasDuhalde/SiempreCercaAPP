@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { COLORS, ALERT_TYPES } from "@/lib/constants";
+import { useThemeStore } from "@/stores/useThemeStore";
 import type { Alert, Client } from "@/lib/types";
 
 /* ------------------------------------------------------------------ */
@@ -143,15 +144,21 @@ export default function RealMap({
   const markersRef = useRef<Map<string, { el: HTMLDivElement; marker: maplibregl.Marker }>>(
     new Map()
   );
+  const theme = useThemeStore((s) => s.theme);
 
   // Initialize map
   useEffect(() => {
     ensurePulseCSS();
     if (!containerRef.current) return;
 
+    const styleUrl =
+      theme === "dark"
+        ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+        : "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+      style: styleUrl,
       center: [-56.70, -36.56],
       zoom: 11,
       attributionControl: false,
@@ -170,6 +177,20 @@ export default function RealMap({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Swap map tile style when theme changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const styleUrl =
+      theme === "dark"
+        ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
+        : "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+    // Clear cached markers before style swap (they'll re-render in the marker effects)
+    markersRef.current.forEach(({ marker }) => marker.remove());
+    markersRef.current.clear();
+    map.setStyle(styleUrl);
+  }, [theme]);
 
   // Add/update geofence circles when map loads and clients change
   useEffect(() => {
@@ -447,7 +468,7 @@ export default function RealMap({
           position: "absolute",
           bottom: 32,
           left: 12,
-          backgroundColor: `${COLORS.panel}ee`,
+          backgroundColor: "var(--sc-panel-a93)",
           border: `1px solid ${COLORS.line}`,
           borderRadius: 8,
           padding: "8px 12px",

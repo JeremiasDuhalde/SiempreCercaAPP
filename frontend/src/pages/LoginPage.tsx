@@ -1,18 +1,6 @@
 import { useState, FormEvent } from "react";
 import { useAuthStore } from "@/stores/useAuthStore";
-
-const COLORS = {
-  bg: "#15131C",
-  panel: "#1E1B29",
-  panel2: "#262232",
-  line: "#352F45",
-  ink: "#F3EFE9",
-  sub: "#9A93AD",
-  faint: "#6A6480",
-  coral: "#FF5A5F",
-  aqua: "#37C8A0",
-  blue: "#5AA9FF",
-};
+import { COLORS } from "@/lib/constants";
 
 export default function LoginPage() {
   const { login, error, isLoading } = useAuthStore();
@@ -155,8 +143,8 @@ export default function LoginPage() {
           {error && (
             <div
               style={{
-                background: `${COLORS.coral}15`,
-                border: `1px solid ${COLORS.coral}40`,
+                background: "var(--sc-coral-a08)",
+                border: "1px solid var(--sc-coral-a25)",
                 borderRadius: 8,
                 padding: "10px 14px",
                 marginBottom: 16,

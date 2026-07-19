@@ -1,0 +1,29 @@
+Resultados envio de templates WhatsApp a Meta API
+Fecha: 2026-07-02
+WABA ID: 1020957603912482
+Categoria: UTILITY | Idioma: es_AR
+=======================================================
+
+ #  | Template                  | ID                  | Status
+----|---------------------------|---------------------|--------
+ 1  | alerta_emergencia         | 1034849105803687    | PENDING
+ 2  | alerta_caida              | 1014667311205493    | PENDING
+ 3  | alerta_resuelta_error     | 1535455811608171    | PENDING
+ 4  | alerta_resuelta_estable   | 2975053539552991    | PENDING
+ 5  | alerta_resuelta_verde     | 1930900537603041    | PENDING
+ 6  | recordatorio_medicacion   | 1687993959174305    | PENDING
+ 7  | recordatorio_turno        | 1711923356729009    | PENDING
+ 8  | recordatorio_visita       | 4476801769252326    | PENDING
+ 9  | recordatorio_monitoreo    | 1704087597463901    | PENDING
+10  | aviso_simulacro           | 1363069875160186    | PENDING
+11  | parte_familiar_diario     | 4472654493002956    | PENDING
+12  | info_numero_emergencia    | 1034974785935383    | PENDING
+13  | info_cobertura            | 2237948300288671    | PENDING
+14  | bienvenida_servicio       | 984326114641238     | PENDING
+
+Total enviados: 14/14
+Errores: 0
+
+Nota: Estado PENDING es el estado inicial normal. Meta revisa los templates
+y los aprueba (APPROVED) o rechaza (REJECTED) tipicamente en minutos/horas.
+Verificar estado final en: https://business.facebook.com/wa/manage/message-templates/

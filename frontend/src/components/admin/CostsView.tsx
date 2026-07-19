@@ -305,7 +305,7 @@ export default function CostsView() {
         {error && (
           <div
             className="rounded-xl px-4 py-3 mb-6 text-sm"
-            style={{ background: `${COLORS.coral}22`, color: COLORS.coral, border: `1px solid ${COLORS.coral}44` }}
+            style={{ background: "var(--sc-coral-a13)", color: COLORS.coral, border: "1px solid var(--sc-coral-a25)" }}
           >
             {error}
           </div>
@@ -344,7 +344,7 @@ export default function CostsView() {
               </div>
               <div
                 className="p-4 rounded-2xl"
-                style={{ background: `${COLORS.violet}22` }}
+                style={{ background: "var(--sc-violet-a13)" }}
               >
                 <DollarSign size={28} style={{ color: COLORS.violet }} />
               </div>

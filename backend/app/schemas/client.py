@@ -11,6 +11,22 @@ from pydantic import BaseModel, ConfigDict
 # ---------------------------------------------------------------------------
 
 
+class ContactCreate(BaseModel):
+    order: int = 1
+    name: str
+    relationship_label: str = ""
+    phone: str
+    has_key: bool = False
+
+
+class ContactUpdate(BaseModel):
+    order: int | None = None
+    name: str | None = None
+    relationship_label: str | None = None
+    phone: str | None = None
+    has_key: bool | None = None
+
+
 class ContactOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templates WhatsApp Final — Siempre Cerca SRL</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0e19; color: #e8edf5; padding: 40px 20px; line-height: 1.6; }
+  .container { max-width: 900px; margin: 0 auto; }
+  h1 { text-align: center; font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+  h1 span { background: linear-gradient(135deg, #60a5fa, #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .subtitle { text-align: center; font-size: 13px; color: #8899b4; margin-bottom: 32px; }
+
+  .category { margin-bottom: 40px; }
+  .cat-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px; border-radius: 12px; margin-bottom: 16px;
+  }
+  .cat-header h2 { font-size: 16px; font-weight: 700; }
+  .cat-header .cat-desc { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .cat-red { background: rgba(255,90,95,0.12); border: 1px solid rgba(255,90,95,0.3); color: #ff5a5f; }
+  .cat-amber { background: rgba(247,162,59,0.12); border: 1px solid rgba(247,162,59,0.3); color: #f7a23b; }
+  .cat-blue { background: rgba(90,169,255,0.12); border: 1px solid rgba(90,169,255,0.3); color: #5aa9ff; }
+  .cat-green { background: rgba(55,200,160,0.12); border: 1px solid rgba(55,200,160,0.3); color: #37c8a0; }
+  .cat-purple { background: rgba(167,139,250,0.12); border: 1px solid rgba(167,139,250,0.3); color: #a78bfa; }
+
+  .tpl-card {
+    background: #111827; border: 1px solid #2a3550; border-radius: 12px;
+    margin-bottom: 14px; overflow: hidden;
+  }
+  .tpl-header {
+    padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid #2a3550;
+  }
+  .tpl-name { font-size: 14px; font-weight: 700; }
+  .tpl-code { font-size: 10px; color: #5a6b87; font-family: monospace; background: #1a2236; padding: 2px 8px; border-radius: 4px; }
+  .tpl-body { padding: 18px; }
+
+  .msg-preview {
+    background: #1a2236; border: 1px solid #2a3550; border-radius: 10px;
+    padding: 16px; font-size: 13px; line-height: 1.8; color: #e8edf5;
+  }
+  .msg-preview .label { font-size: 10px; font-weight: 700; color: #5a6b87; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .var { background: rgba(90,169,255,0.15); color: #5aa9ff; padding: 1px 6px; border-radius: 4px; font-weight: 600; font-size: 12px; }
+
+  .example {
+    background: #212c42; border: 1px solid #334264; border-radius: 8px;
+    padding: 12px 16px; margin-top: 12px; font-size: 12px; color: #8899b4; line-height: 1.8;
+  }
+  .example .label { font-size: 10px; font-weight: 700; color: #37c8a0; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  .meta-info {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin-bottom: 14px; font-size: 11px;
+  }
+  .meta-item { display: flex; gap: 6px; }
+  .meta-label { color: #5a6b87; font-weight: 600; min-width: 100px; }
+  .meta-value { color: #8899b4; }
+
+  .cat-schema {
+    background: #111827; border: 1px solid #2a3550; border-radius: 12px;
+    padding: 20px; margin-top: 32px;
+  }
+  .cat-schema h3 { font-size: 14px; font-weight: 700; color: #60a5fa; margin-bottom: 12px; }
+  .schema-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+  .schema-table th { text-align: left; padding: 8px 12px; background: #1a2236; color: #5a6b87; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .schema-table td { padding: 8px 12px; border-bottom: 1px solid #1a2236; color: #8899b4; }
+  .schema-table td:first-child { color: #e8edf5; font-weight: 600; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 50px; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; }
+  .tag-auto { background: rgba(55,200,160,0.15); color: #37c8a0; border: 1px solid rgba(55,200,160,0.25); }
+  .tag-manual { background: rgba(90,169,255,0.15); color: #5aa9ff; border: 1px solid rgba(90,169,255,0.25); }
+  .tag-opcion { background: rgba(167,139,250,0.15); color: #a78bfa; border: 1px solid rgba(167,139,250,0.25); }
+
+  .footer { text-align: center; margin-top: 40px; font-size: 11px; color: #5a6b87; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1><span>Templates WhatsApp</span> — Version Final</h1>
+  <p class="subtitle">Siempre Cerca SRL · Mensajes automaticos del sistema de monitoreo</p>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- CATEGORIA 1: EMERGENCIAS -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="category">
+    <div class="cat-header cat-red">
+      <div>
+        <h2>EMERGENCIAS</h2>
+        <div class="cat-desc">Se envian automaticamente al contacto del paciente cuando se activa una alerta</div>
+      </div>
+    </div>
+
+    <!-- Template 1.1 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Alerta de emergencia SOS</span>
+        <span class="tpl-code">alerta_emergencia</span>
+      </div>
+      <div class="tpl-body">
+        <div class="meta-info">
+          <div class="meta-item"><span class="meta-label">Disparo</span><span class="meta-value">Automatico — boton SOS</span></div>
+          <div class="meta-item"><span class="meta-label">Destinatario</span><span class="meta-value">Contacto de emergencia</span></div>
+          <div class="meta-item"><span class="meta-label">Categoria Meta</span><span class="meta-value">UTILITY</span></div>
+          <div class="meta-item"><span class="meta-label">Prioridad</span><span class="meta-value">ROJA — critica</span></div>
+        </div>
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          ALERTA DE EMERGENCIA<br><br>
+          El dispositivo de <span class="var">{{1}}</span> ha activado una alerta de emergencia.<br><br>
+          Ubicacion aproximada: <span class="var">{{2}}</span><br><br>
+          Estamos controlando la emergencia. Le informaremos apenas tengamos novedades.<br><br>
+          Central de monitoreo: <span class="var">{{3}}</span><br><br>
+          — Equipo Siempre Cerca
+        </div>
+        <div class="example">
+          <div class="label">Ejemplo real</div>
+          ALERTA DE EMERGENCIA<br><br>
+          El dispositivo de Rosa Pereyra ha activado una alerta de emergencia.<br><br>
+          Ubicacion aproximada: https://maps.google.com/?q=-36.55,-56.70<br><br>
+          Estamos controlando la emergencia. Le informaremos apenas tengamos novedades.<br><br>
+          Central de monitoreo: +54 9 2257 65-3843<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 1.2 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Caida detectada</span>
+        <span class="tpl-code">alerta_caida</span>
+      </div>
+      <div class="tpl-body">
+        <div class="meta-info">
+          <div class="meta-item"><span class="meta-label">Disparo</span><span class="meta-value">Automatico — sensor caida</span></div>
+          <div class="meta-item"><span class="meta-label">Destinatario</span><span class="meta-value">Contacto de emergencia</span></div>
+          <div class="meta-item"><span class="meta-label">Categoria Meta</span><span class="meta-value">UTILITY</span></div>
+          <div class="meta-item"><span class="meta-label">Prioridad</span><span class="meta-value">ROJA — critica</span></div>
+        </div>
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          ALERTA — Posible caida detectada<br><br>
+          El dispositivo de <span class="var">{{1}}</span> detecto una posible caida.<br><br>
+          Estamos comunicandonos con el paciente para confirmar su estado. Le informaremos apenas tengamos novedades.<br><br>
+          Central de monitoreo: <span class="var">{{2}}</span><br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 1.3 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Emergencia resuelta — Boton por error</span>
+        <span class="tpl-code">alerta_resuelta_error</span>
+      </div>
+      <div class="tpl-body">
+        <div class="meta-info">
+          <div class="meta-item"><span class="meta-label">Disparo</span><span class="meta-value">Manual — operadora resuelve</span></div>
+          <div class="meta-item"><span class="meta-label">Destinatario</span><span class="meta-value">Contacto que recibio la alerta</span></div>
+          <div class="meta-item"><span class="meta-label">Categoria Meta</span><span class="meta-value">UTILITY</span></div>
+          <div class="meta-item"><span class="meta-label">Prioridad</span><span class="meta-value">VERDE — informativo</span></div>
+        </div>
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le informamos que la alerta de <span class="var">{{2}}</span> fue atendida y resuelta.<br><br>
+          Nos comunicamos con el paciente y se encuentra bien. Presiono el boton por error.<br><br>
+          Cualquier consulta estamos a disposicion.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 1.4 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Emergencia resuelta — Paciente estable</span>
+        <span class="tpl-code">alerta_resuelta_estable</span>
+      </div>
+      <div class="tpl-body">
+        <div class="meta-info">
+          <div class="meta-item"><span class="meta-label">Disparo</span><span class="meta-value">Manual — operadora resuelve</span></div>
+          <div class="meta-item"><span class="meta-label">Destinatario</span><span class="meta-value">Contacto que recibio la alerta</span></div>
+          <div class="meta-item"><span class="meta-label">Categoria Meta</span><span class="meta-value">UTILITY</span></div>
+          <div class="meta-item"><span class="meta-label">Prioridad</span><span class="meta-value">VERDE — informativo</span></div>
+        </div>
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le informamos que la alerta de <span class="var">{{2}}</span> fue atendida y resuelta.<br><br>
+          Nos comunicamos con el paciente y se encuentra estable. La emergencia fue controlada.<br><br>
+          Cualquier consulta estamos a disposicion.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 1.5 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Emergencia resuelta — Emergencia verde</span>
+        <span class="tpl-code">alerta_resuelta_verde</span>
+      </div>
+      <div class="tpl-body">
+        <div class="meta-info">
+          <div class="meta-item"><span class="meta-label">Disparo</span><span class="meta-value">Manual — operadora resuelve</span></div>
+          <div class="meta-item"><span class="meta-label">Destinatario</span><span class="meta-value">Contacto que recibio la alerta</span></div>
+          <div class="meta-item"><span class="meta-label">Categoria Meta</span><span class="meta-value">UTILITY</span></div>
+          <div class="meta-item"><span class="meta-label">Prioridad</span><span class="meta-value">VERDE — informativo</span></div>
+        </div>
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le informamos que la alerta de <span class="var">{{2}}</span> fue atendida.<br><br>
+          La emergencia es de tipo verde. Le recordamos que nuestro servicio de emergencia cubre situaciones rojo y amarillo. Las emergencias verdes se abonan por separado.<br><br>
+          Cualquier consulta estamos a disposicion.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- CATEGORIA 2: RECORDATORIOS AL PACIENTE -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="category">
+    <div class="cat-header cat-amber">
+      <div>
+        <h2>RECORDATORIOS AL PACIENTE</h2>
+        <div class="cat-desc">Se envian al paciente o su cuidador segun la programacion</div>
+      </div>
+    </div>
+
+    <!-- Template 2.1 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Recordatorio de medicacion</span>
+        <span class="tpl-code">recordatorio_medicacion</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le recordamos que es hora de tomar su medicacion: <span class="var">{{2}}</span>.<br><br>
+          Si necesita ayuda, presione el boton de su dispositivo 2 veces.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 2.2 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Recordatorio de turno medico</span>
+        <span class="tpl-code">recordatorio_turno</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le recordamos que hoy tiene turno con <span class="var">{{2}}</span>.<br><br>
+          Si necesita ayuda para trasladarse, presione el boton de su dispositivo 2 veces.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+        <div class="example">
+          <div class="label">Ejemplo</div>
+          Hola Rosa, le recordamos que hoy tiene turno con el Dr. Suarez (Cardiologia) a las 15:00.<br><br>
+          Si necesita ayuda para trasladarse, presione el boton de su dispositivo 2 veces.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 2.3 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Recordatorio visita enfermera/o</span>
+        <span class="tpl-code">recordatorio_visita</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le recordamos que hoy lo/la visitara <span class="var">{{2}}</span>.<br><br>
+          Si necesita algo antes de la visita, presione el boton de su dispositivo 2 veces.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+        <div class="example">
+          <div class="label">Ejemplo</div>
+          Hola Antonio, le recordamos que hoy lo visitara la enfermera Liliana a las 10:00.<br><br>
+          Si necesita algo antes de la visita, presione el boton de su dispositivo 2 veces.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 2.4 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Recordatorio monitoreo 24hs</span>
+        <span class="tpl-code">recordatorio_monitoreo</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le recordamos que estamos monitoreandolo las 24 horas del dia. Ante cualquier emergencia presione el boton de su dispositivo 2 veces.<br><br>
+          Central de monitoreo: <span class="var">{{2}}</span><br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 2.5 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Aviso de simulacro</span>
+        <span class="tpl-code">aviso_simulacro</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le informamos que hoy estaremos realizando un simulacro para verificar que su equipo funcione perfecto.<br><br>
+          No se preocupe, es solo una prueba de rutina. No es necesario que haga nada.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- CATEGORIA 3: INFORMACION PARA LA FAMILIA -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="category">
+    <div class="cat-header cat-blue">
+      <div>
+        <h2>INFORMACION PARA LA FAMILIA</h2>
+        <div class="cat-desc">Se envian al familiar/contacto del paciente</div>
+      </div>
+    </div>
+
+    <!-- Template 3.1 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Parte diario</span>
+        <span class="tpl-code">parte_familiar_diario</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Buen dia <span class="var">{{1}}</span>, le compartimos el parte diario de <span class="var">{{2}}</span>.<br><br>
+          <span class="var">{{3}}</span><br><br>
+          Calificacion general del dia: <span class="var">{{4}}</span>/100.<br><br>
+          Cualquier consulta estamos a disposicion en el <span class="var">{{5}}</span>.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 3.2 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Recordatorio numero de emergencia</span>
+        <span class="tpl-code">info_numero_emergencia</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le recordamos que nuestro numero de emergencia es <span class="var">{{2}}</span>.<br><br>
+          Puede comunicarse las 24 horas ante cualquier consulta o emergencia relacionada con <span class="var">{{3}}</span>.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+
+    <!-- Template 3.3 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Informacion sobre cobertura del servicio</span>
+        <span class="tpl-code">info_cobertura</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, le recordamos que nuestro servicio de emergencia cubre situaciones de prioridad roja y amarilla sin costo adicional.<br><br>
+          Las emergencias de tipo verde (no urgentes) se abonan por separado.<br><br>
+          Ante cualquier duda comuniquese al <span class="var">{{2}}</span>.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- CATEGORIA 4: BIENVENIDA Y ONBOARDING -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="category">
+    <div class="cat-header cat-green">
+      <div>
+        <h2>BIENVENIDA Y ONBOARDING</h2>
+        <div class="cat-desc">Se envian al dar de alta un nuevo paciente</div>
+      </div>
+    </div>
+
+    <!-- Template 4.1 -->
+    <div class="tpl-card">
+      <div class="tpl-header">
+        <span class="tpl-name">Bienvenida al servicio</span>
+        <span class="tpl-code">bienvenida_servicio</span>
+      </div>
+      <div class="tpl-body">
+        <div class="msg-preview">
+          <div class="label">Mensaje</div>
+          Hola <span class="var">{{1}}</span>, bienvenido/a al servicio de Siempre Cerca.<br><br>
+          Agradecemos nos haya elegido para cuidar a <span class="var">{{2}}</span> las 24 horas. Ya se encuentra activo/a dentro de nuestro sistema de monitoreo.<br><br>
+          A partir de ahora recibira notificaciones por este medio ante cualquier novedad. Tambien le enviaremos un parte diario con el estado general del paciente.<br><br>
+          Por cualquier consulta le dejamos nuestros telefonos de contacto:<br>
+          Central de monitoreo: <span class="var">{{3}}</span><br><br>
+          Estamos a plena disposicion.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+        <div class="example">
+          <div class="label">Ejemplo</div>
+          Hola Mariela, bienvenido/a al servicio de Siempre Cerca.<br><br>
+          Agradecemos nos haya elegido para cuidar a Olga Fernandez las 24 horas. Ya se encuentra activa dentro de nuestro sistema de monitoreo.<br><br>
+          A partir de ahora recibira notificaciones por este medio ante cualquier novedad. Tambien le enviaremos un parte diario con el estado general del paciente.<br><br>
+          Por cualquier consulta le dejamos nuestros telefonos de contacto:<br>
+          Central de monitoreo: +54 9 2257 65-3843<br><br>
+          Estamos a plena disposicion.<br><br>
+          — Equipo Siempre Cerca
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ESQUEMA DE CATEGORIZACION -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <div class="cat-schema">
+    <h3>Esquema de categorizacion y asignacion</h3>
+    <p style="font-size: 12px; color: #8899b4; margin-bottom: 16px;">
+      Cada template se puede activar/desactivar por paciente. La operadora elige la resolucion al cerrar una alerta.
+    </p>
+    <table class="schema-table">
+      <thead>
+        <tr>
+          <th>Template</th>
+          <th>Categoria</th>
+          <th>Disparo</th>
+          <th>Destinatario</th>
+          <th>Configurable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>alerta_emergencia</td>
+          <td style="color:#ff5a5f">Emergencia</td>
+          <td><span class="tag tag-auto">Automatico</span> Boton SOS</td>
+          <td>Contacto emergencia</td>
+          <td>Activar/desactivar por paciente</td>
+        </tr>
+        <tr>
+          <td>alerta_caida</td>
+          <td style="color:#ff5a5f">Emergencia</td>
+          <td><span class="tag tag-auto">Automatico</span> Sensor caida</td>
+          <td>Contacto emergencia</td>
+          <td>Activar/desactivar por paciente</td>
+        </tr>
+        <tr>
+          <td>alerta_resuelta_error</td>
+          <td style="color:#37c8a0">Resolucion</td>
+          <td><span class="tag tag-manual">Manual</span> Operadora elige</td>
+          <td>Contacto que recibio alerta</td>
+          <td>Opcion al resolver: "Boton por error"</td>
+        </tr>
+        <tr>
+          <td>alerta_resuelta_estable</td>
+          <td style="color:#37c8a0">Resolucion</td>
+          <td><span class="tag tag-manual">Manual</span> Operadora elige</td>
+          <td>Contacto que recibio alerta</td>
+          <td>Opcion al resolver: "Paciente estable"</td>
+        </tr>
+        <tr>
+          <td>alerta_resuelta_verde</td>
+          <td style="color:#37c8a0">Resolucion</td>
+          <td><span class="tag tag-manual">Manual</span> Operadora elige</td>
+          <td>Contacto que recibio alerta</td>
+          <td>Opcion al resolver: "Emergencia verde"</td>
+        </tr>
+        <tr>
+          <td>recordatorio_medicacion</td>
+          <td style="color:#f7a23b">Recordatorio</td>
+          <td><span class="tag tag-auto">Automatico</span> Programado</td>
+          <td>Paciente</td>
+          <td>Activar + horarios por paciente</td>
+        </tr>
+        <tr>
+          <td>recordatorio_turno</td>
+          <td style="color:#f7a23b">Recordatorio</td>
+          <td><span class="tag tag-auto">Automatico</span> Agenda</td>
+          <td>Paciente</td>
+          <td>Se crea al agendar turno</td>
+        </tr>
+        <tr>
+          <td>recordatorio_visita</td>
+          <td style="color:#f7a23b">Recordatorio</td>
+          <td><span class="tag tag-auto">Automatico</span> Agenda</td>
+          <td>Paciente</td>
+          <td>Se crea al agendar visita</td>
+        </tr>
+        <tr>
+          <td>recordatorio_monitoreo</td>
+          <td style="color:#f7a23b">Recordatorio</td>
+          <td><span class="tag tag-manual">Manual</span> o periodico</td>
+          <td>Paciente</td>
+          <td>Frecuencia configurable</td>
+        </tr>
+        <tr>
+          <td>aviso_simulacro</td>
+          <td style="color:#f7a23b">Recordatorio</td>
+          <td><span class="tag tag-manual">Manual</span></td>
+          <td>Paciente</td>
+          <td>Envio manual antes del simulacro</td>
+        </tr>
+        <tr>
+          <td>parte_familiar_diario</td>
+          <td style="color:#5aa9ff">Familia</td>
+          <td><span class="tag tag-auto">Automatico</span> Diario 20hs</td>
+          <td>Familiar principal</td>
+          <td>Activar/desactivar por paciente</td>
+        </tr>
+        <tr>
+          <td>info_numero_emergencia</td>
+          <td style="color:#5aa9ff">Familia</td>
+          <td><span class="tag tag-manual">Manual</span> o periodico</td>
+          <td>Familiar</td>
+          <td>Frecuencia configurable</td>
+        </tr>
+        <tr>
+          <td>info_cobertura</td>
+          <td style="color:#5aa9ff">Familia</td>
+          <td><span class="tag tag-manual">Manual</span></td>
+          <td>Familiar</td>
+          <td>Envio unico o periodico</td>
+        </tr>
+        <tr>
+          <td>bienvenida_servicio</td>
+          <td style="color:#37c8a0">Onboarding</td>
+          <td><span class="tag tag-auto">Automatico</span> Alta paciente</td>
+          <td>Familiar principal</td>
+          <td>Se envia 1 vez al dar de alta</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="background:#111827; border:1px solid #2a3550; border-radius:12px; padding:20px; margin-top:20px;">
+    <h3 style="font-size:14px; font-weight:700; color:#a78bfa; margin-bottom:12px;">Flujo de resolucion de alertas</h3>
+    <p style="font-size:12px; color:#8899b4; line-height:2;">
+      Cuando la operadora resuelve una alerta, el sistema le muestra 3 opciones:<br>
+      <span style="color:#37c8a0; font-weight:600;">1.</span> <strong style="color:#e8edf5;">Boton por error</strong> → envia <code style="color:#5aa9ff;">alerta_resuelta_error</code><br>
+      <span style="color:#37c8a0; font-weight:600;">2.</span> <strong style="color:#e8edf5;">Paciente estable</strong> → envia <code style="color:#5aa9ff;">alerta_resuelta_estable</code><br>
+      <span style="color:#37c8a0; font-weight:600;">3.</span> <strong style="color:#e8edf5;">Emergencia verde</strong> → envia <code style="color:#5aa9ff;">alerta_resuelta_verde</code><br><br>
+      Esto evita duplicar templates — la misma logica aplica tanto para SOS como para caidas.
+    </p>
+  </div>
+
+  <div class="footer">
+    14 templates · 4 categorias · Preparado por Jeremias Duhalde · jeremias.duhalde@infocontrol.io
+  </div>
+
+</div>
+</body>
+</html>

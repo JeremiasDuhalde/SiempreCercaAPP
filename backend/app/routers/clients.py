@@ -8,9 +8,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.alert import Alert
 from app.models.client import Client
+from app.models.contact import Contact
 from app.models.device import Device
 from app.models.user import User
-from app.schemas.client import ClientCreate, ClientListItem, ClientOut, ClientUpdate
+from app.schemas.client import (
+    ClientCreate,
+    ClientListItem,
+    ClientOut,
+    ClientUpdate,
+    ContactCreate,
+    ContactOut,
+    ContactUpdate,
+)
 from app.schemas.common import PaginatedResponse
 from app.security import get_current_user, require_role
 from app.services import client_service
@@ -79,6 +88,77 @@ async def delete_client(
     _: User = Depends(require_role("admin")),
 ):
     await client_service.delete_client(db, client_id)
+
+
+# --- Contactos ---
+
+
+@router.get("/{client_id}/contacts", response_model=list[ContactOut])
+async def list_contacts(
+    client_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    result = await db.execute(
+        select(Contact).where(Contact.client_id == client_id).order_by(Contact.order)
+    )
+    return result.scalars().all()
+
+
+@router.post("/{client_id}/contacts", response_model=ContactOut, status_code=status.HTTP_201_CREATED)
+async def create_contact(
+    client_id: int,
+    body: ContactCreate,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("supervisor", "admin")),
+):
+    # Verify client exists
+    result = await db.execute(select(Client).where(Client.id == client_id))
+    if not result.scalar_one_or_none():
+        raise HTTPException(404, "Cliente no encontrado")
+    contact = Contact(client_id=client_id, **body.model_dump())
+    db.add(contact)
+    await db.commit()
+    await db.refresh(contact)
+    return contact
+
+
+@router.patch("/{client_id}/contacts/{contact_id}", response_model=ContactOut)
+async def update_contact(
+    client_id: int,
+    contact_id: int,
+    body: ContactUpdate,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("supervisor", "admin")),
+):
+    result = await db.execute(
+        select(Contact).where(Contact.id == contact_id, Contact.client_id == client_id)
+    )
+    contact = result.scalar_one_or_none()
+    if not contact:
+        raise HTTPException(404, "Contacto no encontrado")
+    for field, value in body.model_dump(exclude_unset=True).items():
+        setattr(contact, field, value)
+    await db.commit()
+    await db.refresh(contact)
+    return contact
+
+
+@router.delete("/{client_id}/contacts/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_contact(
+    client_id: int,
+    contact_id: int,
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(require_role("supervisor", "admin")),
+):
+    result = await db.execute(
+        select(Contact).where(Contact.id == contact_id, Contact.client_id == client_id)
+    )
+    contact = result.scalar_one_or_none()
+    if not contact:
+        raise HTTPException(404, "Contacto no encontrado")
+    await db.delete(contact)
+    await db.commit()
 
 
 # --- Asociar dispositivo FLIC a cliente ---

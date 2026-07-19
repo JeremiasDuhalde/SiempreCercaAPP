@@ -4,6 +4,88 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 
+/* ------------------------------------------------------------------ */
+/*  CSS custom properties — light (default) and dark                   */
+/* ------------------------------------------------------------------ */
+
+:root {
+  --sc-bg: #F5F5F7;
+  --sc-panel: #FFFFFF;
+  --sc-panel2: #F0EFF4;
+  --sc-line: #E2E0EA;
+  --sc-ink: #1A1A2E;
+  --sc-sub: #6B6B80;
+  --sc-faint: #9A9AB0;
+  --sc-coral: #E5434A;
+  --sc-coral-deep: #C73038;
+  --sc-amber: #E09020;
+  --sc-gold: #D4A038;
+  --sc-aqua: #2BA883;
+  --sc-violet: #7B5DC8;
+  --sc-blue: #3B8AE5;
+
+  /* Alpha variants (for tinted backgrounds & borders) */
+  --sc-coral-a08: rgba(229, 67, 74, 0.08);
+  --sc-coral-a13: rgba(229, 67, 74, 0.13);
+  --sc-coral-a25: rgba(229, 67, 74, 0.25);
+  --sc-amber-a07: rgba(224, 144, 32, 0.07);
+  --sc-amber-a13: rgba(224, 144, 32, 0.13);
+  --sc-amber-a20: rgba(224, 144, 32, 0.20);
+  --sc-aqua-a08: rgba(43, 168, 131, 0.08);
+  --sc-aqua-a13: rgba(43, 168, 131, 0.13);
+  --sc-aqua-a25: rgba(43, 168, 131, 0.25);
+  --sc-violet-a08: rgba(123, 93, 200, 0.08);
+  --sc-violet-a13: rgba(123, 93, 200, 0.13);
+  --sc-violet-a20: rgba(123, 93, 200, 0.20);
+  --sc-blue-a08: rgba(59, 138, 229, 0.08);
+  --sc-blue-a13: rgba(59, 138, 229, 0.13);
+  --sc-blue-a25: rgba(59, 138, 229, 0.25);
+  --sc-gold-a13: rgba(212, 160, 56, 0.13);
+  --sc-sub-a09: rgba(107, 107, 128, 0.09);
+  --sc-faint-a09: rgba(154, 154, 176, 0.09);
+  --sc-line-a20: rgba(226, 224, 234, 0.20);
+  --sc-panel-a93: rgba(255, 255, 255, 0.93);
+}
+
+:root.dark {
+  --sc-bg: #15131C;
+  --sc-panel: #1E1B29;
+  --sc-panel2: #262232;
+  --sc-line: #352F45;
+  --sc-ink: #F3EFE9;
+  --sc-sub: #9A93AD;
+  --sc-faint: #6A6480;
+  --sc-coral: #FF5A5F;
+  --sc-coral-deep: #D43F45;
+  --sc-amber: #F7A23B;
+  --sc-gold: #E7B45A;
+  --sc-aqua: #37C8A0;
+  --sc-violet: #9B7BE8;
+  --sc-blue: #5AA9FF;
+
+  /* Alpha variants (for tinted backgrounds & borders) */
+  --sc-coral-a08: rgba(255, 90, 95, 0.08);
+  --sc-coral-a13: rgba(255, 90, 95, 0.13);
+  --sc-coral-a25: rgba(255, 90, 95, 0.25);
+  --sc-amber-a07: rgba(247, 162, 59, 0.07);
+  --sc-amber-a13: rgba(247, 162, 59, 0.13);
+  --sc-amber-a20: rgba(247, 162, 59, 0.20);
+  --sc-aqua-a08: rgba(55, 200, 160, 0.08);
+  --sc-aqua-a13: rgba(55, 200, 160, 0.13);
+  --sc-aqua-a25: rgba(55, 200, 160, 0.25);
+  --sc-violet-a08: rgba(155, 123, 232, 0.08);
+  --sc-violet-a13: rgba(155, 123, 232, 0.13);
+  --sc-violet-a20: rgba(155, 123, 232, 0.20);
+  --sc-blue-a08: rgba(90, 169, 255, 0.08);
+  --sc-blue-a13: rgba(90, 169, 255, 0.13);
+  --sc-blue-a25: rgba(90, 169, 255, 0.25);
+  --sc-gold-a13: rgba(231, 180, 90, 0.13);
+  --sc-sub-a09: rgba(154, 147, 173, 0.09);
+  --sc-faint-a09: rgba(106, 100, 128, 0.09);
+  --sc-line-a20: rgba(53, 47, 69, 0.20);
+  --sc-panel-a93: rgba(30, 27, 41, 0.93);
+}
+
 @layer base {
   html {
     font-family: "Inter", system-ui, sans-serif;
@@ -13,8 +95,8 @@
 
   body {
     margin: 0;
-    background-color: #15131c;
-    color: #f3efe9;
+    background-color: var(--sc-bg);
+    color: var(--sc-ink);
   }
 }
 
@@ -25,7 +107,7 @@
 
 .sc-card { animation: slideIn 0.35s ease }
 .sc-scroll::-webkit-scrollbar { width: 8px }
-.sc-scroll::-webkit-scrollbar-thumb { background: #352F45; border-radius: 8px }
+.sc-scroll::-webkit-scrollbar-thumb { background: var(--sc-line); border-radius: 8px }
 .sc-btn { transition: all 0.15s ease; cursor: pointer }
 .sc-btn:hover { filter: brightness(1.12) }
 

@@ -115,7 +115,7 @@ export default function Header() {
               display: "flex",
               alignItems: "center",
               gap: 4,
-              backgroundColor: `${COLORS.coral}22`,
+              backgroundColor: "var(--sc-coral-a13)",
               padding: "4px 8px",
               borderRadius: 8,
             }}

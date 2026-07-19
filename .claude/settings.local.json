@@ -5,7 +5,9 @@
       "Bash(winget install *)",
       "Read(//c/Users/Jeremias/.ssh/**)",
       "Bash(ssh-keygen *)",
-      "Bash(ssh *)"
+      "Bash(ssh *)",
+      "Bash(dig +short *)",
+      "Bash(nslookup app.siemprecercasrl.com 8.8.8.8)"
     ]
   }
 }

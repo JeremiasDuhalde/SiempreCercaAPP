@@ -1,19 +1,74 @@
 export const COLORS = {
-  bg: "#15131C",
-  panel: "#1E1B29",
-  panel2: "#262232",
-  line: "#352F45",
-  ink: "#F3EFE9",
-  sub: "#9A93AD",
-  faint: "#6A6480",
-  coral: "#FF5A5F",
-  coralDeep: "#D43F45",
-  amber: "#F7A23B",
-  gold: "#E7B45A",
-  aqua: "#37C8A0",
-  violet: "#9B7BE8",
-  blue: "#5AA9FF",
+  bg: "var(--sc-bg)",
+  panel: "var(--sc-panel)",
+  panel2: "var(--sc-panel2)",
+  line: "var(--sc-line)",
+  ink: "var(--sc-ink)",
+  sub: "var(--sc-sub)",
+  faint: "var(--sc-faint)",
+  coral: "var(--sc-coral)",
+  coralDeep: "var(--sc-coral-deep)",
+  amber: "var(--sc-amber)",
+  gold: "var(--sc-gold)",
+  aqua: "var(--sc-aqua)",
+  violet: "var(--sc-violet)",
+  blue: "var(--sc-blue)",
 } as const;
+
+/**
+ * Maps a CSS color variable to its alpha-tinted CSS variable.
+ * Level: "faint" (~8%), "light" (~13%), "medium" (~20%), "strong" (~25%)
+ */
+export function colorTint(cssVar: string, level: "faint" | "light" | "medium" | "strong" = "light"): string {
+  const suffix = { faint: "08", light: "13", medium: "20", strong: "25" }[level];
+  const map: Record<string, Record<string, string>> = {
+    "var(--sc-coral)": { "08": "var(--sc-coral-a08)", "13": "var(--sc-coral-a13)", "20": "var(--sc-coral-a13)", "25": "var(--sc-coral-a25)" },
+    "var(--sc-amber)": { "08": "var(--sc-amber-a07)", "13": "var(--sc-amber-a13)", "20": "var(--sc-amber-a20)", "25": "var(--sc-amber-a20)" },
+    "var(--sc-aqua)":  { "08": "var(--sc-aqua-a08)",  "13": "var(--sc-aqua-a13)",  "20": "var(--sc-aqua-a20)",  "25": "var(--sc-aqua-a25)" },
+    "var(--sc-violet)":{ "08": "var(--sc-violet-a08)","13": "var(--sc-violet-a13)","20": "var(--sc-violet-a20)","25": "var(--sc-violet-a20)" },
+    "var(--sc-blue)":  { "08": "var(--sc-blue-a08)",  "13": "var(--sc-blue-a13)",  "20": "var(--sc-blue-a13)",  "25": "var(--sc-blue-a25)" },
+    "var(--sc-gold)":  { "08": "var(--sc-gold-a13)",  "13": "var(--sc-gold-a13)",  "20": "var(--sc-gold-a13)",  "25": "var(--sc-gold-a13)" },
+    "var(--sc-sub)":   { "08": "var(--sc-sub-a09)",   "13": "var(--sc-sub-a09)",   "20": "var(--sc-sub-a09)",   "25": "var(--sc-sub-a09)" },
+    "var(--sc-faint)": { "08": "var(--sc-faint-a09)", "13": "var(--sc-faint-a09)", "20": "var(--sc-faint-a09)", "25": "var(--sc-faint-a09)" },
+  };
+  return map[cssVar]?.[suffix] ?? `color-mix(in srgb, ${cssVar} ${Math.round(parseInt(suffix, 16) / 255 * 100)}%, transparent)`;
+}
+
+/**
+ * Returns a CSS variable name for an alpha-tinted version of a color.
+ * Maps the most common hex-alpha combinations used throughout the app.
+ * For unlisted combos, falls back to color-mix (requires modern browser).
+ */
+export function colorAlpha(cssVar: string, opacityHex: string): string {
+  const key = `${cssVar}__${opacityHex}`;
+  const map: Record<string, string> = {
+    "var(--sc-coral)__12": "var(--sc-coral-a08)",
+    "var(--sc-coral)__15": "var(--sc-coral-a08)",
+    "var(--sc-coral)__22": "var(--sc-coral-a13)",
+    "var(--sc-coral)__40": "var(--sc-coral-a25)",
+    "var(--sc-coral)__44": "var(--sc-coral-a25)",
+    "var(--sc-amber)__12": "var(--sc-amber-a07)",
+    "var(--sc-amber)__22": "var(--sc-amber-a13)",
+    "var(--sc-amber)__33": "var(--sc-amber-a20)",
+    "var(--sc-aqua)__15": "var(--sc-aqua-a08)",
+    "var(--sc-aqua)__22": "var(--sc-aqua-a13)",
+    "var(--sc-aqua)__33": "var(--sc-aqua-a20)",
+    "var(--sc-aqua)__44": "var(--sc-aqua-a25)",
+    "var(--sc-violet)__15": "var(--sc-violet-a08)",
+    "var(--sc-violet)__22": "var(--sc-violet-a13)",
+    "var(--sc-violet)__33": "var(--sc-violet-a20)",
+    "var(--sc-blue)__15": "var(--sc-blue-a08)",
+    "var(--sc-blue)__22": "var(--sc-blue-a13)",
+    "var(--sc-blue)__44": "var(--sc-blue-a25)",
+    "var(--sc-gold)__22": "var(--sc-gold-a13)",
+    "var(--sc-sub)__18": "var(--sc-sub-a09)",
+    "var(--sc-faint)__18": "var(--sc-faint-a09)",
+    "var(--sc-faint)__22": "var(--sc-faint-a09)",
+    "var(--sc-line)__33": "var(--sc-line-a20)",
+    "var(--sc-panel)__ee": "var(--sc-panel-a93)",
+  };
+  return map[key] ?? `color-mix(in srgb, ${cssVar} ${Math.round(parseInt(opacityHex, 16) / 255 * 100)}%, transparent)`;
+}
 
 export const ALERT_TYPES = {
   sos: {

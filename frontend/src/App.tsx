@@ -16,11 +16,11 @@ export default function App() {
       <div
         style={{
           minHeight: "100vh",
-          background: "#15131C",
+          background: "var(--sc-bg)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "#9A93AD",
+          color: "var(--sc-sub)",
           fontFamily: "'Inter', system-ui, sans-serif",
           fontSize: 14,
         }}

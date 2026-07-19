@@ -12,10 +12,13 @@ import {
   Trash2,
   LogOut,
   DollarSign,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { COLORS, MODULES } from "@/lib/constants";
 import { useAppStore } from "@/stores/useAppStore";
 import { useAuthStore } from "@/stores/useAuthStore";
+import { useThemeStore } from "@/stores/useThemeStore";
 import type { LucideIcon } from "lucide-react";
 
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -39,6 +42,7 @@ export default function Sidebar() {
   const logout = useAuthStore((s) => s.logout);
 
   const activeAlerts = alerts.filter((a) => a.status !== "resuelta").length;
+  const { theme, toggleTheme } = useThemeStore();
 
   return (
     <aside
@@ -154,7 +158,7 @@ export default function Sidebar() {
                 padding: "6px 0",
                 borderRadius: 6,
                 border: "none",
-                backgroundColor: `${COLORS.coral}22`,
+                backgroundColor: "var(--sc-coral-a13)",
                 color: COLORS.coral,
                 fontSize: 11,
                 fontWeight: 600,
@@ -179,7 +183,7 @@ export default function Sidebar() {
                 padding: "6px 0",
                 borderRadius: 6,
                 border: "none",
-                backgroundColor: `${COLORS.amber}22`,
+                backgroundColor: "var(--sc-amber-a13)",
                 color: COLORS.amber,
                 fontSize: 11,
                 fontWeight: 600,
@@ -201,7 +205,7 @@ export default function Sidebar() {
                 padding: "6px 0",
                 borderRadius: 6,
                 border: "none",
-                backgroundColor: `${COLORS.sub}18`,
+                backgroundColor: "var(--sc-sub-a09)",
                 color: COLORS.sub,
                 fontSize: 11,
                 fontWeight: 600,
@@ -215,6 +219,34 @@ export default function Sidebar() {
           </div>
         </div>
       )}
+
+      {/* Theme toggle */}
+      <div style={{ padding: "4px 12px 0" }}>
+        <button
+          className="sc-btn"
+          onClick={toggleTheme}
+          title={theme === "light" ? "Cambiar a modo oscuro" : "Cambiar a modo claro"}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 6,
+            width: "100%",
+            padding: "7px 0",
+            borderRadius: 6,
+            border: "none",
+            backgroundColor: "var(--sc-faint-a09)",
+            color: COLORS.sub,
+            fontSize: 11,
+            fontWeight: 600,
+            cursor: "pointer",
+            fontFamily: "'Inter', system-ui, sans-serif",
+          }}
+        >
+          {theme === "light" ? <Moon size={12} /> : <Sun size={12} />}
+          {theme === "light" ? "Modo oscuro" : "Modo claro"}
+        </button>
+      </div>
 
       {/* Cerrar sesión */}
       <div style={{ padding: "8px 12px 12px" }}>
@@ -230,7 +262,7 @@ export default function Sidebar() {
             padding: "7px 0",
             borderRadius: 6,
             border: "none",
-            backgroundColor: `${COLORS.faint}18`,
+            backgroundColor: "var(--sc-faint-a09)",
             color: COLORS.sub,
             fontSize: 11,
             fontWeight: 600,

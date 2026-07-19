@@ -29,7 +29,7 @@ import {
   User,
   type LucideIcon,
 } from "lucide-react";
-import { COLORS, ALERT_TYPES, ALERT_STATUSES, CRITICAL_CONDITIONS } from "@/lib/constants";
+import { COLORS, ALERT_TYPES, ALERT_STATUSES, CRITICAL_CONDITIONS, colorTint } from "@/lib/constants";
 import type { AlertType } from "@/lib/constants";
 import type { Alert, Client } from "@/lib/types";
 import { CLIENTS } from "@/lib/mockData";
@@ -266,7 +266,7 @@ function AlertCard({
         width: "100%",
         textAlign: "left",
         border: selected ? `1.5px solid ${meta.hex}` : `1px solid ${COLORS.line}`,
-        backgroundColor: selected ? `${meta.hex}12` : COLORS.panel,
+        backgroundColor: selected ? colorTint(meta.hex, "faint") : COLORS.panel,
         borderRadius: 10,
         padding: 12,
         cursor: "pointer",
@@ -456,8 +456,8 @@ function AlertQueue() {
             margin: "0 12px 8px",
             padding: 10,
             borderRadius: 10,
-            backgroundColor: `${COLORS.violet}15`,
-            border: `1px solid ${COLORS.violet}33`,
+            backgroundColor: "var(--sc-violet-a08)",
+            border: "1px solid var(--sc-violet-a20)",
           }}
         >
           <div
@@ -491,7 +491,7 @@ function AlertQueue() {
                     width: 20,
                     height: 20,
                     borderRadius: "50%",
-                    backgroundColor: `${COLORS.violet}33`,
+                    backgroundColor: "var(--sc-violet-a20)",
                     color: COLORS.violet,
                     fontSize: 11,
                     fontWeight: 700,
@@ -636,8 +636,8 @@ function DeviceAssigner({ buttonSerial }: { buttonSerial: string }) {
         style={{
           padding: 10,
           borderRadius: 10,
-          backgroundColor: `${COLORS.aqua}15`,
-          border: `1px solid ${COLORS.aqua}33`,
+          backgroundColor: "var(--sc-aqua-a08)",
+          border: "1px solid var(--sc-aqua-a20)",
           fontSize: 12,
           color: COLORS.aqua,
           fontWeight: 600,
@@ -653,8 +653,8 @@ function DeviceAssigner({ buttonSerial }: { buttonSerial: string }) {
       style={{
         padding: 10,
         borderRadius: 10,
-        backgroundColor: `${COLORS.amber}12`,
-        border: `1px solid ${COLORS.amber}33`,
+        backgroundColor: "var(--sc-amber-a07)",
+        border: "1px solid var(--sc-amber-a20)",
       }}
     >
       <div style={{ fontSize: 11, fontWeight: 700, color: COLORS.amber, marginBottom: 8 }}>
@@ -669,8 +669,8 @@ function DeviceAssigner({ buttonSerial }: { buttonSerial: string }) {
               flex: 1,
               padding: "7px 0",
               borderRadius: 6,
-              border: `1px solid ${COLORS.blue}44`,
-              backgroundColor: `${COLORS.blue}15`,
+              border: "1px solid var(--sc-blue-a25)",
+              backgroundColor: "var(--sc-blue-a08)",
               color: COLORS.blue,
               fontSize: 11,
               fontWeight: 600,
@@ -686,8 +686,8 @@ function DeviceAssigner({ buttonSerial }: { buttonSerial: string }) {
               flex: 1,
               padding: "7px 0",
               borderRadius: 6,
-              border: `1px solid ${COLORS.aqua}44`,
-              backgroundColor: `${COLORS.aqua}15`,
+              border: "1px solid var(--sc-aqua-a25)",
+              backgroundColor: "var(--sc-aqua-a08)",
               color: COLORS.aqua,
               fontSize: 11,
               fontWeight: 600,
@@ -847,8 +847,8 @@ function ClientFicha() {
           gap: 8,
           padding: "10px 12px",
           borderRadius: 10,
-          backgroundColor: `${meta.hex}18`,
-          border: `1px solid ${meta.hex}44`,
+          backgroundColor: colorTint(meta.hex, "faint"),
+          border: `1px solid ${colorTint(meta.hex, "strong")}`,
         }}
       >
         <Icon size={18} color={meta.hex} />
@@ -903,8 +903,8 @@ function ClientFicha() {
         style={{
           padding: 10,
           borderRadius: 10,
-          backgroundColor: `${COLORS.violet}15`,
-          border: `1px solid ${COLORS.violet}33`,
+          backgroundColor: "var(--sc-violet-a08)",
+          border: "1px solid var(--sc-violet-a20)",
         }}
       >
         <div
@@ -942,7 +942,7 @@ function ClientFicha() {
                     fontSize: 11,
                     padding: "3px 8px",
                     borderRadius: 6,
-                    backgroundColor: isCritical ? `${COLORS.coral}22` : COLORS.panel2,
+                    backgroundColor: isCritical ? "var(--sc-coral-a13)" : COLORS.panel2,
                     color: isCritical ? COLORS.coral : COLORS.ink,
                     fontWeight: isCritical ? 600 : 400,
                   }}
@@ -995,7 +995,7 @@ function ClientFicha() {
                   width: 22,
                   height: 22,
                   borderRadius: "50%",
-                  backgroundColor: `${COLORS.violet}33`,
+                  backgroundColor: "var(--sc-violet-a20)",
                   color: COLORS.violet,
                   fontSize: 11,
                   fontWeight: 700,
@@ -1076,7 +1076,7 @@ function ClientFicha() {
                   fontSize: 11,
                   color: COLORS.ink,
                   padding: "4px 0",
-                  borderBottom: `1px solid ${COLORS.line}33`,
+                  borderBottom: "1px solid var(--sc-line-a20)",
                 }}
               >
                 <Clock size={11} color={COLORS.faint} style={{ marginTop: 2, flexShrink: 0 }} />

@@ -126,7 +126,7 @@ function MessageBubble({ msg, templates }: { msg: SentMessage; templates: Messag
         </p>
         <div
           className="px-3 py-2 rounded-xl rounded-br-sm text-sm"
-          style={{ background: "#1f3b32", color: COLORS.ink, border: "1px solid #2a5446" }}
+          style={{ background: "var(--sc-aqua-a13)", color: COLORS.ink, border: "1px solid var(--sc-aqua-a25)" }}
         >
           {msg.body}
           <div className="flex items-center justify-end gap-1 mt-1">
@@ -219,7 +219,7 @@ function CampaignsPanel() {
         </p>
         <span
           className="px-2 py-0.5 rounded-full text-[10px] font-medium"
-          style={{ background: `${COLORS.aqua}22`, color: COLORS.aqua }}
+          style={{ background: "var(--sc-aqua-a13)", color: COLORS.aqua }}
         >
           {activeCount} activas
         </span>
@@ -344,7 +344,7 @@ function MessageLogPanel() {
       <div className="flex items-center gap-2 mb-4">
         <span
           className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium"
-          style={{ background: `${COLORS.aqua}22`, color: COLORS.aqua }}
+          style={{ background: "var(--sc-aqua-a13)", color: COLORS.aqua }}
         >
           <span
             className="w-1.5 h-1.5 rounded-full animate-pulse"

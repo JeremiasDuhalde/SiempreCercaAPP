@@ -314,7 +314,7 @@ function CreateUserForm({
         <SelectField label="Rol" value={role} onChange={setRole} options={ROLE_OPTIONS} />
 
         {error && (
-          <p className="text-sm px-3 py-2 rounded-lg" style={{ background: `${COLORS.coral}22`, color: COLORS.coral }}>
+          <p className="text-sm px-3 py-2 rounded-lg" style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}>
             {error}
           </p>
         )}
@@ -459,7 +459,7 @@ function UserDetail({
             {!user.is_active && (
               <span
                 className="inline-flex px-2 py-0.5 rounded-full text-xs"
-                style={{ background: `${COLORS.faint}22`, color: COLORS.faint }}
+                style={{ background: "var(--sc-faint-a09)", color: COLORS.faint }}
               >
                 Inactivo
               </span>
@@ -490,9 +490,9 @@ function UserDetail({
               onClick={() => setIsActive((v) => !v)}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
               style={{
-                background: isActive ? `${COLORS.aqua}22` : `${COLORS.faint}22`,
+                background: isActive ? "var(--sc-aqua-a13)" : "var(--sc-faint-a09)",
                 color: isActive ? COLORS.aqua : COLORS.faint,
-                border: `1px solid ${isActive ? COLORS.aqua : COLORS.faint}44`,
+                border: isActive ? "1px solid var(--sc-aqua-a25)" : "1px solid var(--sc-faint-a09)",
               }}
             >
               {isActive ? (
@@ -510,7 +510,7 @@ function UserDetail({
           {saveError && (
             <p
               className="text-sm px-3 py-2 rounded-lg"
-              style={{ background: `${COLORS.coral}22`, color: COLORS.coral }}
+              style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}
             >
               {saveError}
             </p>
@@ -565,7 +565,7 @@ function UserDetail({
             {pwdError && (
               <p
                 className="text-sm px-3 py-2 rounded-lg"
-                style={{ background: `${COLORS.coral}22`, color: COLORS.coral }}
+                style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}
               >
                 {pwdError}
               </p>
@@ -573,7 +573,7 @@ function UserDetail({
             {pwdOk && (
               <p
                 className="text-sm px-3 py-2 rounded-lg"
-                style={{ background: `${COLORS.aqua}22`, color: COLORS.aqua }}
+                style={{ background: "var(--sc-aqua-a13)", color: COLORS.aqua }}
               >
                 Contrasena actualizada correctamente
               </p>
@@ -751,7 +751,7 @@ export default function UsersView() {
             </p>
           )}
           {fetchError && (
-            <div className="mx-2 mt-2 px-3 py-2 rounded-lg text-sm" style={{ background: `${COLORS.coral}22`, color: COLORS.coral }}>
+            <div className="mx-2 mt-2 px-3 py-2 rounded-lg text-sm" style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}>
               {fetchError}
             </div>
           )}

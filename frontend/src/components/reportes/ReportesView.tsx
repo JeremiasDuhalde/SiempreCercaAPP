@@ -240,7 +240,7 @@ export default function ReportesView() {
                     type="monotone"
                     dataKey="v"
                     stroke={COLORS.aqua}
-                    fill={`${COLORS.aqua}33`}
+                    fill="var(--sc-aqua-a20)"
                     strokeWidth={2}
                   />
                 </AreaChart>
