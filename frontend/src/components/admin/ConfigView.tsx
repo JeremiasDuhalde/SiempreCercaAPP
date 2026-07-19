@@ -282,7 +282,8 @@ export default function ConfigView() {
   }
 
   return (
-    <div className="sc-scroll" style={{ height: "100%", overflowY: "auto", padding: "16px 20px" }}>
+    <div className="sc-scroll" style={{ height: "100%", overflowY: "auto" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "16px 20px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -441,6 +442,7 @@ export default function ConfigView() {
             </span>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

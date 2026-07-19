@@ -34,11 +34,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
         {!isMobile && <Sidebar />}
         <main
-          className="sc-scroll"
           style={{
             flex: 1,
-            overflow: "auto",
-            padding: isMobile ? 12 : 20,
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           {children}
