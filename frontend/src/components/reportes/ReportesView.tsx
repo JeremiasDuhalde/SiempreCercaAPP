@@ -165,7 +165,7 @@ export default function ReportesView() {
 
   return (
     <div className="sc-scroll h-full overflow-y-auto" style={{ background: COLORS.bg }}>
-      <div className={`mx-auto ${isMobile ? "px-4 py-4" : "px-8 py-6 max-w-5xl"}`}>
+      <div className={`mx-auto w-full ${isMobile ? "px-4 py-4" : "px-6 py-6 max-w-[1200px]"}`}>
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-xl font-bold" style={{ color: COLORS.ink }}>

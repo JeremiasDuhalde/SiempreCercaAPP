@@ -319,7 +319,7 @@ export default function ConfigView() {
   }
 
   return (
-    <div className="sc-scroll" style={{ height: "100%", overflowY: "auto" }}>
+    <div className="sc-scroll" style={{ height: "100%", width: "100%", overflowY: "auto" }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "16px 20px" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>

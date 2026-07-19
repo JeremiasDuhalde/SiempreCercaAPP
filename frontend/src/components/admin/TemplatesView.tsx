@@ -432,7 +432,7 @@ export default function TemplatesView() {
 
   return (
     <div
-      className="flex flex-col h-full"
+      className="flex flex-col h-full w-full"
       style={{ background: COLORS.bg }}
     >
       {/* Header */}

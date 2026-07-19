@@ -701,7 +701,7 @@ export default function UsersView() {
   }
 
   return (
-    <div className="flex h-full" style={{ background: COLORS.bg }}>
+    <div className="flex h-full w-full" style={{ background: COLORS.bg }}>
       {/* Left panel — list */}
       <div
         className="sc-scroll flex flex-col overflow-y-auto border-r"
