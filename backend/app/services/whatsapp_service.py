@@ -92,6 +92,8 @@ class WhatsAppService:
     - Mensajes de rutina → Baileys primero, fallback automatico a Meta.
     - Si `settings.whatsapp_provider == "meta"` fuerza Meta para todo.
     - Si `settings.whatsapp_provider == "mock"` simula el envio en logs (dev).
+    - `provider_override` permite que el router/celery especifique el proveedor
+      leido desde la DB sin requerir que el servicio acceda a ella directamente.
     """
 
     # ------------------------------------------------------------------ #
@@ -105,27 +107,36 @@ class WhatsAppService:
         params: list[str],
         *,
         urgent: bool = False,
+        provider_override: str | None = None,
     ) -> dict:
         """Envia un template de WhatsApp.
 
         Args:
-            to:            Numero de destino (cualquier formato, ej. "+5492257653843").
-            template_name: Clave del template (debe existir en Meta y en _TEMPLATES).
-            params:        Lista de parametros posicionales para el template.
-            urgent:        True = Meta directo (SOS, caidas). False = Baileys + fallback.
+            to:               Numero de destino (cualquier formato, ej. "+5492257653843").
+            template_name:    Clave del template (debe existir en Meta y en _TEMPLATES).
+            params:           Lista de parametros posicionales para el template.
+            urgent:           True = Meta directo (SOS, caidas). False = Baileys + fallback.
+            provider_override: Proveedor a usar ("meta" | "baileys" | "mock"). Si se omite
+                               se usa `settings.whatsapp_provider`.
 
         Returns:
             dict con ``ok``, ``provider`` y ``wa_message_id`` (cuando corresponda).
         """
-        if settings.whatsapp_provider == "mock":
+        provider = provider_override or settings.whatsapp_provider
+
+        if provider == "mock":
             return self._mock_response("send_template", to, template_name)
 
-        if urgent or settings.whatsapp_provider == "meta":
+        if urgent or provider == "meta":
             return await self._send_via_meta_template(to, template_name, params)
 
         # Rutina: Baileys primero, fallback a Meta
         result = await self._send_via_baileys(to, _render_template(template_name, params))
         if not result.get("ok"):
+            banned = result.get("banned", False)
+            if banned:
+                logger.error("Baileys: canal bloqueado (banned). No se hace fallback.")
+                return result
             logger.info(
                 "Baileys fallo para template '%s' -> fallback a Meta", template_name
             )
@@ -138,6 +149,7 @@ class WhatsAppService:
         body: str,
         *,
         urgent: bool = False,
+        provider_override: str | None = None,
     ) -> dict:
         """Envia texto libre.
 
@@ -145,18 +157,25 @@ class WhatsAppService:
         Via Baileys funciona siempre (el numero debe estar en la cuenta conectada).
 
         Args:
-            to:     Numero de destino.
-            body:   Cuerpo del mensaje.
-            urgent: True = Meta directo. False = Baileys + fallback.
+            to:               Numero de destino.
+            body:             Cuerpo del mensaje.
+            urgent:           True = Meta directo. False = Baileys + fallback.
+            provider_override: Proveedor a usar. Si se omite se usa `settings.whatsapp_provider`.
         """
-        if settings.whatsapp_provider == "mock":
+        provider = provider_override or settings.whatsapp_provider
+
+        if provider == "mock":
             return self._mock_response("send_text", to, body)
 
-        if urgent or settings.whatsapp_provider == "meta":
+        if urgent or provider == "meta":
             return await self._send_via_meta_text(to, body)
 
         result = await self._send_via_baileys(to, body)
         if not result.get("ok"):
+            banned = result.get("banned", False)
+            if banned:
+                logger.error("Baileys: canal bloqueado (banned). No se hace fallback.")
+                return result
             logger.info("Baileys fallo para send_text -> fallback a Meta")
             return await self._send_via_meta_text(to, body)
         return result
@@ -243,7 +262,12 @@ class WhatsAppService:
         return {"ok": False, "provider": "meta", "error": data}
 
     async def _send_via_baileys(self, to: str, body: str) -> dict:
-        """Envia via el microservicio Baileys interno."""
+        """Envia via el microservicio Baileys interno.
+
+        Detecta senales de bloqueo/ban en la respuesta:
+        - status 403 con mensaje de banned/blocked
+        - campo ``banned`` en true dentro del JSON de error
+        """
         try:
             async with httpx.AsyncClient() as client:
                 resp = await client.post(
@@ -252,6 +276,22 @@ class WhatsAppService:
                     timeout=10.0,
                 )
             data = resp.json()
+
+            # Deteccion de ban: status 403 o campo banned/blocked en respuesta
+            is_banned = (
+                resp.status_code == 403
+                or data.get("banned", False)
+                or "banned" in str(data.get("error", "")).lower()
+                or "blocked" in str(data.get("error", "")).lower()
+            )
+            if is_banned:
+                logger.error(
+                    "Baileys: senal de bloqueo detectada (status=%d, data=%s)",
+                    resp.status_code,
+                    data,
+                )
+                return {"ok": False, "provider": "baileys", "banned": True, "error": data}
+
             if resp.status_code == 200 and data.get("ok"):
                 logger.info("WhatsApp Baileys enviado a %s", to)
             else:

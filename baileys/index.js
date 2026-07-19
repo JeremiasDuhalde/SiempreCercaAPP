@@ -6,7 +6,7 @@
  * La sesion queda guardada en /data/auth y se reutiliza en reinicios.
  *
  * Endpoints:
- *   GET  /status  → { connected: bool }
+ *   GET  /status  → { connected: bool, banned: bool }
  *   POST /send    → { to: "5492257653843", body: "Hola" } → { ok: bool, provider: "baileys" }
  */
 
@@ -29,6 +29,7 @@ app.use(express.json());
 
 let sock = null;
 let isConnected = false;
+let isBanned = false;
 let reconnectAttempts = 0;
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -69,9 +70,12 @@ async function connectWhatsApp() {
       const statusCode = lastDisconnect?.error?.output?.statusCode;
       const loggedOut = statusCode === DisconnectReason.loggedOut;
 
-      if (loggedOut) {
+      // Codigo 401 = sesion expirada / baneada por WhatsApp
+      if (statusCode === 401 || loggedOut) {
+        isBanned = true;
         console.error(
-          "Baileys: sesion cerrada (logout). Elimina /data/auth y reinicia para vincular de nuevo."
+          "Baileys: cuenta bloqueada o sesion invalida (codigo %s). El canal de WhatsApp fue suspendido.",
+          statusCode
         );
         return;
       }
@@ -103,7 +107,7 @@ async function connectWhatsApp() {
 
 /** GET /status — health check del servicio */
 app.get("/status", (_req, res) => {
-  res.json({ connected: isConnected });
+  res.json({ connected: isConnected, banned: isBanned });
 });
 
 /**
@@ -117,6 +121,12 @@ app.post("/send", async (req, res) => {
 
   if (!to || !body) {
     return res.status(400).json({ ok: false, error: "Se requieren los campos 'to' y 'body'" });
+  }
+
+  if (isBanned) {
+    return res
+      .status(403)
+      .json({ ok: false, provider: "baileys", banned: true, error: "Canal de WhatsApp bloqueado" });
   }
 
   if (!isConnected || !sock) {

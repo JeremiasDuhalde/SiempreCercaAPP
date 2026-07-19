@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from "react";
 import { COLORS } from "@/lib/constants";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Settings, Save, Eye, Phone, MessageSquare, Shield, RefreshCw } from "lucide-react";
+import { Settings, Save, Eye, Phone, MessageSquare, Shield, RefreshCw, Wifi, WifiOff, AlertOctagon, Radio } from "lucide-react";
 
 /* ── Types ──────────────────────────────────────────────────── */
 
 type ConfigMap = Record<string, string>;
+type WaProvider = "meta" | "baileys" | "mock";
+type WaStatus = { provider: string; connected: boolean; banned: boolean } | null;
 
 /* ── Helpers ────────────────────────────────────────────────── */
 
@@ -179,6 +181,13 @@ export default function ConfigView() {
   const [centralPhone, setCentralPhone] = useState("");
   const [centralName, setCentralName] = useState("");
 
+  // WhatsApp provider state
+  const [waProvider, setWaProvider] = useState<WaProvider>("mock");
+  const [waSaving, setWaSaving] = useState(false);
+  const [waSaved, setWaSaved] = useState(false);
+  const [waStatus, setWaStatus] = useState<WaStatus>(null);
+  const [waChecking, setWaChecking] = useState(false);
+
   const fetchConfig = useCallback(async () => {
     setLoading(true);
     setError(null);
@@ -190,6 +199,9 @@ export default function ConfigView() {
       setEmpTemplate(data.emp_message_template ?? "");
       setCentralPhone(data.central_phone ?? "");
       setCentralName(data.central_name ?? "");
+      if (data.whatsapp_provider) {
+        setWaProvider(data.whatsapp_provider as WaProvider);
+      }
     } catch {
       setError("No se pudo cargar la configuración");
     } finally {
@@ -237,6 +249,31 @@ export default function ConfigView() {
       await fetchConfig();
     } finally {
       setSeeding(false);
+    }
+  }
+
+  async function handleSaveWaProvider() {
+    setWaSaving(true);
+    try {
+      await api.post("/api/config/whatsapp-provider", { value: waProvider });
+      setWaSaved(true);
+      setTimeout(() => setWaSaved(false), 2500);
+    } finally {
+      setWaSaving(false);
+    }
+  }
+
+  async function handleCheckWaStatus() {
+    setWaChecking(true);
+    try {
+      const { data } = await api.get<{ provider: string; connected: boolean; banned: boolean }>(
+        "/api/config/whatsapp-status"
+      );
+      setWaStatus(data);
+    } catch {
+      setWaStatus({ provider: waProvider, connected: false, banned: false });
+    } finally {
+      setWaChecking(false);
     }
   }
 
@@ -423,6 +460,116 @@ export default function ConfigView() {
 
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <SaveBtn onClick={handleSaveCentral} saving={centralSaving} saved={centralSaved} />
+          </div>
+        </Section>
+
+        {/* WhatsApp Provider Section */}
+        <Section title="Proveedor de WhatsApp" icon={Radio} color={COLORS.aqua}>
+          {/* Status row */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {waStatus === null ? (
+                <span style={{ fontSize: 12, color: COLORS.faint }}>Sin verificar</span>
+              ) : waStatus.banned ? (
+                <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: COLORS.coral }}>
+                  <AlertOctagon size={14} />
+                  Bloqueado
+                </span>
+              ) : waStatus.connected ? (
+                <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: COLORS.aqua }}>
+                  <Wifi size={14} />
+                  Conectado
+                </span>
+              ) : (
+                <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: COLORS.amber }}>
+                  <WifiOff size={14} />
+                  Desconectado
+                </span>
+              )}
+            </div>
+            <button
+              onClick={handleCheckWaStatus}
+              disabled={waChecking}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 5,
+                padding: "5px 10px",
+                borderRadius: 6,
+                border: `1px solid ${COLORS.line}`,
+                backgroundColor: "transparent",
+                color: COLORS.sub,
+                fontSize: 11,
+                cursor: waChecking ? "not-allowed" : "pointer",
+                fontFamily: "inherit",
+                opacity: waChecking ? 0.6 : 1,
+              }}
+            >
+              <RefreshCw size={11} style={{ animation: waChecking ? "spin 1s linear infinite" : "none" }} />
+              {waChecking ? "Verificando..." : "Verificar conexion"}
+            </button>
+          </div>
+
+          {/* Provider radio buttons */}
+          <FieldRow label="Canal activo">
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {(
+                [
+                  {
+                    value: "meta" as WaProvider,
+                    label: "Meta API (pago)",
+                    hint: "API oficial de WhatsApp Business. Requiere token y phone ID. Mas confiable, sin riesgo de ban.",
+                    color: COLORS.aqua,
+                  },
+                  {
+                    value: "baileys" as WaProvider,
+                    label: "Baileys (gratis)",
+                    hint: "Conexion por eSIM/telefono fisico. Gratis pero puede ser bloqueado por WhatsApp.",
+                    color: COLORS.amber,
+                  },
+                  {
+                    value: "mock" as WaProvider,
+                    label: "Mock (desarrollo)",
+                    hint: "Simula envios en logs. Los mensajes NO se envian. Solo para desarrollo local.",
+                    color: COLORS.violet,
+                  },
+                ] as { value: WaProvider; label: string; hint: string; color: string }[]
+              ).map((opt) => (
+                <label
+                  key={opt.value}
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: 10,
+                    padding: "10px 12px",
+                    borderRadius: 7,
+                    border: `1px solid ${waProvider === opt.value ? opt.color : COLORS.line}`,
+                    backgroundColor: waProvider === opt.value ? "color-mix(in srgb, " + opt.color + " 8%, transparent)" : "transparent",
+                    cursor: "pointer",
+                    transition: "border-color 0.15s, background-color 0.15s",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    name="wa_provider"
+                    value={opt.value}
+                    checked={waProvider === opt.value}
+                    onChange={() => setWaProvider(opt.value)}
+                    style={{ marginTop: 2, accentColor: opt.color }}
+                  />
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.ink, marginBottom: 2 }}>
+                      {opt.label}
+                    </div>
+                    <div style={{ fontSize: 11, color: COLORS.sub, lineHeight: 1.4 }}>{opt.hint}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+          </FieldRow>
+
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 4 }}>
+            <SaveBtn onClick={handleSaveWaProvider} saving={waSaving} saved={waSaved} />
           </div>
         </Section>
 
