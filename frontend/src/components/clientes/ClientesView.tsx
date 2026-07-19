@@ -1228,7 +1228,7 @@ function ClientDetail({ raw, onBack, onEdit, onDeleted, onRefresh, isMobile }: C
         {/* Contactos */}
         <ContactsSection
           clientId={String(raw.id)}
-          contacts={raw.contacts}
+          contacts={raw.contacts ?? []}
           onRefresh={onRefresh}
         />
       </div>
