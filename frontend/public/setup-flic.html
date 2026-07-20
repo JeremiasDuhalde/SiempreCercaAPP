@@ -33,7 +33,6 @@
     font-size: 18px;
     font-weight: 700;
     margin-top: 8px;
-    color: #1a1a2e;
   }
   .logo p {
     font-size: 13px;
@@ -76,6 +75,16 @@
     font-size: 14px;
     color: #6b6b80;
     margin-bottom: 8px;
+  }
+
+  .highlight {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 13px;
   }
 
   .field {
@@ -123,11 +132,11 @@
     white-space: nowrap;
     flex-shrink: 0;
     transition: background 0.15s;
+    min-width: 70px;
+    text-align: center;
   }
   .copy-btn:active { background: #2563eb; }
-  .copy-btn.ok {
-    background: #10b981;
-  }
+  .copy-btn.ok { background: #10b981; }
 
   .note {
     background: #fef9c3;
@@ -149,10 +158,18 @@
     margin-top: 8px;
   }
 
-  .divider {
-    height: 1px;
-    background: #e2e0ea;
-    margin: 8px 0;
+  .select-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #166534;
+    font-weight: 600;
+    margin-bottom: 8px;
   }
 
   .footer {
@@ -177,9 +194,9 @@
   <div class="step">
     <div class="step-header">
       <div class="step-num">1</div>
-      <div class="step-title">Abri la app FLIC</div>
+      <div class="step-title">Abrir la app FLIC</div>
     </div>
-    <p>En el telefono del paciente, abri la app FLIC y selecciona el boton/reloj. Anda a la accion de <strong>Doble Click</strong>.</p>
+    <p>En el telefono del paciente, abri la app <strong>FLIC</strong> y selecciona el boton/reloj. Anda a la accion de <strong>Doble Click</strong>.</p>
   </div>
 
   <!-- PASO 2 -->
@@ -188,76 +205,37 @@
       <div class="step-num">2</div>
       <div class="step-title">Agregar "Internet Request"</div>
     </div>
-    <p>Toca el <strong>"+"</strong> para agregar una accion nueva. Busca <strong>"Internet Request"</strong> en la lista (puede estar en Tools o Hub Actions).</p>
+    <p>Toca el <strong>"+"</strong> para agregar una accion nueva. Busca <strong>"Internet Request"</strong> en la lista.</p>
   </div>
 
   <!-- PASO 3 -->
   <div class="step">
     <div class="step-header">
       <div class="step-num">3</div>
-      <div class="step-title">Copiar estos datos</div>
+      <div class="step-title">Seleccionar metodo POST</div>
     </div>
-    <p>Copia y pega cada campo tocando <strong>"Copiar"</strong>:</p>
-
-    <div class="field">
-      <div class="field-label">URL</div>
-      <div class="copy-row">
-        <div class="copy-value" id="f-url">http://app.siemprecercasrl.net/api/webhooks/flic/alert</div>
-        <button class="copy-btn" onclick="copyField('f-url', this)">Copiar</button>
-      </div>
+    <p>Vas a ver botones con los metodos HTTP uno al lado del otro:</p>
+    <div style="display: flex; gap: 6px; margin: 8px 0;">
+      <span style="padding: 6px 14px; border-radius: 8px; background: #f0f0f0; color: #999; font-size: 13px; font-weight: 600;">GET</span>
+      <span style="padding: 6px 14px; border-radius: 8px; background: #3b82f6; color: #fff; font-size: 13px; font-weight: 600;">POST</span>
+      <span style="padding: 6px 14px; border-radius: 8px; background: #f0f0f0; color: #999; font-size: 13px; font-weight: 600;">PUT</span>
+      <span style="padding: 6px 14px; border-radius: 8px; background: #f0f0f0; color: #999; font-size: 13px; font-weight: 600;">DELETE</span>
     </div>
-
-    <div class="field">
-      <div class="field-label">Metodo HTTP</div>
-      <div class="copy-row">
-        <div class="copy-value" id="f-method">POST</div>
-        <button class="copy-btn" onclick="copyField('f-method', this)">Copiar</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <div class="field-label">Content Type</div>
-      <div class="copy-row">
-        <div class="copy-value" id="f-ct">application/json</div>
-        <button class="copy-btn" onclick="copyField('f-ct', this)">Copiar</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <div class="field-label">Body</div>
-      <div class="copy-row">
-        <div class="copy-value" id="f-body">{"event": "sos"}</div>
-        <button class="copy-btn" onclick="copyField('f-body', this)">Copiar</button>
-      </div>
-    </div>
+    <div class="select-hint">👆 Selecciona POST (no copiar, solo tocar)</div>
   </div>
 
   <!-- PASO 4 -->
   <div class="step">
     <div class="step-header">
       <div class="step-num">4</div>
-      <div class="step-title">Agregar header de seguridad</div>
+      <div class="step-title">Pegar la URL</div>
     </div>
-    <p>En la seccion <strong>"HTTP Headers"</strong>, agrega este header:</p>
-
+    <p>En el campo <strong>URL</strong>, pega esta direccion:</p>
     <div class="field">
-      <div class="field-label">Key (nombre del header)</div>
       <div class="copy-row">
-        <div class="copy-value" id="f-key">X-Webhook-Secret</div>
-        <button class="copy-btn" onclick="copyField('f-key', this)">Copiar</button>
+        <div class="copy-value" id="f-url">http://app.siemprecercasrl.net/api/webhooks/flic/alert</div>
+        <button class="copy-btn" onclick="copyField('f-url', this)">Copiar</button>
       </div>
-    </div>
-
-    <div class="field">
-      <div class="field-label">Value (valor del header)</div>
-      <div class="copy-row">
-        <div class="copy-value" id="f-secret">4d60192711902e66a26923bfc375cb73</div>
-        <button class="copy-btn" onclick="copyField('f-secret', this)">Copiar</button>
-      </div>
-    </div>
-
-    <div class="note">
-      Despues de pegar Key y Value, toca <strong>INSERT</strong> para confirmar. Si no tocas INSERT no se guarda.
     </div>
   </div>
 
@@ -265,39 +243,91 @@
   <div class="step">
     <div class="step-header">
       <div class="step-num">5</div>
-      <div class="step-title">Activar ubicacion</div>
+      <div class="step-title">Agregar header de seguridad</div>
     </div>
-    <p>Abajo de todo en la pantalla, activa la opcion <strong>"Include location"</strong>. Esto envia la ubicacion GPS cuando se toca el boton.</p>
-    <p>El <strong>"Request timeout"</strong> dejalo como esta (no tocar).</p>
+    <p>En la seccion <strong>"HTTP Headers"</strong>, completa estos dos campos y toca <strong>INSERT</strong>:</p>
+
+    <div class="field">
+      <div class="field-label">Key</div>
+      <div class="copy-row">
+        <div class="copy-value" id="f-key">X-Webhook-Secret</div>
+        <button class="copy-btn" onclick="copyField('f-key', this)">Copiar</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Value</div>
+      <div class="copy-row">
+        <div class="copy-value" id="f-secret">4d60192711902e66a26923bfc375cb73</div>
+        <button class="copy-btn" onclick="copyField('f-secret', this)">Copiar</button>
+      </div>
+    </div>
+
+    <div class="note">
+      Despues de pegar Key y Value, toca <strong>INSERT</strong> para confirmar. Si no tocas INSERT no se guarda el header.
+    </div>
   </div>
 
   <!-- PASO 6 -->
   <div class="step">
     <div class="step-header">
       <div class="step-num">6</div>
-      <div class="step-title">Guardar y probar</div>
+      <div class="step-title">Completar el Body</div>
     </div>
-    <p>Guarda la accion y hace <strong>doble click</strong> en el boton del reloj.</p>
-    <div class="success">
-      Si todo esta bien, en el dashboard de Siempre Cerca va a aparecer la alerta con sonido y la ubicacion en el mapa.
+    <p>En el campo <strong>Body</strong>, pega este texto:</p>
+    <div class="field">
+      <div class="copy-row">
+        <div class="copy-value" id="f-body">{"event": "sos"}</div>
+        <button class="copy-btn" onclick="copyField('f-body', this)">Copiar</button>
+      </div>
     </div>
   </div>
 
-  <!-- RESUMEN -->
-  <div class="step" style="background: #f0fdf4; border-color: #bbf7d0;">
+  <!-- PASO 7 -->
+  <div class="step">
     <div class="step-header">
-      <div class="step-num" style="background: #10b981;">✓</div>
-      <div class="step-title">Resumen de lo que se configura</div>
+      <div class="step-num">7</div>
+      <div class="step-title">Content Type</div>
     </div>
-    <p style="font-size: 13px; color: #374151; margin: 0;">
-      <strong>Accion:</strong> Doble Click<br>
-      <strong>Tipo:</strong> Internet Request<br>
-      <strong>URL:</strong> http://app.siemprecercasrl.net/api/webhooks/flic/alert<br>
-      <strong>Metodo:</strong> POST<br>
-      <strong>Content-Type:</strong> application/json<br>
-      <strong>Body:</strong> {"event": "sos"}<br>
-      <strong>Header:</strong> X-Webhook-Secret = 4d60...cb73<br>
-      <strong>Include location:</strong> Activado
+    <p>En <strong>Content Type</strong>, selecciona o pega:</p>
+    <div class="field">
+      <div class="copy-row">
+        <div class="copy-value" id="f-ct">application/json</div>
+        <button class="copy-btn" onclick="copyField('f-ct', this)">Copiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASO 8 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">8</div>
+      <div class="step-title">Activar ubicacion</div>
+    </div>
+    <p>Abajo de todo, activa la opcion <strong>"Include location"</strong>.</p>
+    <p>El <strong>"Request timeout"</strong> dejalo como esta.</p>
+  </div>
+
+  <!-- PASO 9 -->
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">9</div>
+      <div class="step-title">Guardar y probar</div>
+    </div>
+    <p>Guarda todo y hace <strong>doble click</strong> en el boton del reloj.</p>
+    <div class="success">
+      Si esta bien configurado, en el dashboard de Siempre Cerca aparece la alerta con sonido, la ubicacion en el mapa y los datos del paciente.
+    </div>
+  </div>
+
+  <!-- IMPORTANTE -->
+  <div class="step" style="background: #fff7ed; border-color: #fed7aa;">
+    <div class="step-header">
+      <div class="step-num" style="background: #f97316;">!</div>
+      <div class="step-title">Importante</div>
+    </div>
+    <p style="color: #9a3412; margin: 0;">
+      Cada reloj tiene un <strong>codigo unico</strong> (serial). Ese codigo se asocia automaticamente al paciente la primera vez que se toca el boton. <strong>No mezclar relojes entre pacientes</strong> — cada reloj es de un solo paciente.
     </p>
   </div>
 
@@ -312,15 +342,10 @@
 function copyField(id, btn) {
   const text = document.getElementById(id).textContent;
   navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.textContent;
     btn.textContent = "Listo ✓";
     btn.classList.add("ok");
-    setTimeout(() => {
-      btn.textContent = orig;
-      btn.classList.remove("ok");
-    }, 2000);
+    setTimeout(() => { btn.textContent = "Copiar"; btn.classList.remove("ok"); }, 2000);
   }).catch(() => {
-    // Fallback para navegadores que no soportan clipboard API
     const range = document.createRange();
     range.selectNode(document.getElementById(id));
     window.getSelection().removeAllRanges();
@@ -329,10 +354,7 @@ function copyField(id, btn) {
     window.getSelection().removeAllRanges();
     btn.textContent = "Listo ✓";
     btn.classList.add("ok");
-    setTimeout(() => {
-      btn.textContent = "Copiar";
-      btn.classList.remove("ok");
-    }, 2000);
+    setTimeout(() => { btn.textContent = "Copiar"; btn.classList.remove("ok"); }, 2000);
   });
 }
 </script>
