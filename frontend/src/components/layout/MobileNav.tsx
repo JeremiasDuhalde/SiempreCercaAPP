@@ -51,7 +51,11 @@ export default function MobileNav() {
         paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
     >
-      {MODULES.filter((mod) => mod.key !== "config" || user?.role === "admin").map((mod) => {
+      {MODULES.filter((mod) => {
+          const adminOnly = ["config", "costos", "templates", "admin"];
+          if (adminOnly.includes(mod.key) && user?.role !== "admin") return false;
+          return true;
+        }).map((mod) => {
         const Icon = ICON_MAP[mod.icon];
         const active = activeModule === mod.key;
         return (

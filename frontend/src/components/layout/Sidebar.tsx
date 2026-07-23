@@ -64,7 +64,11 @@ export default function Sidebar() {
     >
       {/* Nav items */}
       <nav className="sc-scroll" style={{ flex: 1, overflowY: "auto", padding: "12px 8px" }}>
-        {MODULES.filter((mod) => mod.key !== "config" || user?.role === "admin").map((mod) => {
+        {MODULES.filter((mod) => {
+          const adminOnly = ["config", "costos", "templates", "admin"];
+          if (adminOnly.includes(mod.key) && user?.role !== "admin") return false;
+          return true;
+        }).map((mod) => {
           const Icon = ICON_MAP[mod.icon];
           const active = activeModule === mod.key;
           return (
