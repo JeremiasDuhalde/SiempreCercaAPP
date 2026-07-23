@@ -13,7 +13,7 @@ from slowapi.util import get_remote_address
 
 from app.config import settings
 from app.database import dispose_engine
-from app.routers import alerts, appointments, auth, clients, config, costs, dispatch, health, messages, tasks, templates, users, webhooks, wellbeing, ws
+from app.routers import alerts, appointments, auth, clients, config, costs, dispatch, health, local_templates, messages, tasks, templates, users, webhooks, wellbeing, ws
 
 logging.basicConfig(level=logging.INFO)
 
@@ -78,6 +78,7 @@ app.include_router(wellbeing.router)
 app.include_router(users.router)
 app.include_router(costs.router)
 app.include_router(templates.router)
+app.include_router(local_templates.router)
 app.include_router(tasks.router)
 app.include_router(config.router)
 app.include_router(dispatch.router)

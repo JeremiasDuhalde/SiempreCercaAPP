@@ -5,6 +5,7 @@ Estrategia de enrutamiento:
 - urgent=False → Baileys primero (rutina: reportes, recordatorios), fallback a Meta
 """
 
+import json
 import logging
 
 import httpx
@@ -13,9 +14,9 @@ from app.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Templates en texto plano para renderizar en Baileys (sin formato de template Meta).
+# Templates hardcoded como fallback cuando la DB no tiene datos.
 # Las llaves {0}, {1}, etc. corresponden al orden de `params`.
-_TEMPLATES: dict[str, str] = {
+_TEMPLATES_FALLBACK: dict[str, str] = {
     "alerta_emergencia": (
         "ALERTA DE EMERGENCIA — {0}\n\n"
         "Se activo una alerta de emergencia del dispositivo de {0}.\n\n"
@@ -60,6 +61,9 @@ _TEMPLATES: dict[str, str] = {
     ),
 }
 
+# Clave en system_config donde se guardan los templates locales editables.
+_LOCAL_TEMPLATES_DB_KEY = "local_whatsapp_templates"
+
 META_API_URL = "https://graph.facebook.com/v24.0"
 
 
@@ -68,15 +72,30 @@ def _normalize_phone(phone: str) -> str:
     return phone.replace("+", "").replace(" ", "").replace("-", "")
 
 
-def _render_template(template_name: str, params: list[str]) -> str:
+def _render_template(
+    template_name: str,
+    params: list[str],
+    db_templates: dict[str, str] | None = None,
+) -> str:
     """Renderiza un template como texto plano para Baileys.
 
+    Busca primero en `db_templates` (cargados desde system_config),
+    luego en el dict hardcoded de fallback.
     Si el template no existe devuelve el primer param (o cadena vacia).
     Si los params son insuficientes devuelve el template sin reemplazar.
     """
-    tpl = _TEMPLATES.get(template_name)
+    # Prioridad 1: templates editables en DB
+    if db_templates:
+        tpl = db_templates.get(template_name)
+    else:
+        tpl = None
+
+    # Prioridad 2: fallback hardcoded
     if tpl is None:
-        logger.warning("Template '%s' no encontrado, usando fallback", template_name)
+        tpl = _TEMPLATES_FALLBACK.get(template_name)
+
+    if tpl is None:
+        logger.warning("Template '%s' no encontrado en DB ni en fallback", template_name)
         return params[0] if params else ""
     try:
         return tpl.format(*params)
@@ -108,6 +127,7 @@ class WhatsAppService:
         *,
         urgent: bool = False,
         provider_override: str | None = None,
+        db=None,
     ) -> dict:
         """Envia un template de WhatsApp.
 
@@ -118,6 +138,8 @@ class WhatsAppService:
             urgent:           True = Meta directo (SOS, caidas). False = Baileys + fallback.
             provider_override: Proveedor a usar ("meta" | "baileys" | "mock"). Si se omite
                                se usa `settings.whatsapp_provider`.
+            db:               Sesion AsyncSession opcional. Si se provee, los templates
+                               editables se cargan desde la DB (system_config).
 
         Returns:
             dict con ``ok``, ``provider`` y ``wa_message_id`` (cuando corresponda).
@@ -131,7 +153,10 @@ class WhatsAppService:
             return await self._send_via_meta_template(to, template_name, params)
 
         # Rutina: Baileys primero, fallback a Meta
-        result = await self._send_via_baileys(to, _render_template(template_name, params))
+        # Cargar templates desde DB si hay sesion disponible
+        db_templates = await self._load_db_templates(db) if db is not None else None
+        rendered = _render_template(template_name, params, db_templates)
+        result = await self._send_via_baileys(to, rendered)
         if not result.get("ok"):
             banned = result.get("banned", False)
             if banned:
@@ -179,6 +204,37 @@ class WhatsAppService:
             logger.info("Baileys fallo para send_text -> fallback a Meta")
             return await self._send_via_meta_text(to, body)
         return result
+
+    # ------------------------------------------------------------------ #
+    # Carga de templates desde DB                                          #
+    # ------------------------------------------------------------------ #
+
+    @staticmethod
+    async def _load_db_templates(db) -> dict[str, str] | None:
+        """Carga los templates editables desde system_config.
+
+        Retorna un dict {key: body} o None si no hay datos en DB.
+        """
+        try:
+            from sqlalchemy import select
+            from app.models.system_config import SystemConfig
+
+            result = await db.execute(
+                select(SystemConfig).where(SystemConfig.key == _LOCAL_TEMPLATES_DB_KEY)
+            )
+            config = result.scalar_one_or_none()
+            if not config:
+                return None
+            templates_list: list[dict] = json.loads(config.value)
+            # Convertir lista a dict {key: body} para lookup rapido
+            return {
+                t["key"]: t["body"]
+                for t in templates_list
+                if t.get("active", True)
+            }
+        except Exception as exc:
+            logger.warning("No se pudieron cargar templates desde DB: %s", exc)
+            return None
 
     # ------------------------------------------------------------------ #
     # Implementaciones internas                                            #
