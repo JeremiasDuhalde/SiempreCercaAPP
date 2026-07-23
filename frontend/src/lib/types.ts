@@ -51,9 +51,25 @@ export interface LogEntry {
 
 export interface AgendaItem {
   time: string;
-  type: "med" | "remis" | "turno" | "noche";
+  type: "med" | "remis" | "turno" | "noche" | "llamada" | "otro";
   client: string;
   detail: string;
+}
+
+export interface AppointmentData {
+  id: number;
+  client_id: number | null;
+  client_name: string | null;
+  type: string;
+  scheduled_at: string;
+  detail: string | null;
+  reminder_sent: boolean;
+  status: string;
+  recurrence: string | null;
+  recurrence_end: string | null;
+  whatsapp_reminder: boolean;
+  notes: string | null;
+  created_at: string;
 }
 
 export interface MessageTemplate {

@@ -11,6 +11,7 @@ from app.services.appointment_service import (
     delete_appointment,
     list_appointments,
     update_appointment,
+    update_appointment_status,
 )
 from app.services.audit_service import log_action
 from app.services.client_service import (
@@ -42,6 +43,7 @@ __all__ = [
     "list_appointments",
     "create_appointment",
     "update_appointment",
+    "update_appointment_status",
     "delete_appointment",
     # audit
     "log_action",

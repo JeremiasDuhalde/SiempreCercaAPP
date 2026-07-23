@@ -58,6 +58,14 @@ async def update_appointment(db: AsyncSession, appt_id: int, data) -> Appointmen
     return appt
 
 
+async def update_appointment_status(db: AsyncSession, appt_id: int, status: str) -> Appointment:
+    appt = await _get_appointment(db, appt_id)
+    appt.status = status
+    await db.commit()
+    await db.refresh(appt)
+    return appt
+
+
 async def delete_appointment(db: AsyncSession, appt_id: int) -> None:
     appt = await _get_appointment(db, appt_id)
     await db.delete(appt)

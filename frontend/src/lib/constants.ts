@@ -159,11 +159,13 @@ export const BARRIOS = [
   "Aguas Verdes",
 ] as const;
 
-export const AGENDA_TYPE_COLORS = {
+export const AGENDA_TYPE_COLORS: Record<string, string> = {
   med: "coral",
-  remis: "amber",
+  remis: "violet",
   turno: "blue",
   noche: "violet",
+  llamada: "aqua",
+  otro: "sub",
 } as const;
 
 export const MODULES = [
