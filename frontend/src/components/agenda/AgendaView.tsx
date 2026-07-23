@@ -86,7 +86,6 @@ const ICON_MAP: Record<string, React.ElementType> = {
 const HOURS = Array.from({ length: 17 }, (_, i) => i + 6); // 06:00 - 22:00
 
 const DAY_NAMES = ["Dom", "Lun", "Mar", "Mie", "Jue", "Vie", "Sab"];
-const DAY_NAMES_LONG = ["Domingo", "Lunes", "Martes", "Miercoles", "Jueves", "Viernes", "Sabado"];
 
 /* ── Helpers ──────────────────────────────────────────────────── */
 
