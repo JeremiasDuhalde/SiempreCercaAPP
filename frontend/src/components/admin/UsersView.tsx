@@ -1,12 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { COLORS } from "@/lib/constants";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useAppStore } from "@/stores/useAppStore";
-import { Shield, Plus, ChevronLeft, Check, X, Eye, EyeOff } from "lucide-react";
+import {
+  Shield,
+  Plus,
+  ChevronLeft,
+  Check,
+  X,
+  Eye,
+  EyeOff,
+  Activity,
+  Lock,
+  User as UserIcon,
+} from "lucide-react";
 import { initials } from "@/lib/utils";
 
 /* ── Types ──────────────────────────────────────────────────── */
+
+type TurnoKey = "manana" | "tarde" | "noche";
 
 interface UserItem {
   id: number;
@@ -14,7 +27,15 @@ interface UserItem {
   name: string;
   role: "admin" | "supervisor" | "operador";
   is_active: boolean;
+  turno: TurnoKey | null;
+  last_login: string | null;
   created_at: string;
+}
+
+interface UserActivity {
+  alerts_resolved: number;
+  actions_taken: number;
+  last_login: string | null;
 }
 
 type RoleKey = "admin" | "supervisor" | "operador";
@@ -27,10 +48,68 @@ const ROLE_CONFIG: Record<RoleKey, { label: string; color: string }> = {
   operador: { label: "Operador", color: COLORS.aqua },
 };
 
+/* ── Turno config ───────────────────────────────────────────── */
+
+const TURNO_CONFIG: Record<TurnoKey, { label: string; hours: string; color: string }> = {
+  manana: { label: "Manana", hours: "06-14hs", color: COLORS.amber },
+  tarde: { label: "Tarde", hours: "14-22hs", color: "#4a9eff" },
+  noche: { label: "Noche", hours: "22-06hs", color: COLORS.violet },
+};
+
+const TURNO_OPTIONS = [
+  { value: "", label: "Sin asignar" },
+  { value: "manana", label: "Manana (06-14hs)" },
+  { value: "tarde", label: "Tarde (14-22hs)" },
+  { value: "noche", label: "Noche (22-06hs)" },
+];
+
+const ROLE_OPTIONS = [
+  { value: "admin", label: "Admin" },
+  { value: "supervisor", label: "Supervisor" },
+  { value: "operador", label: "Operador" },
+];
+
 /* ── Helpers ────────────────────────────────────────────────── */
+
+function relativeTime(iso: string | null): string {
+  if (!iso) return "nunca";
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 1) return "ahora";
+  if (mins < 60) return `hace ${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `hace ${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `hace ${days} dias`;
+  const months = Math.floor(days / 30);
+  return `hace ${months} mes${months > 1 ? "es" : ""}`;
+}
+
+function formatDateTime(iso: string | null): string {
+  if (!iso) return "Nunca";
+  return new Date(iso).toLocaleString("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
 
 function RoleBadge({ role }: { role: RoleKey }) {
   const cfg = ROLE_CONFIG[role];
+  return (
+    <span
+      className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold"
+      style={{ background: `${cfg.color}22`, color: cfg.color }}
+    >
+      {cfg.label}
+    </span>
+  );
+}
+
+function TurnoBadge({ turno }: { turno: TurnoKey }) {
+  const cfg = TURNO_CONFIG[turno];
   return (
     <span
       className="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold"
@@ -195,11 +274,32 @@ function SelectField({
   );
 }
 
-const ROLE_OPTIONS = [
-  { value: "admin", label: "Admin" },
-  { value: "supervisor", label: "Supervisor" },
-  { value: "operador", label: "Operador" },
-];
+/* ── Section wrapper ────────────────────────────────────────── */
+
+function Section({
+  icon,
+  title,
+  children,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className="rounded-xl p-5 mb-4"
+      style={{ background: COLORS.panel, border: `1px solid ${COLORS.line}` }}
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <span style={{ color: COLORS.violet }}>{icon}</span>
+        <h3 className="text-sm font-semibold" style={{ color: COLORS.ink }}>
+          {title}
+        </h3>
+      </div>
+      {children}
+    </div>
+  );
+}
 
 /* ── User card (list item) ──────────────────────────────────── */
 
@@ -221,7 +321,18 @@ function UserCard({
       }}
       onClick={onClick}
     >
-      <Avatar name={user.name} role={user.role} />
+      {/* Avatar with active dot */}
+      <div className="relative shrink-0">
+        <Avatar name={user.name} role={user.role} />
+        <span
+          className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2"
+          style={{
+            background: user.is_active ? COLORS.aqua : COLORS.faint,
+            borderColor: selected ? COLORS.panel2 : COLORS.panel,
+          }}
+        />
+      </div>
+
       <div className="flex-1 min-w-0">
         <p className="text-sm font-semibold truncate" style={{ color: COLORS.ink }}>
           {user.name}
@@ -229,14 +340,14 @@ function UserCard({
         <p className="text-xs truncate" style={{ color: COLORS.sub }}>
           {user.email}
         </p>
+        <p className="text-xs mt-0.5" style={{ color: COLORS.faint }}>
+          {relativeTime(user.last_login)}
+        </p>
       </div>
-      <div className="flex flex-col items-end gap-1">
+
+      <div className="flex flex-col items-end gap-1 shrink-0">
         <RoleBadge role={user.role} />
-        {!user.is_active && (
-          <span className="text-xs" style={{ color: COLORS.faint }}>
-            inactivo
-          </span>
-        )}
+        {user.turno && <TurnoBadge turno={user.turno} />}
       </div>
     </button>
   );
@@ -255,19 +366,26 @@ function CreateUserForm({
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<string>("operador");
+  const [turno, setTurno] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !password.trim()) {
-      setError("Todos los campos son obligatorios");
+      setError("Nombre, email y contraseña son obligatorios");
       return;
     }
     setLoading(true);
     setError(null);
     try {
-      const { data } = await api.post<UserItem>("/api/users/", { name, email, password, role });
+      const { data } = await api.post<UserItem>("/api/users/", {
+        name,
+        email,
+        password,
+        role,
+        turno: turno || null,
+      });
       onCreated(data);
     } catch (err: any) {
       setError(err.response?.data?.detail || "Error al crear el usuario");
@@ -306,15 +424,19 @@ function CreateUserForm({
           placeholder="usuario@siemprecerca.app"
         />
         <PasswordField
-          label="Contraseña"
+          label="Contrasena"
           value={password}
           onChange={setPassword}
           placeholder="Minimo 8 caracteres"
         />
         <SelectField label="Rol" value={role} onChange={setRole} options={ROLE_OPTIONS} />
+        <SelectField label="Turno" value={turno} onChange={setTurno} options={TURNO_OPTIONS} />
 
         {error && (
-          <p className="text-sm px-3 py-2 rounded-lg" style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}>
+          <p
+            className="text-sm px-3 py-2 rounded-lg"
+            style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}
+          >
             {error}
           </p>
         )}
@@ -360,26 +482,40 @@ function UserDetail({
   onBack?: () => void;
   onUpdated: (updated: UserItem) => void;
 }) {
+  /* ── Info basica state ── */
   const [name, setName] = useState(user.name);
   const [role, setRole] = useState<string>(user.role);
+  const [turno, setTurno] = useState<string>(user.turno ?? "");
   const [isActive, setIsActive] = useState(user.is_active);
   const [saving, setSaving] = useState(false);
   const [saveOk, setSaveOk] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  // Password change (own user only)
+  /* ── Password (own user) state ── */
   const [currentPwd, setCurrentPwd] = useState("");
   const [newPwd, setNewPwd] = useState("");
   const [pwdLoading, setPwdLoading] = useState(false);
   const [pwdOk, setPwdOk] = useState(false);
   const [pwdError, setPwdError] = useState<string | null>(null);
 
+  /* ── Reset password (admin) state ── */
+  const [resetPwd, setResetPwd] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetOk, setResetOk] = useState(false);
+  const [resetError, setResetError] = useState<string | null>(null);
+
+  /* ── Activity state ── */
+  const [activity, setActivity] = useState<UserActivity | null>(null);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activityError, setActivityError] = useState<string | null>(null);
+
   const isOwnUser = user.id === currentUserId;
 
-  // Sync fields when user prop changes
+  /* ── Sync when selected user changes ── */
   useEffect(() => {
     setName(user.name);
     setRole(user.role);
+    setTurno(user.turno ?? "");
     setIsActive(user.is_active);
     setSaveOk(false);
     setSaveError(null);
@@ -387,8 +523,32 @@ function UserDetail({
     setPwdError(null);
     setCurrentPwd("");
     setNewPwd("");
+    setResetPwd("");
+    setResetOk(false);
+    setResetError(null);
+    setActivity(null);
+    setActivityError(null);
   }, [user.id]);
 
+  /* ── Fetch activity on mount / user change ── */
+  const fetchActivity = useCallback(async () => {
+    setActivityLoading(true);
+    setActivityError(null);
+    try {
+      const { data } = await api.get<UserActivity>(`/api/users/${user.id}/activity`);
+      setActivity(data);
+    } catch {
+      setActivityError("No se pudo cargar la actividad");
+    } finally {
+      setActivityLoading(false);
+    }
+  }, [user.id]);
+
+  useEffect(() => {
+    fetchActivity();
+  }, [fetchActivity]);
+
+  /* ── Handlers ── */
   const handleSave = async () => {
     setSaving(true);
     setSaveOk(false);
@@ -397,6 +557,7 @@ function UserDetail({
       const { data } = await api.patch<UserItem>(`/api/users/${user.id}`, {
         name,
         role,
+        turno: turno || null,
         is_active: isActive,
       });
       onUpdated(data);
@@ -431,9 +592,29 @@ function UserDetail({
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetPwd) return;
+    setResetLoading(true);
+    setResetOk(false);
+    setResetError(null);
+    try {
+      await api.post(`/api/users/${user.id}/reset-password`, {
+        new_password: resetPwd,
+      });
+      setResetOk(true);
+      setResetPwd("");
+      setTimeout(() => setResetOk(false), 3000);
+    } catch (err: any) {
+      setResetError(err.response?.data?.detail || "Error al resetear contrasena");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div className="sc-scroll flex-1 overflow-y-auto p-6" style={{ background: COLORS.bg }}>
-      {/* Back button mobile */}
+      {/* Back button (mobile) */}
       {onBack && (
         <button
           className="flex items-center gap-1 mb-4 text-sm"
@@ -444,9 +625,9 @@ function UserDetail({
         </button>
       )}
 
-      {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <Avatar name={user.name} role={user.role} size={64} />
+      {/* Header with big avatar */}
+      <div className="flex items-center gap-5 mb-6">
+        <Avatar name={user.name} role={user.role} size={72} />
         <div>
           <h2 className="text-xl font-bold" style={{ color: COLORS.ink }}>
             {user.name}
@@ -454,31 +635,33 @@ function UserDetail({
           <p className="text-sm" style={{ color: COLORS.sub }}>
             {user.email}
           </p>
-          <div className="flex items-center gap-2 mt-1.5">
+          <div className="flex flex-wrap items-center gap-2 mt-1.5">
             <RoleBadge role={user.role} />
-            {!user.is_active && (
+            {user.turno && <TurnoBadge turno={user.turno} />}
+            <span
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
+              style={{
+                background: user.is_active ? "var(--sc-aqua-a13)" : "var(--sc-faint-a09)",
+                color: user.is_active ? COLORS.aqua : COLORS.faint,
+              }}
+            >
               <span
-                className="inline-flex px-2 py-0.5 rounded-full text-xs"
-                style={{ background: "var(--sc-faint-a09)", color: COLORS.faint }}
-              >
-                Inactivo
-              </span>
-            )}
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ background: user.is_active ? COLORS.aqua : COLORS.faint }}
+              />
+              {user.is_active ? "Activo" : "Inactivo"}
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Edit form */}
-      <div
-        className="rounded-xl p-5 mb-4"
-        style={{ background: COLORS.panel, border: `1px solid ${COLORS.line}` }}
-      >
-        <h3 className="text-sm font-semibold mb-4" style={{ color: COLORS.ink }}>
-          Datos del usuario
-        </h3>
+      {/* Section 1: Info basica */}
+      <Section icon={<UserIcon size={15} />} title="Informacion basica">
         <div className="space-y-4 max-w-md">
           <InputField label="Nombre" value={name} onChange={setName} />
+          <InputField label="Email" value={user.email} onChange={() => {}} disabled />
           <SelectField label="Rol" value={role} onChange={setRole} options={ROLE_OPTIONS} />
+          <SelectField label="Turno" value={turno} onChange={setTurno} options={TURNO_OPTIONS} />
 
           {/* Active toggle */}
           <div className="flex items-center justify-between">
@@ -492,7 +675,9 @@ function UserDetail({
               style={{
                 background: isActive ? "var(--sc-aqua-a13)" : "var(--sc-faint-a09)",
                 color: isActive ? COLORS.aqua : COLORS.faint,
-                border: isActive ? "1px solid var(--sc-aqua-a25)" : "1px solid var(--sc-faint-a09)",
+                border: isActive
+                  ? "1px solid var(--sc-aqua-a25)"
+                  : "1px solid var(--sc-faint-a09)",
               }}
             >
               {isActive ? (
@@ -537,18 +722,16 @@ function UserDetail({
             )}
           </button>
         </div>
-      </div>
+      </Section>
 
-      {/* Password change — only own user */}
-      {isOwnUser && (
-        <div
-          className="rounded-xl p-5"
-          style={{ background: COLORS.panel, border: `1px solid ${COLORS.line}` }}
-        >
-          <h3 className="text-sm font-semibold mb-4" style={{ color: COLORS.ink }}>
-            Cambiar contrasena
-          </h3>
-          <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
+      {/* Section 2: Seguridad */}
+      <Section icon={<Lock size={15} />} title="Seguridad">
+        {/* Own user: change own password */}
+        {isOwnUser && (
+          <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md mb-4">
+            <p className="text-xs" style={{ color: COLORS.sub }}>
+              Cambiar tu propia contrasena
+            </p>
             <PasswordField
               label="Contrasena actual"
               value={currentPwd}
@@ -561,7 +744,6 @@ function UserDetail({
               onChange={setNewPwd}
               placeholder="Nueva contrasena"
             />
-
             {pwdError && (
               <p
                 className="text-sm px-3 py-2 rounded-lg"
@@ -578,7 +760,6 @@ function UserDetail({
                 Contrasena actualizada correctamente
               </p>
             )}
-
             <button
               type="submit"
               disabled={pwdLoading || !currentPwd || !newPwd}
@@ -592,8 +773,122 @@ function UserDetail({
               {pwdLoading ? "Actualizando..." : "Actualizar contrasena"}
             </button>
           </form>
-        </div>
-      )}
+        )}
+
+        {/* Admin: reset other user's password */}
+        {!isOwnUser && (
+          <form onSubmit={handleResetPassword} className="space-y-4 max-w-md">
+            <p className="text-xs" style={{ color: COLORS.sub }}>
+              Asignar una nueva contrasena para este usuario (sin conocer la actual)
+            </p>
+            <PasswordField
+              label="Nueva contrasena"
+              value={resetPwd}
+              onChange={setResetPwd}
+              placeholder="Minimo 6 caracteres"
+            />
+            {resetError && (
+              <p
+                className="text-sm px-3 py-2 rounded-lg"
+                style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}
+              >
+                {resetError}
+              </p>
+            )}
+            {resetOk && (
+              <p
+                className="text-sm px-3 py-2 rounded-lg"
+                style={{ background: "var(--sc-aqua-a13)", color: COLORS.aqua }}
+              >
+                Contrasena reseteada correctamente
+              </p>
+            )}
+            <button
+              type="submit"
+              disabled={resetLoading || !resetPwd}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-opacity"
+              style={{
+                background: COLORS.coral,
+                color: "#fff",
+                opacity: resetLoading || !resetPwd ? 0.5 : 1,
+              }}
+            >
+              {resetLoading ? "Reseteando..." : "Resetear contrasena"}
+            </button>
+          </form>
+        )}
+      </Section>
+
+      {/* Section 3: Actividad */}
+      <Section icon={<Activity size={15} />} title="Actividad">
+        {activityLoading && (
+          <p className="text-sm" style={{ color: COLORS.faint }}>
+            Cargando actividad...
+          </p>
+        )}
+        {activityError && (
+          <p className="text-sm" style={{ color: COLORS.coral }}>
+            {activityError}
+          </p>
+        )}
+        {activity && !activityLoading && (
+          <>
+            {activity.alerts_resolved === 0 && activity.actions_taken === 0 ? (
+              <p className="text-sm" style={{ color: COLORS.faint }}>
+                Sin actividad registrada
+              </p>
+            ) : (
+              <div className="grid grid-cols-3 gap-3 max-w-md">
+                {/* Alertas resueltas */}
+                <div
+                  className="rounded-xl p-4 flex flex-col gap-1"
+                  style={{ background: COLORS.panel2, border: `1px solid ${COLORS.line}` }}
+                >
+                  <span className="text-2xl font-bold" style={{ color: COLORS.aqua }}>
+                    {activity.alerts_resolved}
+                  </span>
+                  <span className="text-xs leading-tight" style={{ color: COLORS.sub }}>
+                    Alertas resueltas
+                  </span>
+                </div>
+
+                {/* Acciones realizadas */}
+                <div
+                  className="rounded-xl p-4 flex flex-col gap-1"
+                  style={{ background: COLORS.panel2, border: `1px solid ${COLORS.line}` }}
+                >
+                  <span className="text-2xl font-bold" style={{ color: COLORS.violet }}>
+                    {activity.actions_taken}
+                  </span>
+                  <span className="text-xs leading-tight" style={{ color: COLORS.sub }}>
+                    Acciones realizadas
+                  </span>
+                </div>
+
+                {/* Ultimo acceso */}
+                <div
+                  className="rounded-xl p-4 flex flex-col gap-1"
+                  style={{ background: COLORS.panel2, border: `1px solid ${COLORS.line}` }}
+                >
+                  <span className="text-sm font-bold leading-snug" style={{ color: COLORS.amber }}>
+                    {relativeTime(activity.last_login)}
+                  </span>
+                  <span className="text-xs leading-tight" style={{ color: COLORS.sub }}>
+                    Ultimo acceso
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Full timestamp */}
+            {activity.last_login && (
+              <p className="text-xs mt-3" style={{ color: COLORS.faint }}>
+                Ultimo login: {formatDateTime(activity.last_login)}
+              </p>
+            )}
+          </>
+        )}
+      </Section>
     </div>
   );
 }
@@ -671,14 +966,6 @@ export default function UsersView() {
 
   // Mobile: showing detail or create
   if (isMobile && showDetail && !showCreate) {
-    if (showCreate) {
-      return (
-        <CreateUserForm
-          onCreated={handleCreated}
-          onCancel={() => setShowCreate(false)}
-        />
-      );
-    }
     if (selectedUser) {
       return (
         <UserDetail
@@ -732,7 +1019,7 @@ export default function UsersView() {
             style={{ background: COLORS.violet, color: "#fff" }}
           >
             <Plus size={13} />
-            Nuevo usuario
+            Nuevo
           </button>
         </div>
 
@@ -751,7 +1038,10 @@ export default function UsersView() {
             </p>
           )}
           {fetchError && (
-            <div className="mx-2 mt-2 px-3 py-2 rounded-lg text-sm" style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}>
+            <div
+              className="mx-2 mt-2 px-3 py-2 rounded-lg text-sm"
+              style={{ background: "var(--sc-coral-a13)", color: COLORS.coral }}
+            >
               {fetchError}
             </div>
           )}

@@ -13,6 +13,7 @@ class UserOut(BaseModel):
     name: str
     role: str
     is_active: bool
+    turno: str | None
     last_login: datetime | None
     created_at: datetime
 
@@ -22,12 +23,18 @@ class UserCreate(BaseModel):
     password: str
     name: str
     role: str = "operador"
+    turno: str | None = None
 
 
 class UserUpdate(BaseModel):
     name: str | None = None
     role: str | None = None
     is_active: bool | None = None
+    turno: str | None = None
+
+
+class ResetPasswordRequest(BaseModel):
+    new_password: str
 
 
 class PasswordChange(BaseModel):
