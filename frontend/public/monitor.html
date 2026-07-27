@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiempreCerca Monitor — Descarga</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, system-ui, sans-serif;
+    background: #f5f5f7;
+    color: #1a1a2e;
+    padding: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  .container { max-width: 500px; margin: 0 auto; }
+
+  .logo {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-top: 16px;
+  }
+  .logo span {
+    display: inline-flex;
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #e94560, #c2185b);
+    align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: #fff;
+  }
+  .logo h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 10px;
+    color: #1a1a2e;
+  }
+  .logo p {
+    font-size: 14px;
+    color: #6b6b80;
+    margin-top: 4px;
+  }
+
+  /* Tarjeta de descarga */
+  .download-card {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 18px;
+    padding: 24px 20px;
+    margin-bottom: 16px;
+    text-align: center;
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(233,69,96,0.25);
+  }
+  .download-card .version-badge {
+    display: inline-block;
+    background: rgba(233,69,96,0.25);
+    border: 1px solid rgba(233,69,96,0.5);
+    color: #e94560;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+  .download-card h2 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+  .download-card p {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 20px;
+  }
+  .btn-download {
+    display: block;
+    background: #e94560;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px 24px;
+    border-radius: 14px;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.2px;
+  }
+  .btn-download:active {
+    background: #c2185b;
+    transform: scale(0.98);
+  }
+  .btn-download .btn-sub {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.8;
+    margin-top: 3px;
+  }
+
+  /* QR placeholder */
+  .qr-section {
+    background: #fff;
+    border: 1px solid #e2e0ea;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .qr-placeholder {
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    background: #f0f0f5;
+    border: 2px dashed #c0bdd8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #9a9ab0;
+    font-size: 11px;
+    font-weight: 600;
+    gap: 4px;
+  }
+  .qr-placeholder .qr-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .qr-info h3 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .qr-info p {
+    font-size: 12px;
+    color: #6b6b80;
+    line-height: 1.5;
+  }
+
+  /* Requisitos */
+  .req-card {
+    background: #fff;
+    border: 1px solid #e2e0ea;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .req-card h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6b6b80;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .req-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .req-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+  }
+  .req-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: #f0f0f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Pasos */
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #6b6b80;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+    padding-left: 2px;
+  }
+
+  .step {
+    background: #fff;
+    border: 1px solid #e2e0ea;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: #e94560;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-title {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .step p {
+    font-size: 14px;
+    color: #6b6b80;
+    margin: 0;
+  }
+
+  .note {
+    background: #fef9c3;
+    border: 1px solid #fde047;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #854d0e;
+    margin-top: 8px;
+  }
+
+  .success {
+    background: #ecfdf5;
+    border: 1px solid #6ee7b7;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #065f46;
+    margin-top: 8px;
+  }
+
+  .highlight {
+    display: inline-block;
+    background: #fde8ec;
+    color: #c2185b;
+    padding: 1px 7px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 11px;
+    color: #9a9ab0;
+    padding-bottom: 24px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="logo">
+    <span>SC</span>
+    <h1>SiempreCerca Monitor</h1>
+    <p>App de monitoreo BLE para relojes FLIC</p>
+  </div>
+
+  <!-- TARJETA DE DESCARGA -->
+  <div class="download-card">
+    <div class="version-badge">VERSION 1.0.0</div>
+    <h2>SiempreCerca Monitor</h2>
+    <p>Para Android 8.0 o superior</p>
+    <a class="btn-download" href="/monitor/siemprecerca-monitor-v1.0.0.apk" download>
+      Descargar APK v1.0.0
+      <span class="btn-sub">Archivo .apk &middot; Instalacion manual</span>
+    </a>
+  </div>
+
+  <!-- QR PLACEHOLDER -->
+  <div class="qr-section">
+    <div class="qr-placeholder">
+      <span class="qr-icon">&#9638;</span>
+      QR
+    </div>
+    <div class="qr-info">
+      <h3>Escanear desde el celular</h3>
+      <p>Apunta la camara de tu Android a este codigo para ir directamente a la descarga. (QR disponible proximamente.)</p>
+    </div>
+  </div>
+
+  <!-- REQUISITOS -->
+  <div class="req-card">
+    <h3>Requisitos</h3>
+    <div class="req-list">
+      <div class="req-item">
+        <div class="req-icon">&#x1F4F1;</div>
+        <span><strong>Android 8.0</strong> o superior (API 26+)</span>
+      </div>
+      <div class="req-item">
+        <div class="req-icon">&#x1F4E1;</div>
+        <span><strong>Bluetooth</strong> activado (para relojes FLIC)</span>
+      </div>
+      <div class="req-item">
+        <div class="req-icon">&#x1F4F6;</div>
+        <span><strong>WiFi</strong> o datos moviles para enviar alertas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASOS DE INSTALACION -->
+  <div class="section-title">Instrucciones de instalacion</div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">Descargar el APK</div>
+    </div>
+    <p>Toca el boton <span class="highlight">Descargar APK</span> de arriba. El archivo se guarda en la carpeta <strong>Descargas</strong> del dispositivo.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">Permitir fuentes desconocidas</div>
+    </div>
+    <p>Cuando el sistema pregunte, toca <strong>"Configuracion"</strong> y activa la opcion <strong>"Permitir de esta fuente"</strong> para tu navegador o gestor de archivos.</p>
+    <div class="note">
+      En Android 8 o superior esto se activa por app (no de forma global). Es seguro activarlo solo para la descarga.
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">Instalar la app</div>
+    </div>
+    <p>Abre el archivo <strong>siemprecerca-monitor-v1.0.0.apk</strong> desde Descargas y toca <strong>"Instalar"</strong>. Espera a que finalice.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-title">Abrir y configurar</div>
+    </div>
+    <p>Toca <strong>"Abrir"</strong> al terminar la instalacion. La app pedira permisos de Bluetooth y ubicacion: <strong>aceptalos todos</strong>. Luego ingresa la URL del servidor y el token que te provea el administrador.</p>
+    <div class="success">
+      Una vez configurada, la app escanea automaticamente los relojes FLIC cercanos y envia las alertas al sistema de monitoreo.
+    </div>
+  </div>
+
+  <div class="footer">
+    Siempre Cerca SRL &middot; Central de monitoreo<br>
+    Soporte: +54 9 2234 97-3299
+  </div>
+
+</div>
+</body>
+</html>

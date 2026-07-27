@@ -332,6 +332,17 @@ async def seed() -> None:
             ))
             print("✓ Operador demo creado")
 
+        # Usuario de servicio para la app Monitor BLE
+        result = await db.execute(select(User).where(User.email == "monitor@siemprecerca.app"))
+        if not result.scalar_one_or_none():
+            db.add(User(
+                email="monitor@siemprecerca.app",
+                hashed_password=hash_password("M0n1t0rSC2026"),
+                name="Monitor BLE",
+                role="operador",
+            ))
+            print("✓ Usuario monitor@siemprecerca.app creado")
+
         await db.flush()
 
         # 2. Clientes
