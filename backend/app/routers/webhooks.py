@@ -114,7 +114,7 @@ async def flic_alert(
             device = result.scalar_one_or_none()
 
         if device:
-            # Actualizar batería y ubicación del dispositivo
+            # Actualizar estado del dispositivo
             device.is_online = True
             device.last_seen_at = datetime.now(timezone.utc)
 
@@ -135,7 +135,38 @@ async def flic_alert(
                 "entre": client.address_entre or "",
             }
 
-        # 3. Crear alerta
+        # Health check: solo actualizar last_seen, no crear alerta
+        if event == "health":
+            raw_log.processed = True
+
+            # Si habia una alerta de inactividad abierta, resolverla
+            if client:
+                inactivity_alert = await db.execute(
+                    select(Alert).where(
+                        Alert.client_id == client.id,
+                        Alert.type == "inactiv",
+                        Alert.status.in_(["nueva", "atendiendo"]),
+                    )
+                )
+                for alert in inactivity_alert.scalars().all():
+                    alert.status = "resuelta"
+                    alert.resolved_at = datetime.now(timezone.utc)
+
+            await db.commit()
+
+            logger.info(
+                "Health check recibido: serial=%s cliente=%s",
+                button_serial_number, client_name,
+            )
+
+            return {
+                "ok": True,
+                "type": "health",
+                "client": client_name,
+                "message": f"Health check OK de {button_serial_number}",
+            }
+
+        # 3. Crear alerta (para eventos que no son health)
         alert = Alert(
             client_id=client.id if client else None,
             device_id=device.id if device else None,

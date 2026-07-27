@@ -22,18 +22,22 @@ def _get_session_factory():
 
 @celery.task(name="app.tasks.inactivity_check.check_inactivity")
 def check_inactivity() -> None:
-    """Chequea devices con last_seen_at > 4h y genera alertas de inactividad."""
+    """Chequea devices con last_seen_at > 2h y genera alertas de inactividad.
+
+    La app Siempre Cerca Monitor envia health ping cada 1 hora.
+    Si faltan 2 pings consecutivos (2h), se genera alerta.
+    """
     asyncio.run(_check_inactivity())
 
 
 async def _check_inactivity() -> None:
     Session = _get_session_factory()
     now = datetime.now(timezone.utc)
-    threshold_4h = now - timedelta(hours=4)
-    threshold_6h = now - timedelta(hours=6)
+    threshold_4h = now - timedelta(hours=2)
+    threshold_6h = now - timedelta(hours=4)
 
     async with Session() as db:
-        # Dispositivos online que no se han visto en más de 4 horas
+        # Dispositivos online que no se han visto en más de 2 horas
         result = await db.execute(
             select(Device).where(
                 and_(
