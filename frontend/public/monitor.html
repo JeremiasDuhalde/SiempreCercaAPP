@@ -8,8 +8,8 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: -apple-system, system-ui, sans-serif;
-    background: #f5f5f7;
-    color: #1a1a2e;
+    background: #f0f5f4;
+    color: #1a2626;
     padding: 16px;
     line-height: 1.6;
     min-height: 100vh;
@@ -25,7 +25,7 @@
     display: inline-flex;
     width: 52px; height: 52px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #e94560, #c2185b);
+    background: linear-gradient(135deg, #406c6b, #2d4f4e);
     align-items: center; justify-content: center;
     font-size: 22px; font-weight: 900; color: #fff;
   }
@@ -33,29 +33,30 @@
     font-size: 22px;
     font-weight: 700;
     margin-top: 10px;
-    color: #1a1a2e;
+    color: #1a2626;
   }
   .logo p {
     font-size: 14px;
-    color: #6b6b80;
+    color: #7a9695;
     margin-top: 4px;
   }
 
   /* Tarjeta de descarga */
   .download-card {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    background: linear-gradient(135deg, #1a2626, #243434);
     border-radius: 18px;
     padding: 24px 20px;
     margin-bottom: 16px;
     text-align: center;
     color: #fff;
-    box-shadow: 0 4px 20px rgba(233,69,96,0.25);
+    box-shadow: 0 4px 20px rgba(64,108,107,0.3);
+    border: 1px solid #2d4f4e;
   }
   .download-card .version-badge {
     display: inline-block;
-    background: rgba(233,69,96,0.25);
-    border: 1px solid rgba(233,69,96,0.5);
-    color: #e94560;
+    background: rgba(91,181,176,0.2);
+    border: 1px solid rgba(91,181,176,0.4);
+    color: #5bb5b0;
     font-size: 12px;
     font-weight: 700;
     padding: 3px 10px;
@@ -76,7 +77,7 @@
   }
   .btn-download {
     display: block;
-    background: #e94560;
+    background: #406c6b;
     color: #fff;
     text-decoration: none;
     font-size: 16px;
@@ -87,7 +88,7 @@
     letter-spacing: 0.2px;
   }
   .btn-download:active {
-    background: #c2185b;
+    background: #2d4f4e;
     transform: scale(0.98);
   }
   .btn-download .btn-sub {
@@ -101,7 +102,7 @@
   /* QR placeholder */
   .qr-section {
     background: #fff;
-    border: 1px solid #e2e0ea;
+    border: 1px solid #d4e0df;
     border-radius: 14px;
     padding: 16px;
     margin-bottom: 16px;
@@ -114,14 +115,14 @@
     width: 80px;
     height: 80px;
     border-radius: 10px;
-    background: #f0f0f5;
-    border: 2px dashed #c0bdd8;
+    background: #f0f5f4;
+    border: 2px dashed #9db5b4;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #9a9ab0;
+    color: #7a9695;
     font-size: 11px;
     font-weight: 600;
     gap: 4px;
@@ -137,14 +138,14 @@
   }
   .qr-info p {
     font-size: 12px;
-    color: #6b6b80;
+    color: #7a9695;
     line-height: 1.5;
   }
 
   /* Requisitos */
   .req-card {
     background: #fff;
-    border: 1px solid #e2e0ea;
+    border: 1px solid #d4e0df;
     border-radius: 14px;
     padding: 16px;
     margin-bottom: 16px;
@@ -153,7 +154,7 @@
   .req-card h3 {
     font-size: 13px;
     font-weight: 700;
-    color: #6b6b80;
+    color: #7a9695;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 12px;
@@ -172,7 +173,7 @@
   .req-icon {
     width: 32px; height: 32px;
     border-radius: 8px;
-    background: #f0f0f5;
+    background: #f0f5f4;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -184,7 +185,7 @@
   .section-title {
     font-size: 13px;
     font-weight: 700;
-    color: #6b6b80;
+    color: #7a9695;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 10px;
@@ -193,7 +194,7 @@
 
   .step {
     background: #fff;
-    border: 1px solid #e2e0ea;
+    border: 1px solid #d4e0df;
     border-radius: 14px;
     padding: 16px;
     margin-bottom: 10px;
@@ -210,7 +211,7 @@
   .step-num {
     width: 28px; height: 28px;
     border-radius: 50%;
-    background: #e94560;
+    background: #406c6b;
     color: #fff;
     display: flex; align-items: center; justify-content: center;
     font-size: 14px; font-weight: 700;
@@ -224,7 +225,7 @@
 
   .step p {
     font-size: 14px;
-    color: #6b6b80;
+    color: #4a6565;
     margin: 0;
   }
 
@@ -250,8 +251,8 @@
 
   .highlight {
     display: inline-block;
-    background: #fde8ec;
-    color: #c2185b;
+    background: #e0efee;
+    color: #2d4f4e;
     padding: 1px 7px;
     border-radius: 5px;
     font-weight: 600;
@@ -262,7 +263,7 @@
     text-align: center;
     margin-top: 24px;
     font-size: 11px;
-    color: #9a9ab0;
+    color: #9db5b4;
     padding-bottom: 24px;
   }
 </style>
@@ -278,17 +279,13 @@
 
   <!-- TARJETA DE DESCARGA -->
   <div class="download-card">
-    <div class="version-badge">VERSION 2.7.0</div>
-    <h2>Siempre Cerca</h2>
+    <div class="version-badge">VERSION 3.1.0</div>
+    <h2>Siempre Cerca SOS</h2>
     <p>Para Android 8.0 o superior</p>
-    <a class="btn-download" href="/monitor/siemprecerca-monitor-v2.7.0.apk" download>
-      Descargar APK v2.7.0
-      <span class="btn-sub">SDK FLIC &middot; Cooldown 5s &middot; SMS + alertas</span>
+    <a class="btn-download" href="/monitor/siemprecerca-monitor-v1.0.0.apk" download>
+      Descargar APK v3.1.0
+      <span class="btn-sub">SDK FLIC &middot; UI rediseñada &middot; Tema claro/oscuro</span>
     </a>
-    <!-- <a class="btn-download" href="/monitor/siemprecerca-monitor-v2.2.0.apk" download style="background:linear-gradient(135deg,#1a1a2e,#333355);margin-top:12px;">
-      Descargar APK v2.2.0 (BLE Manual)
-      <span class="btn-sub">Version alternativa sin SDK</span>
-    </a> -->
   </div>
 
   <!-- QR PLACEHOLDER -->
@@ -349,7 +346,7 @@
       <div class="step-num">3</div>
       <div class="step-title">Instalar la app</div>
     </div>
-    <p>Abre el archivo <strong>siemprecerca-monitor-v2.2.0.apk</strong> desde Descargas y toca <strong>"Instalar"</strong>. Espera a que finalice.</p>
+    <p>Abre el archivo <strong>siemprecerca-monitor-v3.1.0.apk</strong> desde Descargas y toca <strong>"Instalar"</strong>. Espera a que finalice.</p>
   </div>
 
   <div class="step">
@@ -357,9 +354,9 @@
       <div class="step-num">4</div>
       <div class="step-title">Abrir y configurar</div>
     </div>
-    <p>Toca <strong>"Abrir"</strong> al terminar la instalacion. La app pedira permisos de Bluetooth y ubicacion: <strong>aceptalos todos</strong>. Luego ingresa la URL del servidor y el token que te provea el administrador.</p>
+    <p>Toca <strong>"Abrir"</strong> al terminar la instalacion. La app pedira permisos de Bluetooth y ubicacion: <strong>aceptalos todos</strong>. Luego busca el paciente por ID y vincula el boton FLIC.</p>
     <div class="success">
-      Una vez configurada, la app escanea automaticamente los relojes FLIC cercanos y envia las alertas al sistema de monitoreo.
+      Una vez configurada, la app monitorea automaticamente el boton FLIC y envia las alertas SOS al sistema.
     </div>
   </div>
 
