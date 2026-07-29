@@ -35,6 +35,7 @@ FLIC_EVENT_MAP = {
     "geo": "geo",
     "battery": "bateria",
     "panic": "sos",
+    "test": "test",
 }
 
 PRIORITY_MAP = {
@@ -44,6 +45,7 @@ PRIORITY_MAP = {
     "bateria": 1,
     "inactiv": 2,
     "compania": 1,
+    "test": 0,
 }
 
 
@@ -55,6 +57,8 @@ async def flic_alert(
     flic_latitude: str = Header(default=""),
     flic_longitude: str = Header(default=""),
     flic_accuracy: str = Header(default=""),
+    x_phone_battery: str = Header(default=""),
+    x_flic_battery_voltage: str = Header(default=""),
 ):
     """Recibe alerta de un botón FLIC.
 
@@ -77,10 +81,12 @@ async def flic_alert(
         "latitude": flic_latitude,
         "longitude": flic_longitude,
         "accuracy": flic_accuracy,
+        "phone_battery": x_phone_battery,
+        "flic_battery_voltage": x_flic_battery_voltage,
         "body": body,
         "headers": {
             k: v for k, v in request.headers.items()
-            if k.startswith(("button-", "flic-"))
+            if k.startswith(("button-", "flic-", "x-phone", "x-flic"))
         },
     }
 
@@ -117,6 +123,20 @@ async def flic_alert(
             # Actualizar estado del dispositivo
             device.is_online = True
             device.last_seen_at = datetime.now(timezone.utc)
+
+            # Actualizar bateria del telefono
+            if x_phone_battery:
+                try:
+                    device.phone_battery_level = int(x_phone_battery)
+                except (ValueError, TypeError):
+                    pass
+
+            # Actualizar bateria del FLIC
+            if x_flic_battery_voltage:
+                try:
+                    device.flic_battery_voltage = float(x_flic_battery_voltage)
+                except (ValueError, TypeError):
+                    pass
 
             # Cargar cliente asociado
             result = await db.execute(

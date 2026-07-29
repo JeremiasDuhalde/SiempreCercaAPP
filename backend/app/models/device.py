@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 
 from geoalchemy2 import Geometry
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, SmallInteger, String
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, SmallInteger, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -22,6 +22,8 @@ class Device(Base):
         String(100), unique=True, nullable=True, index=True
     )
     battery_pct: Mapped[int] = mapped_column(SmallInteger, default=100)
+    phone_battery_level: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    flic_battery_voltage: Mapped[float | None] = mapped_column(Float, nullable=True)
     signal_strength: Mapped[int] = mapped_column(SmallInteger, default=4)  # 0-4
     last_location = mapped_column(Geometry("POINT", srid=4326), nullable=True)
     last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

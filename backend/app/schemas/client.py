@@ -51,6 +51,8 @@ class DeviceOut(BaseModel):
     serial_number: str | None
     external_device_id: str | None
     battery_pct: int
+    phone_battery_level: int | None
+    flic_battery_voltage: float | None
     signal_strength: int
     is_online: bool
     last_seen_at: datetime | None

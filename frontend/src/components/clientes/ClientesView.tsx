@@ -50,6 +50,8 @@ interface RawDevice {
   serial_number: string | null;
   external_device_id: string | null;
   battery_pct: number;
+  phone_battery_level: number | null;
+  flic_battery_voltage: number | null;
   signal_strength: number;
   is_online: boolean;
   last_seen_at: string | null;
@@ -178,6 +180,8 @@ function adaptApiClient(raw: RawClient): Client {
     hr: undefined,
     spo2: undefined,
     geofence: raw.geofence ? raw.geofence.is_active : false,
+    phoneBattery: dev?.phone_battery_level ?? null,
+    flicBatteryVoltage: dev?.flic_battery_voltage ?? null,
   };
 }
 
@@ -394,6 +398,30 @@ function SignalIndicator({ level }: { level: number }) {
           }}
         />
       ))}
+    </span>
+  );
+}
+
+function PhoneBatteryIndicator({ level }: { level: number }) {
+  const Icon = level <= 25 ? BatteryLow : level <= 60 ? BatteryMedium : BatteryFull;
+  const color = level <= 25 ? COLORS.coral : level <= 50 ? COLORS.amber : COLORS.aqua;
+  return (
+    <span className="flex items-center gap-1" style={{ color }}>
+      <Smartphone size={14} />
+      <Icon size={16} />
+      <span className="text-xs font-medium">{level}%</span>
+    </span>
+  );
+}
+
+function FlicBatteryIndicator({ voltage }: { voltage: number }) {
+  // FLIC CR2032: ~3.0V full, ~2.5V low, ~2.2V critical
+  const color = voltage >= 2.8 ? COLORS.aqua : voltage >= 2.5 ? COLORS.amber : COLORS.coral;
+  const Icon = voltage >= 2.8 ? BatteryFull : voltage >= 2.5 ? BatteryMedium : BatteryLow;
+  return (
+    <span className="flex items-center gap-1" style={{ color }}>
+      <Icon size={16} />
+      <span className="text-xs font-medium">{voltage.toFixed(2)}V</span>
     </span>
   );
 }
@@ -1269,13 +1297,25 @@ function ClientDetail({ raw, onBack, onEdit, onDeleted, onRefresh, isMobile }: C
       {/* Device + Signal cards */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="sc-card rounded-xl p-3" style={{ background: COLORS.panel }}>
-          <p className="text-xs mb-1" style={{ color: COLORS.sub }}>Batería</p>
+          <p className="text-xs mb-1" style={{ color: COLORS.sub }}>Batería dispositivo</p>
           <BatteryIndicator level={client.bat} />
         </div>
         <div className="sc-card rounded-xl p-3" style={{ background: COLORS.panel }}>
           <p className="text-xs mb-1" style={{ color: COLORS.sub }}>Señal</p>
           <SignalIndicator level={client.sig} />
         </div>
+        {dev?.phone_battery_level != null && (
+          <div className="sc-card rounded-xl p-3" style={{ background: COLORS.panel }}>
+            <p className="text-xs mb-1" style={{ color: COLORS.sub }}>Batería celular</p>
+            <PhoneBatteryIndicator level={dev.phone_battery_level} />
+          </div>
+        )}
+        {dev?.flic_battery_voltage != null && (
+          <div className="sc-card rounded-xl p-3" style={{ background: COLORS.panel }}>
+            <p className="text-xs mb-1" style={{ color: COLORS.sub }}>Batería FLIC</p>
+            <FlicBatteryIndicator voltage={dev.flic_battery_voltage} />
+          </div>
+        )}
       </div>
 
       {/* 4-panel grid */}

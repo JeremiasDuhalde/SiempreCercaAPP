@@ -20,6 +20,7 @@ import {
   BatteryFull,
   BatteryMedium,
   BatteryWarning,
+  Smartphone,
   Signal,
   SignalLow,
   SignalMedium,
@@ -122,6 +123,49 @@ function InlineSignal({ bars }: { bars: number }) {
       <Icon size={16} color={color} />
       <span style={{ fontSize: 13, color: COLORS.ink }}>{bars}/4</span>
       <span style={{ fontSize: 11, color: COLORS.sub, marginLeft: "auto" }}>Señal</span>
+    </div>
+  );
+}
+
+function InlinePhoneBattery({ pct }: { pct: number }) {
+  const Icon = pct > 60 ? BatteryFull : pct > 25 ? BatteryMedium : BatteryWarning;
+  const color = pct > 60 ? COLORS.aqua : pct > 25 ? COLORS.amber : COLORS.coral;
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "8px 10px",
+        borderRadius: 8,
+        backgroundColor: COLORS.panel2,
+      }}
+    >
+      <Smartphone size={14} color={color} />
+      <Icon size={16} color={color} />
+      <span style={{ fontSize: 13, color: COLORS.ink }}>{pct}%</span>
+      <span style={{ fontSize: 11, color: COLORS.sub, marginLeft: "auto" }}>Celular</span>
+    </div>
+  );
+}
+
+function InlineFlicBattery({ voltage }: { voltage: number }) {
+  const color = voltage >= 2.8 ? COLORS.aqua : voltage >= 2.5 ? COLORS.amber : COLORS.coral;
+  const Icon = voltage >= 2.8 ? BatteryFull : voltage >= 2.5 ? BatteryMedium : BatteryWarning;
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "8px 10px",
+        borderRadius: 8,
+        backgroundColor: COLORS.panel2,
+      }}
+    >
+      <Icon size={16} color={color} />
+      <span style={{ fontSize: 13, color: COLORS.ink }}>{voltage.toFixed(2)}V</span>
+      <span style={{ fontSize: 11, color: COLORS.sub, marginLeft: "auto" }}>FLIC</span>
     </div>
   );
 }
@@ -789,6 +833,8 @@ function ClientFicha() {
           device: dev.model || "FLIC",
           bat: dev.battery_pct || 0,
           sig: dev.signal_strength || 0,
+          phoneBattery: dev.phone_battery_level ?? null,
+          flicBatteryVoltage: dev.flic_battery_voltage ?? null,
           cond: raw.conditions || [],
           meds: raw.medications ? Object.entries(raw.medications).map(([k, v]) => `${k}: ${v}`) : [],
           contacts: (raw.contacts || []).map((ct: any) => ({
@@ -948,6 +994,12 @@ function ClientFicha() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
         <InlineBattery pct={client.bat} />
         <InlineSignal bars={client.sig} />
+        {client.phoneBattery != null && (
+          <InlinePhoneBattery pct={client.phoneBattery} />
+        )}
+        {client.flicBatteryVoltage != null && (
+          <InlineFlicBattery voltage={client.flicBatteryVoltage} />
+        )}
       </div>
 
       {/* 4. Copiloto IA */}

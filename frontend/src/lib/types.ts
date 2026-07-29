@@ -27,6 +27,8 @@ export interface Client {
   hr?: number;
   spo2?: number;
   geofence?: boolean;
+  phoneBattery?: number | null;
+  flicBatteryVoltage?: number | null;
 }
 
 export interface Alert {
