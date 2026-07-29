@@ -7,7 +7,27 @@
       "Bash(ssh-keygen *)",
       "Bash(ssh *)",
       "Bash(dig +short *)",
-      "Bash(nslookup app.siemprecercasrl.com 8.8.8.8)"
+      "Bash(nslookup app.siemprecercasrl.com 8.8.8.8)",
+      "Bash(mkdir -p \"D:/dev/projects/SiempreCercaMonitor/app/src/main/java/com/siemprecerca/monitor\")",
+      "Bash(mkdir -p \"D:/dev/projects/SiempreCercaMonitor/app/src/main/res/layout\")",
+      "Bash(mkdir -p \"D:/dev/projects/SiempreCercaMonitor/app/src/main/res/values\")",
+      "Bash(mkdir -p \"D:/dev/projects/SiempreCercaMonitor/app/src/main/res/drawable\")",
+      "Bash(mkdir -p \"D:/dev/projects/SiempreCercaMonitor/app/src/main/res/mipmap-hdpi\")",
+      "Bash(JAVA_HOME=\"D:/dev/jdk17\" ANDROID_HOME=\"C:/Users/Jeremias/AppData/Local/Android/Sdk\" ./gradlew assembleDebug --no-daemon)",
+      "Bash(scp -i ~/.ssh/siemprecerca-gcp \"D:/dev/projects/SiempreCercaMonitor/app/build/outputs/apk/debug/app-debug.apk\" jeremias@34.95.223.140:/opt/siemprecerca/frontend/public/monitor/siemprecerca-monitor-v2.0.0.apk)",
+      "Bash(scp -i ~/.ssh/siemprecerca-gcp \"D:/dev/projects/SiempreCercaAPP/frontend/public/monitor.html\" jeremias@34.95.223.140:/opt/siemprecerca/frontend/public/)",
+      "Bash(scp -i ~/.ssh/siemprecerca-gcp \"D:/dev/projects/SiempreCercaMonitor/app/build/outputs/apk/debug/app-debug.apk\" jeremias@34.95.223.140:/opt/siemprecerca/frontend/public/monitor/siemprecerca-monitor-v2.0.1.apk)",
+      "WebFetch(domain:github.com)",
+      "Bash(cp app/src/main/java/com/siemprecerca/monitor/SetupActivity.kt /tmp/setup_manual.kt)",
+      "Bash(cp app/src/main/java/com/siemprecerca/monitor/MonitorApp.kt /tmp/monitorapp_manual.kt)",
+      "Bash(cp app/src/main/java/com/siemprecerca/monitor/MainActivity.kt /tmp/mainactivity_manual.kt)",
+      "Bash(cp app/src/main/java/com/siemprecerca/monitor/service/FlicBleService.kt /tmp/service_manual.kt)",
+      "Bash(cp app/src/main/java/com/siemprecerca/monitor/receiver/BootReceiver.kt /tmp/boot_manual.kt)",
+      "Bash(cp /tmp/setup_manual.kt \"D:/dev/projects/SiempreCercaMonitor/app/src/main/java/com/siemprecerca/monitor/SetupActivity.kt\")",
+      "Bash(cp /tmp/monitorapp_manual.kt \"D:/dev/projects/SiempreCercaMonitor/app/src/main/java/com/siemprecerca/monitor/MonitorApp.kt\")",
+      "Bash(cp /tmp/mainactivity_manual.kt \"D:/dev/projects/SiempreCercaMonitor/app/src/main/java/com/siemprecerca/monitor/MainActivity.kt\")",
+      "Bash(cp /tmp/service_manual.kt \"D:/dev/projects/SiempreCercaMonitor/app/src/main/java/com/siemprecerca/monitor/service/FlicBleService.kt\")",
+      "Bash(cp /tmp/boot_manual.kt \"D:/dev/projects/SiempreCercaMonitor/app/src/main/java/com/siemprecerca/monitor/receiver/BootReceiver.kt\")"
     ]
   }
 }
