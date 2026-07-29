@@ -9,13 +9,11 @@ import {
   Check,
   CheckCheck,
   MessageCircle,
-  ChevronDown,
   Phone,
   Search,
   Wifi,
   WifiOff,
   User,
-  Clock,
 } from "lucide-react";
 import type { MessageTemplate, SentMessage } from "@/lib/types";
 
