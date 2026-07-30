@@ -192,7 +192,11 @@ async def assign_device(
         result = await db.execute(select(Device).where(Device.client_id == body.client_id))
         device = result.scalar_one_or_none()
         if device:
-            device.external_device_id = body.button_serial
+            raise HTTPException(
+                409,
+                f"El paciente ya tiene un dispositivo vinculado ({device.external_device_id}). "
+                "Desvincula el actual antes de asociar uno nuevo.",
+            )
         else:
             device = Device(
                 client_id=body.client_id,
