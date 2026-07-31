@@ -7,7 +7,7 @@ import { Settings, Save, Eye, Phone, MessageSquare, Shield, RefreshCw, Wifi, Wif
 /* ── Types ──────────────────────────────────────────────────── */
 
 type ConfigMap = Record<string, string>;
-type WaProvider = "meta" | "baileys" | "mock";
+type WaProvider = "meta" | "mock";
 type WaStatus = { provider: string; connected: boolean; banned: boolean } | null;
 
 /* ── Helpers ────────────────────────────────────────────────── */
@@ -520,12 +520,6 @@ export default function ConfigView() {
                     label: "Meta API (pago)",
                     hint: "API oficial de WhatsApp Business. Requiere token y phone ID. Mas confiable, sin riesgo de ban.",
                     color: COLORS.aqua,
-                  },
-                  {
-                    value: "baileys" as WaProvider,
-                    label: "Baileys (gratis)",
-                    hint: "Conexion por eSIM/telefono fisico. Gratis pero puede ser bloqueado por WhatsApp.",
-                    color: COLORS.amber,
                   },
                   {
                     value: "mock" as WaProvider,

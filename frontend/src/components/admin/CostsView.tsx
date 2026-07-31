@@ -44,11 +44,6 @@ const SERVICE_CONFIG: Record<string, { label: string; color: string; description
     color: "#25D366",
     description: "API oficial de Meta",
   },
-  whatsapp_baileys: {
-    label: "WhatsApp Baileys",
-    color: "#128C7E",
-    description: "Conector alternativo",
-  },
   gcp: {
     label: "GCP Infra",
     color: "#4285F4",

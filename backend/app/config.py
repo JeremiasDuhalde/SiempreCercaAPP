@@ -52,11 +52,10 @@ class Settings(BaseSettings):
     webhook_secret: str = "change-me-webhook-secret"
 
     # WhatsApp
-    whatsapp_provider: str = "mock"  # "meta" | "baileys" | "mock"
+    whatsapp_provider: str = "mock"  # "meta" | "mock"
     whatsapp_token: str = ""
     whatsapp_phone_id: str = ""
     whatsapp_verify_token: str = ""
-    baileys_url: str = "http://baileys:3001"
 
     # Anthropic (IA)
     anthropic_api_key: str = ""

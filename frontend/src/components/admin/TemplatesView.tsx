@@ -88,7 +88,7 @@ function categoryFromMetaName(name: string): { label: string; color: string } {
 
 /* ── Highlight placeholders ─────────────────────────────────── */
 
-/** Resalta {{N}} (Meta) y {N} (Baileys) en azul */
+/** Resalta {{N}} (Meta) y {N} (locales) en azul */
 function HighlightedText({ text }: { text: string }) {
   const parts = text.split(/({{?\d+}?})/g);
   return (
@@ -851,7 +851,7 @@ function LocalEditorModal({ initial, onClose, onSaved }: LocalEditorModalProps) 
               className="rounded"
             />
             <span className="text-xs font-semibold" style={{ color: COLORS.sub }}>
-              Template activo (se usa en envios via Baileys)
+              Template activo
             </span>
           </label>
 
@@ -933,8 +933,7 @@ function LocalTemplatesTab() {
       >
         <Info size={14} className="shrink-0 mt-0.5" />
         <span>
-          Los templates locales se usan con{" "}
-          <strong>Baileys</strong>. No requieren aprobacion de Meta y se pueden editar
+          Los templates locales no requieren aprobacion de Meta y se pueden editar
           libremente. Los placeholders son posicionales:{" "}
           <code
             className="px-1 py-0.5 rounded"
@@ -1176,7 +1175,6 @@ export default function TemplatesView() {
       .get<{ provider: string }>("/api/config/whatsapp-status")
       .then(({ data }) => {
         setProvider(data.provider);
-        // Default tab: locales for baileys/mock, meta for meta
         setActiveTab(data.provider === "meta" ? "meta" : "locales");
       })
       .catch(() => {});
@@ -1196,7 +1194,7 @@ export default function TemplatesView() {
   }
 
   const tabs: { key: Tab; label: string; color: string }[] = [
-    { key: "locales", label: "Locales (Baileys)", color: COLORS.aqua },
+    { key: "locales", label: "Locales", color: COLORS.aqua },
     { key: "meta", label: "Meta API", color: COLORS.violet },
   ];
 
@@ -1216,11 +1214,8 @@ export default function TemplatesView() {
             <span
               className="text-xs px-2 py-0.5 rounded-full font-medium"
               style={{
-                background:
-                  provider === "baileys"
-                    ? `${COLORS.aqua}18`
-                    : `${COLORS.violet}18`,
-                color: provider === "baileys" ? COLORS.aqua : COLORS.violet,
+                background: `${COLORS.violet}18`,
+                color: COLORS.violet,
               }}
             >
               {provider}

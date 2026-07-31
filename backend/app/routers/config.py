@@ -1,6 +1,5 @@
 """Endpoints de configuracion del sistema (clave-valor)."""
 
-import httpx
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy import select
@@ -84,9 +83,9 @@ async def switch_whatsapp_provider(
     db: AsyncSession = Depends(get_db),
     _: User = Depends(require_role("admin")),
 ):
-    """Cambia el proveedor de WhatsApp activo ('meta', 'baileys', 'mock')."""
-    if body.value not in ("meta", "baileys", "mock"):
-        raise HTTPException(400, "El proveedor debe ser 'meta', 'baileys' o 'mock'")
+    """Cambia el proveedor de WhatsApp activo ('meta' o 'mock')."""
+    if body.value not in ("meta", "mock"):
+        raise HTTPException(400, "El proveedor debe ser 'meta' o 'mock'")
     result = await db.execute(select(SystemConfig).where(SystemConfig.key == "whatsapp_provider"))
     config = result.scalar_one_or_none()
     if config:
@@ -110,16 +109,7 @@ async def whatsapp_status(
     provider = config.value if config else settings.whatsapp_provider
     status_resp["provider"] = provider
 
-    if provider == "baileys":
-        try:
-            async with httpx.AsyncClient() as client:
-                resp = await client.get(f"{settings.baileys_url}/status", timeout=5.0)
-                data = resp.json()
-                status_resp["connected"] = data.get("connected", False)
-                status_resp["banned"] = data.get("banned", False)
-        except Exception:
-            status_resp["connected"] = False
-    elif provider == "meta":
+    if provider == "meta":
         # Meta se considera conectado si el token esta configurado
         status_resp["connected"] = bool(settings.whatsapp_token)
     elif provider == "mock":

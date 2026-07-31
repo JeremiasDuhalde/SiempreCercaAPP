@@ -71,9 +71,9 @@ function useWhatsAppStatus() {
   useEffect(() => {
     const check = async () => {
       try {
-        const res = await fetch("/baileys/status");
+        const res = await fetch("/api/config/whatsapp-status");
         const data = await res.json();
-        setStatus({ connected: data.connected, banned: data.banned });
+        setStatus({ connected: data.connected, banned: data.banned ?? false });
       } catch {
         setStatus({ connected: false, banned: false });
       }

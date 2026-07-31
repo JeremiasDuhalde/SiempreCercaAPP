@@ -1,4 +1,4 @@
-"""Templates locales editables (para Baileys, no requieren aprobacion de Meta)."""
+"""Templates locales editables (no requieren aprobacion de Meta)."""
 import json
 import re
 

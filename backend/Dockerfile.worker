@@ -17,3 +17,7 @@ COPY pyproject.toml uv.lock* ./
 RUN uv sync --no-install-project
 
 COPY app ./app
+
+RUN groupadd -r appuser && useradd -r -g appuser -d /app appuser \
+    && chown -R appuser:appuser /app
+USER appuser
