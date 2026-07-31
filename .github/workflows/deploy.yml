@@ -1,0 +1,57 @@
+name: Deploy Web App
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '*.md'
+      - 'PROCESO_OPERATIVO.md'
+      - 'PROYECTO_ODOO.md'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        env:
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          if [ -z "$SSH_KEY" ] || [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ]; then
+            echo "::error::Secrets SSH no configurados"
+            exit 1
+          fi
+
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" << 'DEPLOY'
+            set -e
+            cd /opt/siemprecerca
+
+            echo "=== Pull codigo ==="
+            git pull origin main
+
+            echo "=== Rebuild frontend ==="
+            docker compose up -d --build frontend
+
+            echo "=== Restart backend ==="
+            docker compose restart backend
+
+            echo "=== Copiar archivos estaticos al container ==="
+            # Monitor HTML y version.json
+            docker compose cp frontend/public/monitor.html frontend:/usr/share/nginx/html/monitor.html 2>/dev/null || true
+            docker compose cp frontend/public/monitor/version.json frontend:/usr/share/nginx/html/monitor/version.json 2>/dev/null || true
+
+            echo "=== Verificar servicios ==="
+            docker compose ps --format "table {{.Name}}\t{{.Status}}" | head -15
+
+            echo "=== Deploy completado ==="
+          DEPLOY
+
+          rm -f ~/.ssh/deploy_key
