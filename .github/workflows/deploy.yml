@@ -4,54 +4,179 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '*.md'
-      - 'PROCESO_OPERATIVO.md'
-      - 'PROYECTO_ODOO.md'
+      - "*.md"
+      - "PROCESO_OPERATIVO.md"
+      - "PROYECTO_ODOO.md"
+      - ".github/**"
+      - "!.github/workflows/deploy.yml"
   workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+env:
+  DEPLOY_PATH: /opt/siemprecerca
+  DOMAIN: app.siemprecercasrl.net
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
-      - name: Deploy via SSH
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Crear tarball del proyecto
+        run: |
+          tar czf deploy.tar.gz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.venv' \
+            --exclude='__pycache__' \
+            --exclude='.env' \
+            --exclude='.env.local' \
+            --exclude='backend/.env' \
+            --exclude='*.pyc' \
+            --exclude='.mypy_cache' \
+            --exclude='.ruff_cache' \
+            --exclude='.pytest_cache' \
+            --exclude='backups' \
+            --exclude='nginx/certbot' \
+            --exclude='docker-compose.override.yml' \
+            .
+          echo "TARBALL_SIZE=$(du -h deploy.tar.gz | cut -f1)" >> "$GITHUB_ENV"
+
+      - name: Configurar SSH
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           if [ -z "$SSH_KEY" ] || [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ]; then
-            echo "::error::Secrets SSH no configurados"
+            echo "::error::Secrets SSH no configurados (SSH_KEY, SSH_HOST, SSH_USER)"
             exit 1
           fi
-
           mkdir -p ~/.ssh
           echo "$SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          echo "SSH_CMD=ssh -i ~/.ssh/deploy_key ${SSH_USER}@${SSH_HOST}" >> "$GITHUB_ENV"
+          echo "SCP_CMD=scp -i ~/.ssh/deploy_key" >> "$GITHUB_ENV"
 
-          ssh -i ~/.ssh/deploy_key "${SSH_USER}@${SSH_HOST}" << 'DEPLOY'
+      - name: Subir tarball al servidor
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          $SCP_CMD deploy.tar.gz "${SSH_USER}@${SSH_HOST}:/tmp/deploy.tar.gz"
+
+      - name: Backup pre-deploy
+        run: |
+          $SSH_CMD << 'REMOTE'
             set -e
             cd /opt/siemprecerca
 
-            echo "=== Pull codigo ==="
-            git pull origin main
+            echo "=== Backup .env files ==="
+            TS=$(date +%s)
+            cp .env ".env.backup.${TS}" 2>/dev/null || true
+            cp backend/.env "backend/.env.backup.${TS}" 2>/dev/null || true
 
-            echo "=== Rebuild frontend ==="
-            docker compose up -d --build frontend
+            # Rotar: mantener solo los ultimos 10 backups
+            ls -t .env.backup.* 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
+            ls -t backend/.env.backup.* 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
 
-            echo "=== Restart backend ==="
-            docker compose restart backend
+            echo "Backups creados con timestamp ${TS}"
+          REMOTE
 
-            echo "=== Copiar archivos estaticos al container ==="
-            # Monitor HTML y version.json
-            docker compose cp frontend/public/monitor.html frontend:/usr/share/nginx/html/monitor.html 2>/dev/null || true
-            docker compose cp frontend/public/monitor/version.json frontend:/usr/share/nginx/html/monitor/version.json 2>/dev/null || true
+      - name: Extraer codigo y rebuild
+        run: |
+          $SSH_CMD << 'REMOTE'
+            set -e
+            cd /opt/siemprecerca
 
-            echo "=== Verificar servicios ==="
-            docker compose ps --format "table {{.Name}}\t{{.Status}}" | head -15
+            echo "=== Extraer tarball ==="
+            tar xzf /tmp/deploy.tar.gz --overwrite
+            rm /tmp/deploy.tar.gz
 
-            echo "=== Deploy completado ==="
-          DEPLOY
+            echo "=== Rebuild servicios ==="
+            docker compose up -d --build 2>&1
+          REMOTE
 
-          rm -f ~/.ssh/deploy_key
+      - name: Migraciones
+        run: |
+          $SSH_CMD << 'REMOTE'
+            set -e
+            cd /opt/siemprecerca
+
+            # Esperar a que el backend arranque
+            echo "=== Esperando backend ==="
+            for i in $(seq 1 12); do
+              if docker compose exec -T backend uv run python -c "print('ready')" 2>/dev/null | grep -q ready; then
+                echo "Backend listo en intento $i"
+                break
+              fi
+              echo "Intento $i/12 - esperando..."
+              sleep 5
+            done
+
+            echo "=== Ejecutando migraciones ==="
+            docker compose exec -T backend uv run alembic upgrade head 2>&1
+            echo "Migraciones completadas"
+          REMOTE
+
+      - name: Health check post-deploy
+        run: |
+          echo "=== Health check API ==="
+          for i in $(seq 1 5); do
+            HTTP_CODE=$(curl -sf -o /tmp/health_response -w "%{http_code}" "https://${DOMAIN}/api/health" 2>/dev/null || echo "000")
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "API OK (intento $i): $(cat /tmp/health_response)"
+              break
+            fi
+            echo "Intento $i/5 - HTTP $HTTP_CODE, reintentando en 10s..."
+            sleep 10
+          done
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::API no responde despues de 5 intentos"
+            exit 1
+          fi
+
+          echo "=== Health check Frontend ==="
+          FRONTEND_CODE=$(curl -sf -o /dev/null -w "%{http_code}" "https://${DOMAIN}/" 2>/dev/null || echo "000")
+          if [ "$FRONTEND_CODE" = "200" ]; then
+            echo "Frontend OK: HTTP $FRONTEND_CODE"
+          else
+            echo "::warning::Frontend respondio HTTP $FRONTEND_CODE"
+          fi
+
+      - name: Estado de servicios
+        if: always()
+        run: |
+          $SSH_CMD << 'REMOTE'
+            cd /opt/siemprecerca
+            docker compose ps --format "table {{.Name}}\t{{.Status}}" 2>/dev/null || true
+          REMOTE
+
+      - name: Step summary
+        if: always()
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          ## Deploy a produccion
+
+          | Campo | Valor |
+          |-------|-------|
+          | **VM** | \`${{ secrets.SSH_HOST }}\` |
+          | **URL** | https://${DOMAIN} |
+          | **Commit** | \`${{ github.sha }}\` |
+          | **Actor** | ${{ github.actor }} |
+          | **Timestamp** | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |
+          | **Tarball** | ${TARBALL_SIZE} |
+          | **Ref** | \`${{ github.ref_name }}\` |
+          EOF
+
+      - name: Limpiar SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
