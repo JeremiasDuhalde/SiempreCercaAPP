@@ -4,8 +4,8 @@
   "description": "Sistema de monitoreo remoto y teleasistencia para adultos mayores",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#15131C",
-  "theme_color": "#15131C",
+  "background_color": "#0D1717",
+  "theme_color": "#0D1717",
   "orientation": "any",
   "icons": [
     {
