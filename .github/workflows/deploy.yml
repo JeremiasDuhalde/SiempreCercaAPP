@@ -130,18 +130,18 @@ jobs:
       - name: Health check post-deploy
         run: |
           echo "=== Health check API ==="
-          for i in $(seq 1 8); do
+          for i in $(seq 1 12); do
             HTTP_CODE=$(curl -s -o /tmp/health_response -w "%{http_code}" --max-time 10 "https://${DOMAIN}/api/health" || echo "000")
             if [ "$HTTP_CODE" = "200" ]; then
               echo "API OK (intento $i): $(cat /tmp/health_response)"
               break
             fi
-            echo "Intento $i/8 - HTTP $HTTP_CODE, reintentando en 15s..."
+            echo "Intento $i/12 - HTTP $HTTP_CODE, esperando 15s..."
             sleep 15
           done
 
           if [ "$HTTP_CODE" != "200" ]; then
-            echo "::error::API no responde despues de 8 intentos (2 min)"
+            echo "::error::API no responde despues de 12 intentos (3 min)"
             exit 1
           fi
 
