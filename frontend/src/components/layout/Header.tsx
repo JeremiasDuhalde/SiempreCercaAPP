@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import { Siren } from "lucide-react";
+import { Siren, Sun, Moon } from "lucide-react";
 import { COLORS } from "@/lib/constants";
 import { CLIENTS } from "@/lib/mockData";
 import { formatTime } from "@/lib/utils";
 import { useAppStore } from "@/stores/useAppStore";
+import { useThemeStore } from "@/stores/useThemeStore";
 import { useAlertStats } from "@/hooks/useAlerts";
 import StatCard from "@/components/shared/StatCard";
 
@@ -12,6 +13,7 @@ export default function Header() {
   const tickClock = useAppStore((s) => s.tickClock);
   const alerts = useAppStore((s) => s.alerts);
   const isMobile = useAppStore((s) => s.isMobile);
+  const { theme, toggleTheme } = useThemeStore();
   const { data: alertStats } = useAlertStats();
 
   useEffect(() => {
@@ -107,8 +109,24 @@ export default function Header() {
         </div>
       )}
 
-      {/* Right: mobile badge or clock */}
+      {/* Right: theme toggle + mobile badge + clock */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <button
+          onClick={toggleTheme}
+          title={theme === "light" ? "Modo oscuro" : "Modo claro"}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: COLORS.faint,
+            padding: 4,
+            borderRadius: 6,
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+        </button>
         {isMobile && activeAlerts > 0 && (
           <div
             style={{
