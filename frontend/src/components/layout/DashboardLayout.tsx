@@ -12,12 +12,17 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const isMobile = useAppStore((s) => s.isMobile);
   const setIsMobile = useAppStore((s) => s.setIsMobile);
+  const setIsTablet = useAppStore((s) => s.setIsTablet);
 
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 820);
+    const onResize = () => {
+      const w = window.innerWidth;
+      setIsMobile(w < 820);
+      setIsTablet(w >= 820 && w < 1100);
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-  }, [setIsMobile]);
+  }, [setIsMobile, setIsTablet]);
 
   return (
     <div

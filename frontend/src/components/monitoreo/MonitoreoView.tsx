@@ -1201,6 +1201,7 @@ function ClientFicha() {
 
 export default function MonitoreoView() {
   const isMobile = useAppStore((s) => s.isMobile);
+  const isTablet = useAppStore((s) => s.isTablet);
   const alerts = useAppStore((s) => s.alerts);
   const activeCount = alerts.filter((a) => a.status !== "resuelta").length;
 
@@ -1220,6 +1221,55 @@ export default function MonitoreoView() {
     );
   }
 
+  /* Tablet: alertas + ficha arriba, mapa abajo */
+  if (isTablet) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          gap: 1,
+          backgroundColor: COLORS.line,
+        }}
+      >
+        {/* Top row: alerts + ficha */}
+        <div style={{ display: "flex", flex: 1, minHeight: 0, gap: 1 }}>
+          <div
+            style={{
+              flex: 1,
+              backgroundColor: COLORS.bg,
+              overflow: "hidden",
+            }}
+          >
+            <AlertQueue />
+          </div>
+          <div
+            style={{
+              flex: 1,
+              backgroundColor: COLORS.bg,
+              overflow: "hidden",
+            }}
+          >
+            <ClientFicha />
+          </div>
+        </div>
+        {/* Bottom: map */}
+        <div
+          style={{
+            height: "40%",
+            flexShrink: 0,
+            backgroundColor: COLORS.bg,
+            padding: 8,
+          }}
+        >
+          <MonitoreoMap />
+        </div>
+      </div>
+    );
+  }
+
+  /* Desktop: 3 columnas */
   return (
     <div
       style={{

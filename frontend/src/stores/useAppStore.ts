@@ -34,9 +34,11 @@ interface AppState {
   markRead: (id: number) => void;
   _nextMsgId: number;
 
-  // Mobile
+  // Responsive
   isMobile: boolean;
+  isTablet: boolean;
   setIsMobile: (v: boolean) => void;
+  setIsTablet: (v: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -95,5 +97,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   _nextMsgId: 50,
 
   isMobile: typeof window !== "undefined" && window.innerWidth < 820,
+  isTablet: typeof window !== "undefined" && window.innerWidth >= 820 && window.innerWidth < 1100,
   setIsMobile: (v) => set({ isMobile: v }),
+  setIsTablet: (v) => set({ isTablet: v }),
 }));
