@@ -40,8 +40,10 @@ async def dispatch_emp(
     result = await db.execute(select(SystemConfig))
     configs = {c.key: c.value for c in result.scalars().all()}
 
-    emp_whatsapp = configs.get("emp_whatsapp_number", "+5492245406323")
-    emp_call = configs.get("emp_call_number", "+5492246529000")
+    # Productivo EMP: "+5492245406323" / "+5492246529000"
+    # Marcelo pruebas: "+5492252413144"
+    emp_whatsapp = configs.get("emp_whatsapp_number", "+5492234973299")
+    emp_call = configs.get("emp_call_number", "+5492234973299")
     template = configs.get(
         "emp_message_template",
         "DESPACHO DE EMERGENCIA\n\nPaciente: {client_name}",

@@ -52,8 +52,10 @@ async def seed_defaults(
 ):
     """Seed default config values if not exist."""
     defaults = {
-        "emp_whatsapp_number": "+5492245406323",
-        "emp_call_number": "+5492246529000",
+        # Productivo EMP: "+5492245406323" / "+5492246529000"
+        # Marcelo pruebas: "+5492252413144"
+        "emp_whatsapp_number": "+5492234973299",
+        "emp_call_number": "+5492234973299",
         "central_phone": "+5492257653843",
         "central_name": "Siempre Cerca SRL",
         "emp_message_template": (
