@@ -618,9 +618,14 @@ function ClientCard({
     >
       <Avatar name={client.name} color={client.color} />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold truncate" style={{ color: COLORS.ink }}>
-          {client.name}
-        </p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-sm font-semibold truncate" style={{ color: COLORS.ink }}>
+            {client.name}
+          </p>
+          <span className="text-[10px] font-mono font-bold shrink-0 px-1 rounded" style={{ color: COLORS.sub, background: alpha12(COLORS.sub) }}>
+            #{client.id}
+          </span>
+        </div>
         <p className="text-xs truncate" style={{ color: COLORS.sub }}>
           {client.age} años · {client.barrio}
         </p>
@@ -1218,9 +1223,18 @@ function ClientDetail({ raw, onBack, onEdit, onDeleted, onRefresh, isMobile }: C
       <div className="flex items-start gap-4 mb-5">
         <Avatar name={client.name} color={client.color} size={72} />
         <div className="flex-1 min-w-0">
-          <h2 className="text-xl font-bold leading-tight" style={{ color: COLORS.ink }}>
-            {client.name}
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold leading-tight" style={{ color: COLORS.ink }}>
+              {client.name}
+            </h2>
+            <span
+              className="px-2 py-0.5 rounded-md text-xs font-mono font-bold shrink-0"
+              style={{ background: alpha15(COLORS.aqua), color: COLORS.aqua }}
+              title="Número de cliente para la app del monitor"
+            >
+              #{raw.id}
+            </span>
+          </div>
           <p className="text-sm" style={{ color: COLORS.sub }}>
             {client.age} años · {client.barrio}
           </p>

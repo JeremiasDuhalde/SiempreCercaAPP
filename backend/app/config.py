@@ -61,6 +61,12 @@ class Settings(BaseSettings):
     anthropic_api_key: str = ""
     anthropic_model: str = "claude-sonnet-4-20250514"
 
+    # Odoo (internacion domiciliaria)
+    odoo_url: str = "https://siempre-cerca-srl.odoo.com"
+    odoo_db: str = "siempre-cerca-srl"
+    odoo_user: str = "administracion@siemprecercasrl.com"
+    odoo_password: str = ""
+
     # Sentry (opcional)
     sentry_dsn: str = ""
 

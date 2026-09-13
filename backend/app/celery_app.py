@@ -37,6 +37,13 @@ celery.conf.beat_schedule = {
         "task": "app.tasks.wellbeing_report.generate_daily_reports",
         "schedule": crontab(hour=20, minute=0),
     },
+    "procesar-autorizaciones-ia": {
+        "task": "app.tasks.procesar_autorizaciones.procesar_pendientes",
+        "schedule": 30.0,  # cada 30 segundos
+    },
 }
 
 celery.autodiscover_tasks(["app.tasks"])
+
+# Import explicito para que el worker registre los tasks
+import app.tasks.procesar_autorizaciones  # noqa: F401, E402

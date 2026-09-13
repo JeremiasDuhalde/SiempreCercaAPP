@@ -68,8 +68,8 @@ async def create_client(db: AsyncSession, data) -> Client:
     client = Client(**data.model_dump(exclude_unset=False))
     db.add(client)
     await db.commit()
-    await db.refresh(client)
-    return client
+    # Recargar con relaciones para que ClientOut serialice correctamente
+    return await get_client(db, client.id)
 
 
 async def update_client(db: AsyncSession, client_id: int, data) -> Client:
