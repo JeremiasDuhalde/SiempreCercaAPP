@@ -59,6 +59,7 @@ async def flic_alert(
     flic_accuracy: str = Header(default=""),
     x_phone_battery: str = Header(default=""),
     x_flic_battery_voltage: str = Header(default=""),
+    x_client_id: str = Header(default=""),
 ):
     """Recibe alerta de un botón FLIC.
 
@@ -78,6 +79,7 @@ async def flic_alert(
     raw_payload = {
         "button_serial_number": button_serial_number,
         "button_name": button_name,
+        "client_id": x_client_id,
         "latitude": flic_latitude,
         "longitude": flic_longitude,
         "accuracy": flic_accuracy,
@@ -86,7 +88,7 @@ async def flic_alert(
         "body": body,
         "headers": {
             k: v for k, v in request.headers.items()
-            if k.startswith(("button-", "flic-", "x-phone", "x-flic"))
+            if k.startswith(("button-", "flic-", "x-phone", "x-flic", "x-client"))
         },
     }
 
@@ -118,6 +120,30 @@ async def flic_alert(
                 )
             )
             device = result.scalar_one_or_none()
+
+            # Auto-registrar dispositivo si no existe pero tenemos client_id
+            if not device and x_client_id:
+                try:
+                    cid = int(x_client_id)
+                    cl_result = await db.execute(
+                        select(Client).where(Client.id == cid)
+                    )
+                    if cl_result.scalar_one_or_none():
+                        device = Device(
+                            client_id=cid,
+                            model="FLIC Button",
+                            external_device_id=button_serial_number,
+                            is_online=True,
+                            last_seen_at=datetime.now(timezone.utc),
+                        )
+                        db.add(device)
+                        await db.flush()
+                        logger.info(
+                            "Dispositivo auto-registrado: serial=%s client_id=%d",
+                            button_serial_number, cid,
+                        )
+                except (ValueError, TypeError):
+                    pass
 
         if device:
             # Actualizar estado del dispositivo
