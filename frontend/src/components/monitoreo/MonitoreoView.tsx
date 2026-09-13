@@ -1221,49 +1221,58 @@ export default function MonitoreoView() {
     );
   }
 
-  /* Tablet: alertas + ficha arriba, mapa abajo */
+  /* Tablet: alertas izquierda, mapa + ficha derecha */
   if (isTablet) {
     return (
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
           height: "100%",
           gap: 1,
           backgroundColor: COLORS.line,
         }}
       >
-        {/* Top row: alerts + ficha */}
-        <div style={{ display: "flex", flex: 1, minHeight: 0, gap: 1 }}>
+        {/* Left: Alert queue */}
+        <div
+          style={{
+            width: 280,
+            flexShrink: 0,
+            backgroundColor: COLORS.bg,
+            overflow: "hidden",
+          }}
+        >
+          <AlertQueue />
+        </div>
+        {/* Right: Map (top) + Ficha (bottom) */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+            minWidth: 0,
+          }}
+        >
           <div
             style={{
-              flex: 1,
+              flex: 3,
               backgroundColor: COLORS.bg,
-              overflow: "hidden",
+              padding: 8,
+              minHeight: 0,
             }}
           >
-            <AlertQueue />
+            <MonitoreoMap />
           </div>
           <div
             style={{
-              flex: 1,
+              flex: 2,
               backgroundColor: COLORS.bg,
               overflow: "hidden",
+              minHeight: 0,
             }}
           >
             <ClientFicha />
           </div>
-        </div>
-        {/* Bottom: map */}
-        <div
-          style={{
-            height: "40%",
-            flexShrink: 0,
-            backgroundColor: COLORS.bg,
-            padding: 8,
-          }}
-        >
-          <MonitoreoMap />
         </div>
       </div>
     );

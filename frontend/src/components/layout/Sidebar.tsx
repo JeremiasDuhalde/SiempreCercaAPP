@@ -41,6 +41,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 export default function Sidebar() {
   const activeModule = useAppStore((s) => s.activeModule);
   const setActiveModule = useAppStore((s) => s.setActiveModule);
+  const isTablet = useAppStore((s) => s.isTablet);
   const pushAlert = useAppStore((s) => s.pushAlert);
   const clearAlerts = useAppStore((s) => s.clearAlerts);
   const alerts = useAppStore((s) => s.alerts);
@@ -49,21 +50,23 @@ export default function Sidebar() {
 
   const activeAlerts = alerts.filter((a) => a.status !== "resuelta").length;
   const { theme, toggleTheme } = useThemeStore();
+  const collapsed = isTablet;
 
   return (
     <aside
       style={{
-        width: 210,
+        width: collapsed ? 56 : 210,
         backgroundColor: COLORS.panel,
         borderRight: `1px solid ${COLORS.line}`,
         display: "flex",
         flexDirection: "column",
         flexShrink: 0,
         overflow: "hidden",
+        transition: "width 0.2s ease",
       }}
     >
       {/* Nav items */}
-      <nav className="sc-scroll" style={{ flex: 1, overflowY: "auto", padding: "12px 8px" }}>
+      <nav className="sc-scroll" style={{ flex: 1, overflowY: "auto", padding: collapsed ? "12px 4px" : "12px 8px" }}>
         {MODULES.filter((mod) => {
           const adminOnly = ["config", "costos", "templates", "admin"];
           if (adminOnly.includes(mod.key) && user?.role !== "admin") return false;
@@ -76,12 +79,14 @@ export default function Sidebar() {
               key={mod.key}
               onClick={() => setActiveModule(mod.key)}
               className="sc-btn"
+              title={collapsed ? mod.label : undefined}
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 10,
+                justifyContent: collapsed ? "center" : "flex-start",
+                gap: collapsed ? 0 : 10,
                 width: "100%",
-                padding: "9px 12px",
+                padding: collapsed ? "10px 0" : "9px 12px",
                 borderRadius: 8,
                 border: "none",
                 backgroundColor: active ? COLORS.panel2 : "transparent",
@@ -93,14 +98,17 @@ export default function Sidebar() {
                 marginBottom: 2,
                 textAlign: "left",
                 fontFamily: "'Inter', system-ui, sans-serif",
+                position: "relative",
               }}
             >
-              {Icon && <Icon size={16} />}
-              {mod.label}
+              {Icon && <Icon size={collapsed ? 20 : 16} />}
+              {!collapsed && mod.label}
               {mod.key === "monitoreo" && activeAlerts > 0 && (
                 <span
                   style={{
-                    marginLeft: "auto",
+                    ...(collapsed
+                      ? { position: "absolute" as const, top: 4, right: 4 }
+                      : { marginLeft: "auto" }),
                     backgroundColor: COLORS.coral,
                     color: "#fff",
                     fontSize: 9,
@@ -122,23 +130,27 @@ export default function Sidebar() {
       {/* Operadora */}
       <div
         style={{
-          padding: "12px 14px",
+          padding: collapsed ? "12px 0" : "12px 14px",
           borderTop: `1px solid ${COLORS.line}`,
           borderBottom: `1px solid ${COLORS.line}`,
           display: "flex",
           alignItems: "center",
+          justifyContent: collapsed ? "center" : "flex-start",
           gap: 8,
         }}
+        title={collapsed ? (user?.name || "Operadora") : undefined}
       >
         <ShieldCheck size={16} style={{ color: COLORS.aqua, flexShrink: 0 }} />
-        <div>
-          <div style={{ fontSize: 10, color: COLORS.faint, fontWeight: 500 }}>
-            Operadora
+        {!collapsed && (
+          <div>
+            <div style={{ fontSize: 10, color: COLORS.faint, fontWeight: 500 }}>
+              Operadora
+            </div>
+            <div style={{ fontSize: 12, color: COLORS.ink, fontWeight: 600 }}>
+              {user?.name || "Operadora"}
+            </div>
           </div>
-          <div style={{ fontSize: 12, color: COLORS.ink, fontWeight: 600 }}>
-            {user?.name || "Operadora"}
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Demo controls — solo en desarrollo */}
@@ -231,7 +243,7 @@ export default function Sidebar() {
       )}
 
       {/* Theme toggle */}
-      <div style={{ padding: "4px 12px 0" }}>
+      <div style={{ padding: collapsed ? "4px 8px 0" : "4px 12px 0" }}>
         <button
           className="sc-btn"
           onClick={toggleTheme}
@@ -240,7 +252,7 @@ export default function Sidebar() {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 6,
+            gap: collapsed ? 0 : 6,
             width: "100%",
             padding: "7px 0",
             borderRadius: 6,
@@ -254,20 +266,21 @@ export default function Sidebar() {
           }}
         >
           {theme === "light" ? <Moon size={12} /> : <Sun size={12} />}
-          {theme === "light" ? "Modo oscuro" : "Modo claro"}
+          {!collapsed && (theme === "light" ? "Modo oscuro" : "Modo claro")}
         </button>
       </div>
 
       {/* Cerrar sesión */}
-      <div style={{ padding: "8px 12px 12px" }}>
+      <div style={{ padding: collapsed ? "8px 8px 12px" : "8px 12px 12px" }}>
         <button
           className="sc-btn"
           onClick={logout}
+          title={collapsed ? "Cerrar sesión" : undefined}
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            gap: 6,
+            gap: collapsed ? 0 : 6,
             width: "100%",
             padding: "7px 0",
             borderRadius: 6,
@@ -281,7 +294,7 @@ export default function Sidebar() {
           }}
         >
           <LogOut size={12} />
-          Cerrar sesión
+          {!collapsed && "Cerrar sesión"}
         </button>
       </div>
     </aside>
