@@ -132,6 +132,8 @@ export type AlertType = keyof typeof ALERT_TYPES;
 export const ALERT_STATUSES = {
   nueva: { label: "Nueva", color: "coral" },
   atendiendo: { label: "En atención", color: "amber" },
+  pendiente: { label: "Pendiente", color: "blue" },
+  falsa_alarma: { label: "Falsa alarma", color: "sub" },
   resuelta: { label: "Resuelta", color: "aqua" },
 } as const;
 

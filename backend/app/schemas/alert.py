@@ -40,7 +40,7 @@ class AlertWithLogs(AlertOut):
 
 
 class AlertStatusUpdate(BaseModel):
-    status: Literal["atendiendo", "resuelta"]
+    status: Literal["atendiendo", "pendiente", "falsa_alarma", "resuelta"]
     detail: str | None = None
 
 

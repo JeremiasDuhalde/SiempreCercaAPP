@@ -9,6 +9,7 @@ from app.schemas.alert import AlertOut, AlertStats, AlertStatusUpdate, AlertWith
 from app.schemas.common import PaginatedResponse
 from app.security import get_current_user
 from app.services import alert_service
+from app.ws_manager import ws_manager
 
 router = APIRouter(prefix="/api/alerts", tags=["alerts"])
 
@@ -89,4 +90,23 @@ async def update_alert_status(
     result = AlertOut.model_validate(alert)
     if alert.client:
         result.client_name = alert.client.name
+
+    # Broadcast cambio de estado a todos los operadores conectados
+    await ws_manager.broadcast("alert_updated", {
+        "id": alert_id,
+        "status": body.status,
+        "updated_by": current_user.email,
+    })
+
     return result
+
+
+@router.delete("/", status_code=200)
+async def delete_all_alerts(
+    db: AsyncSession = Depends(get_db),
+    _: User = Depends(get_current_user),
+):
+    """Borra todas las alertas y logs de la BD."""
+    count = await alert_service.delete_all_alerts(db)
+    await ws_manager.broadcast("alerts_cleared", {})
+    return {"ok": True, "deleted": count}

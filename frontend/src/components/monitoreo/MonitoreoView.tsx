@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import RealMap from "./RealMap";
-import { useAlerts, useUpdateAlertStatus } from "@/hooks/useAlerts";
+import { useAlerts, useUpdateAlertStatus, useDeleteAllAlerts } from "@/hooks/useAlerts";
 import {
   Siren,
   TriangleAlert,
@@ -28,6 +28,10 @@ import {
   ClipboardList,
   Clock,
   User,
+  Trash2,
+  XCircle,
+  PauseCircle,
+  PlayCircle,
   type LucideIcon,
 } from "lucide-react";
 import { COLORS, ALERT_TYPES, ALERT_STATUSES, CRITICAL_CONDITIONS, colorTint } from "@/lib/constants";
@@ -414,6 +418,9 @@ function AlertQueue() {
   const setSelectedAlert = useAppStore((s) => s.setSelectedAlert);
   const pushRealAlert = useAppStore((s) => s.pushRealAlert);
   const setAlertStatus = useAppStore((s) => s.setAlertStatus);
+  const clearAlerts = useAppStore((s) => s.clearAlerts);
+  const deleteAllAlerts = useDeleteAllAlerts();
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   // Load active alerts from API on mount (nueva + atendiendo)
   const { data: apiNuevas } = useAlerts({ status: "nueva" });
@@ -448,11 +455,11 @@ function AlertQueue() {
 
   void setAlertStatus; // referenced in ClientFicha via the store
 
-  const activeAlerts = alerts.filter((a) => a.status !== "resuelta");
+  const activeAlerts = alerts.filter((a) => a.status !== "resuelta" && a.status !== "falsa_alarma");
 
   const sorted = useMemo(() => {
     return [...alerts].sort((a, b) => {
-      const aActive = a.status !== "resuelta" ? 1 : 0;
+      const aActive = a.status !== "resuelta" && a.status !== "falsa_alarma" ? 1 : 0;
       const bActive = b.status !== "resuelta" ? 1 : 0;
       if (aActive !== bActive) return bActive - aActive;
       const aPrio = ALERT_TYPES[a.type].priority;
@@ -490,8 +497,77 @@ function AlertQueue() {
           <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: 1, color: COLORS.sub }}>
             COLA DE ALERTAS
           </span>
-          <span style={{ fontSize: 12, color: COLORS.faint }}>{activeAlerts.length} activas</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 12, color: COLORS.faint }}>{activeAlerts.length} activas</span>
+            {sorted.length > 0 && (
+              <button
+                className="sc-btn"
+                onClick={() => setShowClearConfirm(true)}
+                title="Limpiar todas las alertas"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 4,
+                  padding: "3px 8px",
+                  borderRadius: 6,
+                  border: `1px solid ${COLORS.line}`,
+                  background: "transparent",
+                  color: COLORS.faint,
+                  fontSize: 11,
+                  cursor: "pointer",
+                }}
+              >
+                <Trash2 size={12} />
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Confirmacion de borrado */}
+        {showClearConfirm && (
+          <div
+            style={{
+              marginTop: 8,
+              padding: 10,
+              borderRadius: 8,
+              backgroundColor: "var(--sc-coral-a08)",
+              border: "1px solid var(--sc-coral-a25)",
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            <span style={{ fontSize: 12, color: COLORS.coral, fontWeight: 600 }}>
+              Borrar todas las alertas del feed?
+            </span>
+            <div style={{ display: "flex", gap: 6 }}>
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                style={{
+                  flex: 1, padding: "6px", borderRadius: 6,
+                  border: `1px solid ${COLORS.line}`, backgroundColor: "transparent",
+                  color: COLORS.sub, fontSize: 11, cursor: "pointer", fontFamily: "inherit",
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  deleteAllAlerts.mutate();
+                  clearAlerts();
+                  setShowClearConfirm(false);
+                }}
+                style={{
+                  flex: 1, padding: "6px", borderRadius: 6,
+                  border: "none", backgroundColor: COLORS.coral, color: "#fff",
+                  fontSize: 11, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+                }}
+              >
+                Borrar todo
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Triage IA */}
@@ -615,7 +691,7 @@ function MonitoreoMap() {
   const alertByClient = useMemo(() => {
     const map = new Map<string, Alert>();
     for (const a of alerts) {
-      if (a.status !== "resuelta" && !map.has(a.clientId)) {
+      if (a.status !== "resuelta" && a.status !== "falsa_alarma" && !map.has(a.clientId)) {
         map.set(a.clientId, a);
       }
     }
@@ -869,6 +945,15 @@ function ClientFicha() {
   const meta = ALERT_TYPES[alert.type];
   const Icon = alertIcon(alert.type);
 
+  const changeStatus = (newStatus: string, label: string) => {
+    setAlertStatus(alert.id, newStatus as any);
+    addLog(`Alerta ${alert.type} de ${client.name} → ${label}`);
+    const numericId = parseInt(alert.id, 10);
+    if (!isNaN(numericId)) {
+      updateAlertStatus.mutate({ id: numericId, status: newStatus });
+    }
+  };
+
   const actionButtons = [
     {
       label: "Llamar al reloj",
@@ -909,21 +994,36 @@ function ClientFicha() {
         }
       },
     },
-    {
-      label: "Marcar resuelta",
-      icon: CheckCircle2,
-      color: COLORS.coral,
-      action: () => {
-        setAlertStatus(alert.id, "resuelta");
-        addLog(`Alerta ${alert.type} de ${client.name} marcada resuelta`);
-        // If alert id is numeric (from API), also update via API
-        const numericId = parseInt(alert.id, 10);
-        if (!isNaN(numericId)) {
-          updateAlertStatus.mutate({ id: numericId, status: "resuelta" });
-        }
-      },
-    },
   ];
+
+  const isActive = alert.status !== "resuelta" && alert.status !== "falsa_alarma";
+
+  const statusButtons = isActive ? [
+    ...(alert.status !== "atendiendo" ? [{
+      label: "Atender",
+      icon: PlayCircle,
+      color: COLORS.amber,
+      action: () => changeStatus("atendiendo", "En atención"),
+    }] : []),
+    {
+      label: "Pendiente",
+      icon: PauseCircle,
+      color: COLORS.blue,
+      action: () => changeStatus("pendiente", "Pendiente"),
+    },
+    {
+      label: "Falsa alarma",
+      icon: XCircle,
+      color: COLORS.sub,
+      action: () => changeStatus("falsa_alarma", "Falsa alarma"),
+    },
+    {
+      label: "Resuelta",
+      icon: CheckCircle2,
+      color: COLORS.aqua,
+      action: () => changeStatus("resuelta", "Resuelta"),
+    },
+  ] : [];
 
   return (
     <div
@@ -1125,7 +1225,7 @@ function ClientFicha() {
       </div>
 
       {/* 8. Action buttons */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
         {actionButtons.map((btn) => (
           <button
             key={btn.label}
@@ -1151,6 +1251,41 @@ function ClientFicha() {
           </button>
         ))}
       </div>
+
+      {/* 8b. Status buttons */}
+      {statusButtons.length > 0 && (
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, color: COLORS.sub, marginBottom: 6 }}>
+            Cambiar estado
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: `repeat(${statusButtons.length}, 1fr)`, gap: 6 }}>
+            {statusButtons.map((btn) => (
+              <button
+                key={btn.label}
+                className="sc-btn"
+                onClick={btn.action}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 4,
+                  padding: "8px 6px",
+                  borderRadius: 8,
+                  border: `1px solid ${btn.color}44`,
+                  cursor: "pointer",
+                  backgroundColor: `${btn.color}15`,
+                  color: btn.color,
+                  fontSize: 11,
+                  fontWeight: 600,
+                }}
+              >
+                <btn.icon size={13} />
+                {btn.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 9. Bitacora */}
       {log.length > 0 && (
@@ -1203,7 +1338,7 @@ export default function MonitoreoView() {
   const isMobile = useAppStore((s) => s.isMobile);
   const isTablet = useAppStore((s) => s.isTablet);
   const alerts = useAppStore((s) => s.alerts);
-  const activeCount = alerts.filter((a) => a.status !== "resuelta").length;
+  const activeCount = alerts.filter((a) => a.status !== "resuelta" && a.status !== "falsa_alarma").length;
 
   // Mobile tab state
   const [mobileTab, setMobileTab] = useMobileTab("alertas");

@@ -16,6 +16,7 @@ export function useAlerts(filters?: AlertFilters) {
     queryKey: ["alerts", filters],
     queryFn: () =>
       api.get("/api/alerts/", { params: { per_page: 50, ...filters } }).then((r) => r.data),
+    refetchInterval: 15_000,
   });
 }
 
@@ -32,6 +33,17 @@ export function useUpdateAlertStatus() {
   return useMutation({
     mutationFn: ({ id, status, detail }: UpdateAlertStatusParams) =>
       api.patch(`/api/alerts/${id}/status`, { status, detail }).then((r) => r.data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["alerts"] });
+      qc.invalidateQueries({ queryKey: ["alert-stats"] });
+    },
+  });
+}
+
+export function useDeleteAllAlerts() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.delete("/api/alerts/").then((r) => r.data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["alerts"] });
       qc.invalidateQueries({ queryKey: ["alert-stats"] });

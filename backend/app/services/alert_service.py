@@ -3,7 +3,7 @@
 from datetime import datetime, timezone
 
 from fastapi import HTTPException
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -68,7 +68,7 @@ async def update_alert_status(
     alert = await get_alert_with_logs(db, alert_id)
 
     alert.status = status
-    if status == "resuelta":
+    if status in ("resuelta", "falsa_alarma"):
         alert.resolved_by = user_id
         alert.resolved_at = datetime.now(timezone.utc)
 
@@ -83,6 +83,14 @@ async def update_alert_status(
     await db.commit()
     await db.refresh(alert)
     return alert
+
+
+async def delete_all_alerts(db: AsyncSession) -> int:
+    """Borra todas las alertas y sus logs. Retorna cantidad borrada."""
+    await db.execute(delete(AlertLog))
+    result = await db.execute(delete(Alert))
+    await db.commit()
+    return result.rowcount  # type: ignore[return-value]
 
 
 async def get_alert_stats(db: AsyncSession) -> dict:

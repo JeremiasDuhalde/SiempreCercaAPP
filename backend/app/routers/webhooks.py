@@ -1,7 +1,7 @@
 """Endpoints de ingesta: reciben webhooks de FLIC y otros dispositivos."""
 
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request, status
 from fastapi.responses import PlainTextResponse
@@ -14,6 +14,9 @@ from app.models.client import Client
 from app.models.device import Device
 from app.models.webhook_raw import WebhookRawLog
 from app.ws_manager import ws_manager
+
+# Ventana de deduplicacion: ignorar alertas del mismo boton en este intervalo
+DEDUP_WINDOW_SECONDS = 10
 
 logger = logging.getLogger(__name__)
 
@@ -212,7 +215,29 @@ async def flic_alert(
                 "message": f"Health check OK de {button_serial_number}",
             }
 
-        # 3. Crear alerta (para eventos que no son health)
+        # 3. Deduplicacion: si ya hay una alerta reciente del mismo dispositivo, ignorar
+        if device:
+            dedup_cutoff = datetime.now(timezone.utc) - timedelta(seconds=DEDUP_WINDOW_SECONDS)
+            existing = await db.execute(
+                select(Alert).where(
+                    Alert.device_id == device.id,
+                    Alert.created_at >= dedup_cutoff,
+                )
+            )
+            if existing.scalar_one_or_none():
+                raw_log.processed = True
+                await db.commit()
+                logger.info(
+                    "Alerta FLIC duplicada ignorada: serial=%s (<%ds)",
+                    button_serial_number, DEDUP_WINDOW_SECONDS,
+                )
+                return {
+                    "ok": True,
+                    "deduplicated": True,
+                    "message": f"Alerta ignorada (duplicada en {DEDUP_WINDOW_SECONDS}s)",
+                }
+
+        # 4. Crear alerta
         alert = Alert(
             client_id=client.id if client else None,
             device_id=device.id if device else None,
@@ -231,7 +256,7 @@ async def flic_alert(
 
         alert_id = alert.id
 
-    # 4. Broadcast por WebSocket a todas las operadoras conectadas
+    # 5. Broadcast por WebSocket a todas las operadoras conectadas
     ws_data = {
         "id": f"flic-{alert_id}",
         "type": alert_type,

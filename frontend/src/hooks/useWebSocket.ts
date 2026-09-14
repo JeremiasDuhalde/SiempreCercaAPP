@@ -38,7 +38,16 @@ export function useWebSocket() {
           const msg = JSON.parse(ev.data);
           console.log("[WS] Mensaje:", msg);
 
-          if (msg.type === "alert_new") {
+          if (msg.type === "alert_updated") {
+            const d = msg.data;
+            useAppStore.getState().setAlertStatus(String(d.id), d.status);
+            useAppStore
+              .getState()
+              .addLog(`Alerta #${d.id} → ${d.status} (por ${d.updated_by})`);
+          } else if (msg.type === "alerts_cleared") {
+            useAppStore.getState().clearAlerts();
+            useAppStore.getState().addLog("Todas las alertas fueron eliminadas");
+          } else if (msg.type === "alert_new") {
             const d = msg.data;
             const alertType = (d.type || "sos") as keyof typeof ALERT_TYPES;
             const priority = ALERT_TYPES[alertType]?.priority ?? 1;
