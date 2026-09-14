@@ -18,7 +18,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     const onResize = () => {
       const w = window.innerWidth;
       setIsMobile(w < 820);
-      setIsTablet(w >= 820 && w < 1100);
+      setIsTablet(w >= 820 && w < 1280);
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);

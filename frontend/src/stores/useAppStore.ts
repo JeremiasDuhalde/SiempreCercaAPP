@@ -97,7 +97,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   _nextMsgId: 50,
 
   isMobile: typeof window !== "undefined" && window.innerWidth < 820,
-  isTablet: typeof window !== "undefined" && window.innerWidth >= 820 && window.innerWidth < 1100,
+  isTablet: typeof window !== "undefined" && window.innerWidth >= 820 && window.innerWidth < 1280,
   setIsMobile: (v) => set({ isMobile: v }),
   setIsTablet: (v) => set({ isTablet: v }),
 }));
