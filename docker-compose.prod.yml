@@ -1,0 +1,16 @@
+# Override de produccion: usa imagenes pre-buildeadas de GHCR
+# Uso: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+services:
+  backend:
+    image: ghcr.io/jeremiasduhalde/siemprecerca-backend:${IMAGE_TAG:-latest}
+    volumes:
+      - ./backend/media:/app/media
+
+  worker:
+    image: ghcr.io/jeremiasduhalde/siemprecerca-worker:${IMAGE_TAG:-latest}
+
+  beat:
+    image: ghcr.io/jeremiasduhalde/siemprecerca-worker:${IMAGE_TAG:-latest}
+
+  frontend:
+    image: ghcr.io/jeremiasduhalde/siemprecerca-frontend:${IMAGE_TAG:-latest}

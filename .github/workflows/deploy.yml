@@ -18,36 +18,70 @@ concurrency:
 env:
   DEPLOY_PATH: /opt/siemprecerca
   DOMAIN: app.siemprecercasrl.net
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/siemprecerca
 
 jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login a GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag de imagen
+        id: meta
+        run: echo "tag=$(echo ${{ github.sha }} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
+      - name: Build y push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-backend:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_PREFIX }}-backend:latest
+
+      - name: Build y push worker
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile.worker
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-worker:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_PREFIX }}-worker:latest
+
+      - name: Build y push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-frontend:${{ steps.meta.outputs.tag }}
+            ${{ env.IMAGE_PREFIX }}-frontend:latest
+
   deploy:
+    needs: build-and-push
     runs-on: ubuntu-latest
     environment: production
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Crear tarball del proyecto
-        run: |
-          tar czf /tmp/deploy.tar.gz \
-            --exclude='.git' \
-            --exclude='node_modules' \
-            --exclude='.venv' \
-            --exclude='__pycache__' \
-            --exclude='.env' \
-            --exclude='.env.local' \
-            --exclude='backend/.env' \
-            --exclude='*.pyc' \
-            --exclude='.mypy_cache' \
-            --exclude='.ruff_cache' \
-            --exclude='.pytest_cache' \
-            --exclude='backups' \
-            --exclude='nginx/certbot' \
-            --exclude='docker-compose.override.yml' \
-            .
-          mv /tmp/deploy.tar.gz .
-          echo "TARBALL_SIZE=$(du -h deploy.tar.gz | cut -f1)" >> "$GITHUB_ENV"
 
       - name: Configurar SSH
         env:
@@ -66,6 +100,26 @@ jobs:
           echo "SSH_CMD=ssh -i ~/.ssh/deploy_key ${SSH_USER}@${SSH_HOST}" >> "$GITHUB_ENV"
           echo "SCP_CMD=scp -i ~/.ssh/deploy_key" >> "$GITHUB_ENV"
 
+      - name: Crear tarball (configs y archivos no-Docker)
+        run: |
+          tar czf /tmp/deploy.tar.gz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.venv' \
+            --exclude='__pycache__' \
+            --exclude='.env' \
+            --exclude='.env.local' \
+            --exclude='backend/.env' \
+            --exclude='*.pyc' \
+            --exclude='.mypy_cache' \
+            --exclude='.ruff_cache' \
+            --exclude='.pytest_cache' \
+            --exclude='backups' \
+            --exclude='nginx/certbot' \
+            --exclude='docker-compose.override.yml' \
+            .
+          mv /tmp/deploy.tar.gz .
+
       - name: Subir tarball al servidor
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -73,36 +127,39 @@ jobs:
         run: |
           $SCP_CMD deploy.tar.gz "${SSH_USER}@${SSH_HOST}:/tmp/deploy.tar.gz"
 
-      - name: Backup pre-deploy
+      - name: Deploy en servidor
+        env:
+          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_ACTOR: ${{ github.actor }}
         run: |
-          $SSH_CMD << 'REMOTE'
+          $SSH_CMD << REMOTE
             set -e
             cd /opt/siemprecerca
 
             echo "=== Backup .env files ==="
-            TS=$(date +%s)
-            cp .env ".env.backup.${TS}" 2>/dev/null || true
-            cp backend/.env "backend/.env.backup.${TS}" 2>/dev/null || true
-
-            # Rotar: mantener solo los ultimos 10 backups
+            TS=\$(date +%s)
+            cp .env ".env.backup.\${TS}" 2>/dev/null || true
+            cp backend/.env "backend/.env.backup.\${TS}" 2>/dev/null || true
             ls -t .env.backup.* 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
             ls -t backend/.env.backup.* 2>/dev/null | tail -n +11 | xargs rm -f 2>/dev/null || true
-
-            echo "Backups creados con timestamp ${TS}"
-          REMOTE
-
-      - name: Extraer codigo y rebuild
-        run: |
-          $SSH_CMD << 'REMOTE'
-            set -e
-            cd /opt/siemprecerca
 
             echo "=== Extraer tarball ==="
             tar xzf /tmp/deploy.tar.gz --overwrite
             rm /tmp/deploy.tar.gz
 
-            echo "=== Rebuild servicios ==="
-            docker compose up -d --build 2>&1
+            echo "=== Login a GHCR ==="
+            echo "${GH_TOKEN}" | docker login ghcr.io -u "${GH_ACTOR}" --password-stdin
+
+            echo "=== Pull imagenes ==="
+            export IMAGE_TAG="${IMAGE_TAG}"
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml pull
+
+            echo "=== Levantar servicios ==="
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+            echo "=== Restart nginx para resolver IPs nuevas ==="
+            docker compose restart nginx
           REMOTE
 
       - name: Migraciones
@@ -111,7 +168,6 @@ jobs:
             set -e
             cd /opt/siemprecerca
 
-            # Esperar a que el backend arranque
             echo "=== Esperando backend ==="
             for i in $(seq 1 12); do
               if docker compose exec -T backend uv run python -c "print('ready')" 2>/dev/null | grep -q ready; then
@@ -163,6 +219,8 @@ jobs:
 
       - name: Step summary
         if: always()
+        env:
+          IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
         run: |
           cat >> "$GITHUB_STEP_SUMMARY" << EOF
           ## Deploy a produccion
@@ -172,9 +230,9 @@ jobs:
           | **VM** | \`${{ secrets.SSH_HOST }}\` |
           | **URL** | https://${DOMAIN} |
           | **Commit** | \`${{ github.sha }}\` |
+          | **Image tag** | \`${IMAGE_TAG}\` |
           | **Actor** | ${{ github.actor }} |
           | **Timestamp** | $(date -u '+%Y-%m-%d %H:%M:%S UTC') |
-          | **Tarball** | ${TARBALL_SIZE} |
           | **Ref** | \`${{ github.ref_name }}\` |
           EOF
 

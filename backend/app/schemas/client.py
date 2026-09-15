@@ -119,6 +119,7 @@ class ClientListItem(BaseModel):
     phone: str | None
     is_active: bool
     color: str | None
+    contacts: list[ContactOut]
     device: DeviceOut | None
 
 

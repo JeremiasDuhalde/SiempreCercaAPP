@@ -25,6 +25,10 @@ celery.conf.beat_schedule = {
         "task": "app.tasks.medication_reminders.check_medications",
         "schedule": 300.0,  # cada 5 min
     },
+    "check-appointment-reminders": {
+        "task": "app.tasks.appointment_reminders.check_appointments",
+        "schedule": 300.0,  # cada 5 min
+    },
     "check-inactivity": {
         "task": "app.tasks.inactivity_check.check_inactivity",
         "schedule": 1800.0,  # cada 30 min
