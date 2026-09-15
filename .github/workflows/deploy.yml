@@ -19,7 +19,7 @@ env:
   DEPLOY_PATH: /opt/siemprecerca
   DOMAIN: app.siemprecercasrl.net
   REGISTRY: ghcr.io
-  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/siemprecerca
+  IMAGE_PREFIX: ghcr.io/jeremiasduhalde/siemprecerca
 
 jobs:
   build-and-push:
